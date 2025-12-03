@@ -1,0 +1,25 @@
+model Product {
+    id            String   @id @default(cuid())
+    name          String
+    description   String?
+    price         Decimal  @db.Decimal(10, 2)
+    discountPrice Decimal? @db.Decimal(10, 2)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    sku           String?  @unique
+
+    stock       Int      @default(0)
+    isActive    Boolean  @default(true)
+    tags        String[] @default([])
+    subCategory String?
+    slug        String?  @unique
+
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+
+    images     Image[]
+    reviews    Review[]
+    CartItem   CartItem[]
+    orderItems OrderItem[]
+    wishes     Wish[]
+}

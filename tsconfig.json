@@ -1,0 +1,5 @@
+{
+
+"extends": "@ecomerceNextjs/config/base.json"
+}
+
