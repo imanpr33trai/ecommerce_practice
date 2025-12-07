@@ -1,61 +1,77 @@
 // 1. Import the standard `useQuery` hook from TanStack Query
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { trpc } from '@/utils/trpc'; // Your tRPC client setup
+
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { type RouterInputs, trpc } from "@/utils/trpc"; // Your tRPC client setup
+
+type ProductFilters = RouterInputs["product"]["list"]["filters"];
+type ProductSortOption = RouterInputs["product"]["list"]["sort"];
+
+interface UseProductsOptions {
+	limit?: number;
+	enabled?: boolean;
+	sort?: ProductSortOption;
+}
 
 /**
  * A collection of custom hooks for product-related data fetching.
  * This pattern groups related tRPC procedures for better organization.
  */
 export const useProduct = {
-    /**
-     * Fetches a list of products tagged as "newDeal".
-     */
-    newDeals: () => {
-        // 2. Generate the query options from your tRPC client
-        const queryOptions = trpc.product.getNewDeal.queryOptions();
-
-        // 3. Pass those options to the standard `useQuery` hook
-        return useQuery(queryOptions);
-    },
-
-    /**
-     * Fetches a list of products tagged as "exclusive".
-     * This is a more concise way of writing the same logic as above.
-     */
-    exclusiveDeals: () => {
-        return useQuery(trpc.product.getExclusiveDeal.queryOptions());
-    },
-    greatValueDeals: () => {
-        return useQuery(trpc.product.getGreatValueDeal.queryOptions());
-    },
-    getAll: () => {
-        return useQuery(trpc.product.getAll.queryOptions())
-    },
-    getBySlug: (slug: string) => {
-        const queryOptions = useQuery(trpc.product.getProductBySlug.queryOptions({ slug }))
-        return queryOptions;
-    },
-    /**
- * Fetches a list of related products for a given product.
- *
- * @param params - Object containing `excludeProductId`, `categoryId`, `tags`, and `limit`.
- */
-    getRelated: (params: {
-        categoryId?: string;
-        tags?: string[];
-        excludeProductId: string;
-        limit: number;
-    }) => {
-        const queryOptions = trpc.product.getRelatedProducts.queryOptions(params);
-
-        return useQuery({
-            ...queryOptions,
-            enabled: !!params.excludeProductId,
-        })
-    }
-
+	create: () => {
+		return useMutation(
+			trpc.product.create.mutationOptions({
+				onSuccess: () => {
+					console.log("Product created successfully");
+				},
+				onError: (error) => {
+					console.error("Error creating product:", error);
+				},
+			}),
+		);
+	},
+	list: (filters?: ProductFilters, options?: UseProductsOptions) => {
+		return useQuery(
+			trpc.product.list.queryOptions(
+				{
+					limit: options?.limit ?? 20,
+					filters,
+					sort: options?.sort ?? "newest",
+				},
+				{
+					enabled: options?.enabled,
+					placeholderData: keepPreviousData,
+					staleTime: 60 * 1000,
+				},
+			),
+		);
+	},
+	newDeals: () => {
+		return useQuery(
+			trpc.product.list.queryOptions({
+				limit: 1,
+				sort: "newest",
+				filters: { isNew: true, inStock: true },
+			}),
+		);
+	},
+	exclusiveDeals: () => {
+		return useQuery(
+			trpc.product.list.queryOptions({
+				limit: 1,
+				filters: { hasDiscount: true, inStock: true },
+			}),
+		);
+	},
+	greatValue: () => {
+		return useQuery(
+			trpc.product.list.queryOptions({
+				limit: 2,
+				sort: "price_asc", // Cheapest first
+				filters: { inStock: true },
+			}),
+		);
+	},
+	featuredCategories: () => {
+		return useQuery(trpc.category.getRoots.queryOptions());
+	},
 };
-
-
-
-

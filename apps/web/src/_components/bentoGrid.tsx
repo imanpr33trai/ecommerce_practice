@@ -11,7 +11,6 @@
 // import Link from "next/link";
 // import { Button } from "@comp/button";
 
-
 // const BentoGrid = () => {
 //   const { data: newDeal, isLoading, isError } = useProduct.newDeals();
 //   const { data: exclusiveProduct } = useProduct.exclusiveDeals();
@@ -31,7 +30,6 @@
 //     );
 //   }
 //   // const productDeal = product.filter((p)=>p.createdAt)
-
 
 //   // const newDeal = mockProducts.find((p) => p.deal === "New");
 //   const greatValueDeal = mockProducts.find((p) => p.deal === "Great Value");
@@ -234,6 +232,5 @@
 //     </div>
 //   </div>
 // );
-
 
 // export default BentoGrid;

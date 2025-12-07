@@ -1,64 +1,73 @@
+"use client";
 
-
-import Footer from '@/_components/Layout/Footer';
-import Header from '@/_components/Layout/Header';
-import MaxWidthWrapper from '@/_components/max-width-wrapper';
-import CategoryFilters from './_components/CategoriesFilter';
-import FinalCTASection from './_components/CTA';
-import ExclusiveProductCard from './_components/ExclusiveProductCard';
-import FeaturedCategoriesSection from './_components/FeaturedCategoriesSection';
-import GreatValueCard from './_components/GreatValueCard';
-import NewDealsCard from './_components/NewDealsCard';
-import Sidebar from './_components/Sidebar';
+import Footer from "@/_components/Layout/Footer";
+import Header from "@/_components/Layout/Header";
+import MaxWidthWrapper from "@/_components/max-width-wrapper";
+import { useProduct } from "@/hooks/useProduct";
+import { useState } from "react";
+import CategoryFilters from "./_components/CategoriesFilter";
+import FinalCTASection from "./_components/CTA";
+import ExclusiveProductCard from "./_components/ExclusiveProductCard";
+import FeaturedCategoriesSection from "./_components/FeaturedCategoriesSection";
+import GreatValueCard from "./_components/GreatValueCard";
+import NewDealsCard from "./_components/NewDealsCard";
+import Sidebar from "./_components/Sidebar";
 // =================================================================================
 // Header & Category Filters _components
 // =================================================================================
 
-
-
-
 export default function ModernLandingPage() {
-  return (
-    // The outer div now has a different background to distinguish sections
-    <>
-      <section className="bg-background dark:bg-gray-950 min-h-screen">
-        {/* FIRST SECTION (Hero) */}
-        <div className="bg-gray-100 dark:bg-zinc-900 p-4 md:p-6 h-full">
-          <MaxWidthWrapper className="bg-background rounded-3xl p-4 md:p-6 group">
-            <Header />
-            <CategoryFilters />
+	const [category, setCategory] = useState<string | undefined>(undefined);
+	const [priceRange, setPriceRange] = useState<{ min?: number; max?: number }>(
+		{},
+	);
+	const [sort, setSort] = useState<"newest" | "price_asc">("newest");
 
-            {/* Main Content Grid */}
-            <div className="mt-4 grid grid-cols-12 gap-6">
-              <NewDealsCard />
-              <div className="col-span-12 md:col-span-7 lg:col-span-5 flex flex-col gap-6">
-                <GreatValueCard />
-                <ExclusiveProductCard />
-              </div>
-              <Sidebar />
-            </div>
-          </MaxWidthWrapper>
-        </div>
-      </section>
-      {/* SECOND SECTION (Featured Categories) */}
-      <FeaturedCategoriesSection />
-      {/*<OurCommitmentSection />
+	const { data, isLoading, isFetching } = useProduct.list(
+		{
+			categorySlug: category,
+			minPrice: priceRange.min,
+			maxPrice: priceRange.max,
+			inStock: true,
+		},
+		{ sort, limit: 12 },
+	);
+
+	return (
+		// The outer div now has a different background to distinguish sections
+		<>
+			<section className="min-h-screen bg-background dark:bg-gray-950">
+				{/* FIRST SECTION (Hero) */}
+				<div className="h-full bg-gray-100 p-4 md:p-6 dark:bg-zinc-900">
+					<MaxWidthWrapper className="group rounded-3xl bg-background p-4 md:p-6">
+						<Header />
+						<CategoryFilters />
+
+						{/* Main Content Grid */}
+						<div className="mt-4 grid grid-cols-12 gap-6">
+							<NewDealsCard />
+							<div className="col-span-12 flex flex-col gap-6 md:col-span-7 lg:col-span-5">
+								<GreatValueCard />
+								<ExclusiveProductCard />
+							</div>
+							<Sidebar />
+						</div>
+					</MaxWidthWrapper>
+				</div>
+			</section>
+			{/* SECOND SECTION (Featured Categories) */}
+			<FeaturedCategoriesSection />
+			{/*<OurCommitmentSection />
       <TestimonialsSection />*/}
-      <FinalCTASection />
-      <Footer />
-    </>
-  );
+			<FinalCTASection />
+			<Footer />
+		</>
+	);
 }
-
-
 
 // =================================================================================
 // Main Grid Card _components
 // =================================================================================
-
-
-
-
 
 // =================================================================================
 // Sidebar Widget _components
@@ -240,14 +249,12 @@ export default function ModernLandingPage() {
 // This provides a final, powerful prompt to convert interest into action.
 // =================================================================================
 
-
 // =================================================================================
 // Section 9: The Footer
 // The standard, utility-focused footer for global navigation and information.
 // =================================================================================
 
 // Import social icons
-
 
 // =================================================================================
 // Main Page Component

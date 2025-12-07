@@ -1,29 +1,29 @@
 {
-  "name": "@ecomerceNextjs/api",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "type": "module",
-  "scripts": {},
-  "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@trpc/server": "catalog:",
-    "@trpc/client": "catalog:",
-    "hono": "catalog:",
-    "@prisma/client": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "^4.1.11",
-    "@ecomerceNextjs/auth": "workspace:*",
-    "@ecomerceNextjs/db": "workspace:*"
-  }
+	"name": "@ecomerceNextjs/api",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"type": "module",
+	"scripts": {},
+	"devDependencies": {
+		"@ecomerceNextjs/config": "workspace:*"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@trpc/server": "catalog:",
+		"@trpc/client": "catalog:",
+		"hono": "catalog:",
+		"@prisma/client": "catalog:",
+		"dotenv": "catalog:",
+		"zod": "^4.1.11",
+		"@ecomerceNextjs/auth": "workspace:*",
+		"@ecomerceNextjs/db": "workspace:*"
+	}
 }

@@ -1,15 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated"
-  moduleFormat = "esm"
-  runtime = "bun"
+  provider               = "prisma-client"
+  output                 = "../generated"
+  moduleFormat           = "esm"
+  runtime                = "bun"
   generatedFileExtension = "ts"
-   previewFeatures = ["postgresqlExtensions"]
-   importFileExtension = "ts"
+  previewFeatures        = ["postgresqlExtensions"]
+  importFileExtension    = "ts"
 }
 
 datasource db {
   provider = "postgresql"
-  
-
 }

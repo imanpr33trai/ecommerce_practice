@@ -1,87 +1,82 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';               // 👈 1. Import toast directly from sonner
-import { trpc } from '@/utils/trpc';        // Your tRPC client
+import { trpc } from "@/utils/trpc";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-/**
- * A custom hook to manage all wishlist-related mutations (add, remove).
- * This centralizes logic for cache invalidation and user feedback.
- */
 export const useWish = {
-    //   const utils = trpc.useUtils();
+  /**
+   * Hook for the "My Wishlist" page.
+   * Returns the full details of wishlisted items.
+   */
+  wishlistData: () => {
+    return useQuery(
+      trpc.wish.getAll.queryOptions(undefined, {
+        staleTime: 5 * 60 * 1000, // 5 minutes (Wishlists don't change often externally)
+      })
+    );
+  },
 
-    // Renamed from `removeWish` to `removeItem` for clarity, as it's the mutation object
-    removeWish: () => useMutation(
-        // 2. Call `createMutationOptions` and pass your configuration object to it
-        trpc.wish.removeWish.mutationOptions({
-            // `onSuccess` and `onError` are now properties of this options object
-            onSuccess: (data, variables) => {
-                // `data` is the return value from your backend mutation
-                // `variables` is the input you passed to `.mutate()`
+  isWishListed: (productId: string) => {
+    const { data: ids } = useQuery(
+      trpc.wish.getIds.queryOptions(undefined, {
+        staleTime: 5 * 60 * 1000,
+      })
+    );
+    return !!ids?.includes(productId);
+  },
+  wishlistToggle: () => {
+    const queryClient = useQueryClient();
 
-                // Invalidate the query to refetch the user's wishlist
-                // utils.wishlist.get.invalidate();
+    const mutation = useMutation(
+      trpc.wish.toggle.mutationOptions({
+        // 1. OPTIMISTIC UPDATE: Update UI before server responds
+        onMutate: async ({ productId }) => {
+          // Cancel outgoing refetches so they don't overwrite our optimistic update
+          // await utils.wish.getIds.cancel();
 
-                toast.success("Removed from Wishlist", {
-                    // The backend returns the full product, so we can use its name
-                    description: `${data.product.name} has been removed.`,
-                });
-            },
-            onError: (error) => {
-                toast.error("Error", {
-                    description: error.message,
-                });
-            },
-        })
-    ),
-    getAll: () => {
-        return useQuery(trpc.wish.getAll.queryOptions())
-    },
+          // Snapshot the previous value
+          const previousIds = queryClient.getQueryData(
+            trpc.wish.getIds.queryKey()
+          );
 
+          // Optimistically update to the new value
+          queryClient.setQueryData(trpc.wish.getIds.queryKey(), (oldIds) => {
+            if (!oldIds) return [productId];
+            return oldIds.includes(productId)
+              ? oldIds.filter((id) => id !== productId) // Remove
+              : [...oldIds, productId]; // Add
+          });
 
+          // Return context to rollback if error
+          return { previousIds };
+        },
 
-    // You could add another mutation for adding an item here
-    // const addWish = useMutation({ ... });
-    addWish: () => {
-        return useMutation(trpc.wish.createWish.mutationOptions({
-            onSuccess: (data, variables) => {
-                toast.success("Added to Wishlist", {
-                    description: `${variables.productId} has been added to your wishlist.`
-                })
+        // 2. ON ERROR: Rollback to snapshot
+        onError: (err, newVariables, context) => {
+          queryClient.setQueryData(
+            trpc.wish.getIds.queryKey(),
+            context?.previousIds
+          );
+          toast.error("Could not update wishlist");
+        },
 
-            },
-            onError: (error) => {
-                toast.error("Error", {
-                    description: error.message
-                })
-            }
-        }))
-    },
-    addOrRemove: () => {
-        return useMutation(trpc.wish.addOrRemove.mutationOptions({
-            onSuccess: (data, variables) => {
-                toast.success("added or Removed", { description: `${variables.productId} has been updated.` })
-            },
-            onError: (error) => {
-                toast.error("Error", { description: error.message })
-            }
-        }))
-    },
+        // 3. ON SETTLED: Sync with server to be sure
+        onSettled: () => {
+          queryClient.invalidateQueries({
+            queryKey: trpc.wish.getAll.queryKey(),
+          });
+          // Also refresh the full list page
+        },
 
-    toggleWish: () => {
-        return useMutation(trpc.wish.toggle.mutationOptions({
-            onSuccess: (data, variables) => {
-                const { refetch } = useQuery(trpc.wish.getAll.queryOptions());
-                refetch()
+        // 4. ON SUCCESS: Show feedback
+        onSuccess: (data) => {
+          toast.success(data.message, { duration: 2000 });
+        },
+      })
+    );
 
-                const actionMessage = data.action === 'added' ? 'Added to Wishlist!' : 'Removed from Wishlist'
-                const description = `${variables.productName || 'Item'} has been ${data.action}.` // This line is already correct based on the last diff.
-                toast.success(actionMessage, { description });
-            },
-            onError: (error) => {
-                toast.error("Error", { description: error.message });
-            }
-        }))
-    },
-
-
+    return {
+      toggle: (productId: string) => mutation.mutate({ productId }),
+      isPending: mutation.isPending,
+    };
+  },
 };

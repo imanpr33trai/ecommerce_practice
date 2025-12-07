@@ -1,5 +1,3 @@
 {
-
-"extends": "@ecomerceNextjs/config/base.json"
+	"extends": "@ecomerceNextjs/config/base.json"
 }
-

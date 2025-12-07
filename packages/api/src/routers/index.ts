@@ -1,11 +1,11 @@
 import { protectedProcedure, publicProcedure, router } from "../index";
-import { cartRouter } from "./cart";
-import { CategoryRouter } from "./category";
-import { productRouter } from "./product";
-import { ReviewRouter } from "./review";
-import { todoRouter } from "./todo";
-import { wishRouter } from "./wish";
-
+import { addressRouter } from "./address.route";
+import { cartRouter } from "./cart.route";
+import { categoryRouter } from "./category.route";
+import { orderRouter } from "./order.route";
+import { productRouter } from "./product.route";
+import { userRouter } from "./user.route";
+import { wishRouter } from "./wish.route";
 
 export const appRouter = router({
 	healthCheck: publicProcedure.query(() => {
@@ -17,11 +17,13 @@ export const appRouter = router({
 			user: ctx.session.user,
 		};
 	}),
-	todo: todoRouter,
-  product: productRouter,
-  wish: wishRouter,
-  cart: cartRouter,
-  review: ReviewRouter,
-  category: CategoryRouter
+
+	product: productRouter,
+	category: categoryRouter,
+	address: addressRouter,
+	user: userRouter,
+	wish: wishRouter,
+	order: orderRouter,
+	cart: cartRouter,
 });
 export type AppRouter = typeof appRouter;

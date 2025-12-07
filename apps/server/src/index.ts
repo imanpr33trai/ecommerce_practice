@@ -1,8 +1,8 @@
 import "dotenv/config";
-import { trpcServer } from "@hono/trpc-server";
 import { createContext } from "@ecomerceNextjs/api/context";
 import { appRouter } from "@ecomerceNextjs/api/routers/index";
 import { auth } from "@ecomerceNextjs/auth";
+import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
