@@ -1,29 +1,25 @@
-import { protectedProcedure, publicProcedure, router } from "../index";
-import { addressRouter } from "./address.route";
-import { cartRouter } from "./cart.route";
-import { categoryRouter } from "./category.route";
-import { orderRouter } from "./order.route";
-import { productRouter } from "./product.route";
-import { userRouter } from "./user.route";
-import { wishRouter } from "./wish.route";
+import {
+  createCallerFactory,
+  protectedProcedure,
+  publicProcedure,
+  router,
+} from "../index";
+import { ProductRouter } from "./product.route";
 
 export const appRouter = router({
-	healthCheck: publicProcedure.query(() => {
-		return "OK";
-	}),
-	privateData: protectedProcedure.query(({ ctx }) => {
-		return {
-			message: "This is private",
-			user: ctx.session.user,
-		};
-	}),
+  healthCheck: publicProcedure.query(() => {
+    return "OK";
+  }),
+  privateData: protectedProcedure.query(({ ctx }) => {
+    return {
+      message: "This is private",
+      user: ctx.session.user,
+    };
+  }),
 
-	product: productRouter,
-	category: categoryRouter,
-	address: addressRouter,
-	user: userRouter,
-	wish: wishRouter,
-	order: orderRouter,
-	cart: cartRouter,
+  product: ProductRouter,
 });
+
+export const createCaller = createCallerFactory(appRouter);
+
 export type AppRouter = typeof appRouter;

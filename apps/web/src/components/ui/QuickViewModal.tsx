@@ -1,0 +1,1 @@
+// Unused - Moved to components/QuickViewModal.tsx

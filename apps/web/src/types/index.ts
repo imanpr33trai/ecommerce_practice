@@ -1,4 +1,4 @@
-import type { RouterOutputs } from "@/utils/trpc";
+import type { RouterOutputs } from "@/trpc/client";
 
 // 1. The "Summary" type (for Product Cards / Lists)
 // We look at the 'product' router -> 'list' procedure -> 'items' array -> single item
@@ -18,3 +18,5 @@ export type ProductImage = ProductDetail["images"][number];
 export type ProductCategory = ProductDetail["category"];
 
 export type CartUpdateQuantity = RouterOutputs["cart"]["updateQuantity"];
+
+export type SubCategoryList = RouterOutputs["category"]["getBySlug"];

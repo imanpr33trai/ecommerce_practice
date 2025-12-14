@@ -1,102 +1,183 @@
-import type { Product, TeamMember } from "./types";
+import { Product, TeamMember, Review } from './types';
 
-export const CATEGORIES = [
-	"All",
-	"Table",
-	"Dressers",
-	"Sofa",
-	"Chair",
-	"Bed",
-	"Lamps",
-];
+export const CATEGORIES = ['All', 'Table', 'Dressers', 'Sofa', 'Chair', 'Bed', 'Lamps'];
 
 export const PRODUCTS: Product[] = [
-	{
-		id: "1",
-		name: "Long Chair",
-		category: "Sofa",
-		price: 508,
-		rating: 4.9,
-		image:
-			"https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000",
-		description: "Minimalist long chair designed for comfort and style.",
-		isNew: true,
-	},
-	{
-		id: "2",
-		name: "PureSpace Focus",
-		category: "Chair",
-		price: 299,
-		rating: 4.8,
-		image:
-			"https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=1000",
-		description: "Sleek, minimalist design for ultimate productivity.",
-		isOnSale: true,
-		discount: 50,
-	},
-	{
-		id: "3",
-		name: "Nordic Lamp",
-		category: "Lamps",
-		price: 120,
-		rating: 4.7,
-		image:
-			"https://images.unsplash.com/photo-1507473888900-52e1ad14db3d?auto=format&fit=crop&q=80&w=1000",
-		description: "Warm light for a cozy atmosphere.",
-	},
-	{
-		id: "4",
-		name: "Oak Dresser",
-		category: "Dressers",
-		price: 850,
-		rating: 5.0,
-		image:
-			"https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=1000",
-		description: "Solid oak dresser with plenty of storage.",
-	},
-	{
-		id: "5",
-		name: "Cloud Sofa",
-		category: "Sofa",
-		price: 1200,
-		rating: 4.9,
-		image:
-			"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000",
-		description: "Like sitting on a cloud. Ultra soft fabric.",
-		isNew: true,
-	},
-	{
-		id: "6",
-		name: "Marble Table",
-		category: "Table",
-		price: 450,
-		rating: 4.6,
-		image:
-			"https://images.unsplash.com/photo-1577140917170-285929fb55b7?auto=format&fit=crop&q=80&w=1000",
-		description: "Genuine marble top with gold legs.",
-	},
+  {
+    id: '1',
+    name: 'Long Chair',
+    category: 'Sofa',
+    price: 508,
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=1000',
+    description: 'Minimalist long chair designed for comfort and style.',
+    isNew: true,
+    colors: ['#D9D9D9', '#3A3A3A'],
+    material: 'Fabric'
+  },
+  {
+    id: '2',
+    name: 'PureSpace Focus',
+    category: 'Chair',
+    price: 299,
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=1000',
+    description: 'Sleek, minimalist design for ultimate productivity.',
+    isOnSale: true,
+    discount: 50,
+    colors: ['#111111', '#FFFFFF'],
+    material: 'Leather'
+  },
+  {
+    id: '3',
+    name: 'Nordic Lamp',
+    category: 'Lamps',
+    price: 120,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1507473888900-52e1ad14db3d?auto=format&fit=crop&q=80&w=1000',
+    description: 'Warm light for a cozy atmosphere.',
+    colors: ['#E2E8F0', '#8C7A6B'],
+    material: 'Metal'
+  },
+  {
+    id: '4',
+    name: 'Oak Dresser',
+    category: 'Dressers',
+    price: 850,
+    rating: 5.0,
+    image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=1000',
+    description: 'Solid oak dresser with plenty of storage.',
+    colors: ['#8C7A6B'],
+    material: 'Wood'
+  },
+  {
+    id: '5',
+    name: 'Cloud Sofa',
+    category: 'Sofa',
+    price: 1200,
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1000',
+    description: 'Like sitting on a cloud. Ultra soft fabric.',
+    isNew: true,
+    colors: ['#D9D9D9', '#FFFFFF'],
+    material: 'Fabric'
+  },
+  {
+    id: '6',
+    name: 'Marble Table',
+    category: 'Table',
+    price: 450,
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?auto=format&fit=crop&q=80&w=1000',
+    description: 'Genuine marble top with gold legs.',
+    colors: ['#FFFFFF', '#111111'],
+    material: 'Marble'
+  },
+  {
+    id: '7',
+    name: 'Velvet Lounge',
+    category: 'Chair',
+    price: 350,
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=1000',
+    description: 'Luxury velvet finish for your reading corner.',
+    isNew: true,
+    colors: ['#8C7A6B', '#3A3A3A'],
+    material: 'Fabric'
+  },
+  {
+    id: '8',
+    name: 'Geometric Lamp',
+    category: 'Lamps',
+    price: 89,
+    rating: 4.5,
+    image: 'https://images.unsplash.com/photo-1513506003011-3b03c80165bd?auto=format&fit=crop&q=80&w=1000',
+    description: 'Modern geometric lines casting beautiful shadows.',
+    colors: ['#111111'],
+    material: 'Metal'
+  },
+  {
+    id: '9',
+    name: 'Minimal Bed',
+    category: 'Bed',
+    price: 1500,
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1505693416388-b0346efee749?auto=format&fit=crop&q=80&w=1000',
+    description: 'Low profile Japanese style bed frame.',
+    isOnSale: true,
+    discount: 20,
+    colors: ['#8C7A6B', '#E2E8F0'],
+    material: 'Wood'
+  },
+  {
+    id: '10',
+    name: 'Walnut Side',
+    category: 'Table',
+    price: 180,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&q=80&w=1000',
+    description: 'Dark walnut wood side table.',
+    colors: ['#3A3A3A'],
+    material: 'Wood'
+  }
 ];
 
 export const TEAM: TeamMember[] = [
-	{
-		id: "1",
-		name: "Sarah",
-		role: "Designer",
-		image:
-			"https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
-	},
-	{
-		id: "2",
-		name: "Mike",
-		role: "Engineer",
-		image:
-			"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150",
-	},
-	{
-		id: "3",
-		name: "Anna",
-		role: "Manager",
-		image:
-			"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150",
-	},
+  { id: '1', name: 'Sarah', role: 'Designer', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150' },
+  { id: '2', name: 'Mike', role: 'Engineer', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150' },
+  { id: '3', name: 'Anna', role: 'Manager', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150' },
+];
+
+export const REVIEWS = [
+  {
+    id: 1,
+    name: "Alex Morgan",
+    role: "Interior Designer",
+    text: "Nestify has completely transformed my living room. The minimalist aesthetic is exactly what I was looking for.",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150"
+  },
+  {
+    id: 2,
+    name: "Emily Chen",
+    role: "Architect",
+    text: "The quality of the wood and the craftsmanship is outstanding. Highly recommended for anyone valuing durability.",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150"
+  },
+  {
+    id: 3,
+    name: "Michael Ross",
+    role: "Product Manager",
+    text: "Customer service was exceptional, and the delivery was faster than expected. The Cloud Sofa is a dream.",
+    rating: 4.8,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150"
+  }
+];
+
+export const PRODUCT_REVIEWS: Review[] = [
+  {
+    id: 'r1',
+    userName: 'Jessica M.',
+    rating: 5,
+    comment: 'The texture is absolutely amazing. It feels so premium!',
+    date: '2 days ago',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=150'
+  },
+  {
+    id: 'r2',
+    userName: 'David K.',
+    rating: 4,
+    comment: 'Great design, but shipping took a day longer than expected.',
+    date: '1 week ago',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=150'
+  },
+  {
+    id: 'r3',
+    userName: 'Sarah L.',
+    rating: 5,
+    comment: 'Fits perfectly in my studio apartment. Minimal and functional.',
+    date: '2 weeks ago',
+    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=150'
+  }
 ];

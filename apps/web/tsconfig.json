@@ -1,31 +1,45 @@
 {
-	"extends": "@ecomerceNextjs/config/nextjs.json",
 	"compilerOptions": {
-		"target": "ES2017",
-		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowImportingTsExtensions": true,
 		"allowJs": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"noEmit": true,
 		"esModuleInterop": true,
+		"incremental": true,
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"esnext"
+		],
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"verbatimModuleSyntax": false,
-		"jsx": "react-jsx",
-		"incremental": true,
+		"noEmit": true,
+		"paths": {
+			"@/*": [
+				"./src/*"
+			],
+			"@comp/*": [
+				"../../packages/ui/src/components/*"
+			],
+			"@workspace/ui/*": [
+				"../../packages/ui/src/*"
+			]
+		},
 		"plugins": [
 			{
 				"name": "next"
 			}
 		],
-		"paths": {
-			"@/*": ["./src/*"],
-			"@workspace/ui/*": ["../../packages/ui/src/*"],
-			"@comp/*": ["../../packages/ui/src/components/*"]
-		}
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2017",
+		"verbatimModuleSyntax": false
 	},
+	"exclude": [
+		"./node_modules"
+	],
+	"extends": "@ecomerceNextjs/config/nextjs.json",
 	"include": [
 		"./next-env.d.ts",
 		"./**/*.ts",
@@ -33,6 +47,5 @@
 		"./.next/types/**/*.ts",
 		".next/types/**/*.ts",
 		".next/dev/types/**/*.ts"
-	],
-	"exclude": ["./node_modules"]
+	]
 }

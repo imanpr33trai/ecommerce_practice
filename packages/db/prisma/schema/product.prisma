@@ -8,14 +8,15 @@ model Product {
     updatedAt     DateTime @updatedAt
     sku           String?  @unique
 
-    stock       Int      @default(0)
-    isActive    Boolean  @default(true)
-    tags        String[] @default([])
+    colors      String[]  @default([])
+    stock       Int       @default(0)
+    isActive    Boolean   @default(true)
+    tags        String[]  @default([])
     subCategory String?
-    slug        String?  @unique
-
-    categoryId String?
-    category   Category? @relation(fields: [categoryId], references: [id])
+    slug        String?   @unique
+    material    String[]  @default([])
+    categoryId  String?
+    category    Category? @relation(fields: [categoryId], references: [id])
 
     images     Image[]
     reviews    Review[]

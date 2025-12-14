@@ -1,6 +1,17 @@
 {
-	"name": "@ecomerceNextjs/db",
-	"type": "module",
+	"dependencies": {
+		"@prisma/adapter-pg": "^7.0.0",
+		"@prisma/client": "catalog:",
+		"dotenv": "catalog:",
+		"pg": "^8.16.3",
+		"zod": "^4.1.11"
+	},
+	"devDependencies": {
+		"@ecomerceNextjs/config": "workspace:*",
+		"@ecomerceNextjs/env": "workspace:*",
+		"@types/pg": "^8.11.11",
+		"prisma": "^7.0.0"
+	},
 	"exports": {
 		".": {
 			"default": "./src/index.ts"
@@ -9,30 +20,20 @@
 			"default": "./src/*.ts"
 		}
 	},
-	"scripts": {
-		"db:push": "prisma db push",
-		"db:studio": "prisma studio",
-		"db:generate": "prisma generate",
-		"db:migrate": "prisma migrate dev",
-		"db:seed": "bun prisma/seed.ts",
-		"db:start": "docker compose up -d",
-		"db:watch": "docker compose up",
-		"db:stop": "docker compose stop",
-		"db:down": "docker compose down"
-	},
-	"devDependencies": {
-		"prisma": "^7.0.0",
-		"@types/pg": "^8.11.11",
-		"@ecomerceNextjs/config": "workspace:*"
-	},
+	"name": "@ecomerceNextjs/db",
 	"peerDependencies": {
 		"typescript": "^5"
 	},
-	"dependencies": {
-		"@prisma/client": "catalog:",
-		"@prisma/adapter-pg": "^7.0.0",
-		"pg": "^8.14.1",
-		"dotenv": "catalog:",
-		"zod": "^4.1.11"
-	}
+	"scripts": {
+		"db:down": "docker compose down",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev",
+		"db:push": "prisma db push",
+		"db:seed": "bun prisma/seed.ts",
+		"db:start": "docker compose up -d",
+		"db:stop": "docker compose stop",
+		"db:studio": "prisma studio",
+		"db:watch": "docker compose up"
+	},
+	"type": "module"
 }

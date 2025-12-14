@@ -2,6 +2,7 @@
 	"dependencies": {
 		"@ecomerceNextjs/api": "workspace:*",
 		"@ecomerceNextjs/auth": "workspace:*",
+		"@ecomerceNextjs/db": "workspace:*",
 		"@prisma/client": "catalog:",
 		"@tanstack/react-form": "^1.12.3",
 		"@tanstack/react-query": "^5.90.12",

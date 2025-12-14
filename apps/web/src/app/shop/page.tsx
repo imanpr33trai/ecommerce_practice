@@ -3,8 +3,8 @@ import { Filter, ShoppingBag, Star } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type React from "react";
-import BentoCard from "@/components/bento-card";
-import Button from "@/components/button";
+import BentoCard from "@/components/BentoCard";
+import Button from "@/components/Button";
 import { CATEGORIES, PRODUCTS } from "@/constants";
 
 const Shop: React.FC = () => {
@@ -46,7 +46,9 @@ const Shop: React.FC = () => {
 								className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
 							/>
 							<Link
-								href={`/product/${product.id}`}
+								href={{
+									pathname:`/product/${product.id}`
+								}}
 								className="absolute inset-0 z-0"
 							/>
 
