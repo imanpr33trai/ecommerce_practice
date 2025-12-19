@@ -3,5 +3,8 @@
 	"name": "@ecomerceNextjs/env",
 	"type": "module",
 	"types": "src/index.ts",
-	"version": "1.0.0"
+	"version": "1.0.0",
+	"devDependencies": {
+		"zod":"catalog:"
+	}
 }

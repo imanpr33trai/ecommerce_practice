@@ -23,6 +23,7 @@
 		"@prisma/client": "catalog:",
 		"dotenv": "catalog:",
 		"zod": "^4.1.11",
+		"superjson":"catalog:",
 		"@ecomerceNextjs/auth": "workspace:*",
 		"@ecomerceNextjs/db": "workspace:*"
 	}
