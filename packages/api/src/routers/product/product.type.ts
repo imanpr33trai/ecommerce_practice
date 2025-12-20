@@ -6,18 +6,19 @@ export const ProductFilterSchema = z.object({
     materials: z.array(z.string()).default([]),
 
     minPrice: z.number().default(0),
-    maxPrice: z.number().default(10000), // Increased default max
+    maxPrice: z.number().default(10000),
+
     onSale: z.boolean().default(false),
     inStock: z.boolean().default(false),
     search: z.string().optional(),
 
-    // Rating can be a number (4) or null
     rating: z.number().nullable().optional(),
 
     sort: z.enum(["newest", "price_asc", "price_desc", "rating"]).default("newest"),
     page: z.number().min(1).default(1),
     limit: z.number().min(1).max(100).default(20),
 });
+
 
 
 // const productListSelect = Prisma.validator<Prisma.ProductSelect>()({

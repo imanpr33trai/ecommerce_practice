@@ -1,33 +1,135 @@
-import { z } from "zod";
-import { router, publicProcedure } from "../../index"; // Adjust path to your trpc init
 import prisma from "@ecomerceNextjs/db"; // Adjust path to your db package
-import type { Prisma } from "@ecomerceNextjs/db";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import type { Prisma } from "@ecomerceNextjs/db";
+
+import { publicProcedure, router } from "../../index"; // Adjust path to your trpc init
 import { ProductFilterSchema } from "./product.type";
 
-// --- 1. Validation Schemas ---
-
-/**
- * Filter Input Schema
- * Defaults are applied here to keep the controller logic clean.
- */
-
-
-// --- 2. Query Optimization (Prisma Selectors) ---
-
-/**
- * List Selector:
- * We explicitly select ONLY the fields needed for a Product Card.
- * This prevents fetching heavy 'description' text or unused relations for 20+ items.
- */
 
 // --- 3. The Router ---
 
 export const productRouter = router({
+  getLandingProducts: publicProcedure
+    .input(
+      z.object({
+        // Limits
+        limit: z.number().min(1).max(20).default(8),
+
+        // Context Filters (Optional)
+        categorySlug: z.string().optional(),
+
+        // Landing Page Flags
+        isNew: z.boolean().default(false),        // "New Arrivals"
+        isExclusive: z.boolean().default(false),  // "Exclusive Deals" (Discounted)
+        isGreatValue: z.boolean().default(false), // "Great Value" (Low Price)
+      })
+    )
+    .query(async ({ input }) => {
+      const { limit, categorySlug, isNew, isExclusive, isGreatValue } = input;
+
+      // 1. Build Dynamic WHERE Clause
+      const where: Prisma.ProductWhereInput = {
+        isActive: true, // Always show active only
+        stock: { gt: 0 }, // Don't show OOS items on landing page
+      };
+
+      // Filter: Category
+      if (categorySlug) {
+        where.category = { slug: categorySlug };
+      }
+
+      // Filter: "New Deals" (Created in last 30 days)
+      if (isNew) {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        where.createdAt = { gte: thirtyDaysAgo };
+      }
+
+      // Filter: "Exclusive Deals" (Must have a discount)
+      if (isExclusive) {
+        where.discountPrice = { not: null };
+      }
+
+      // 2. Build Dynamic ORDER BY Clause
+      let orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
+
+      if (isGreatValue) {
+        // Great Value = Lowest Price first
+        orderBy = [{ price: "asc" }];
+      } else if (isExclusive) {
+        // Exclusive = Biggest discount (Logic depends on DB, usually just newest discounted)
+        // Alternatively, order by creation date to show fresh deals
+        orderBy = [{ createdAt: "desc" }];
+      } else {
+        // Default = Newest first
+        orderBy = [{ createdAt: "desc" }];
+      }
+
+      // 3. Execute Query
+      const products = await prisma.product.findMany({
+        where,
+        take: limit,
+        orderBy,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          price: true, material: true,
+          discountPrice: true,
+          stock: true, colors: true,
+          createdAt: true, description: true,
+          category: {
+            select: { name: true, slug: true },
+          },
+          images: {
+            where: { isPrimary: true }, // Only fetch the main image
+            take: 1,
+            select: { url: true, altText: true, id: true },
+          },
+          _count: {
+            select: { reviews: true },
+          },
+          reviews: { select: { rating: true } }
+        },
+      });
+
+      // 4. Transform Data (Decimal -> Number, Add Helper Props)
+      return products.map((p) => {
+        const price = Number(p.price);
+        const discountPrice = p.discountPrice ? Number(p.discountPrice) : null;
+        const avgRating = p.reviews.length > 0 ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length : 0;
+        // Calculate Discount Percentage for badges (e.g., "-20%")
+        let discountPercentage = 0;
+        if (discountPrice) {
+          discountPercentage = Math.round(((price - discountPrice) / price) * 100);
+        }
+
+        return {
+          id: p.id,
+          name: p.name,
+          slug: p.slug,
+          price,
+          rating: avgRating,
+          description: p.description,
+          discountPrice,
+          isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
+          isOnSale: !!p.discountPrice,
+          colors: p.colors || null,
+          discountPercentage: discountPercentage > 0 ? discountPercentage : null,
+          category: p.category,
+          images: p.images, // Safe fallback
+          material: p.material || [],
+          reviewCount: p._count.reviews,
+        };
+      });
+    }),
+
   /**
    * List Products (Filtered & Paginated)
    */
-  list: publicProcedure.input(ProductFilterSchema)
+  list: publicProcedure
+    .input(ProductFilterSchema) // Make filters optional
     .query(async ({ input }) => {
       const {
         categories, colors, materials,
@@ -36,7 +138,7 @@ export const productRouter = router({
         sort, page, limit
       } = input;
 
-      // --- A. Build Dynamic 'WHERE' Clause ---
+      // --- A. Build Dynamic WHERE Clause ---
       const where: Prisma.ProductWhereInput = {
         isActive: true,
 
@@ -46,21 +148,18 @@ export const productRouter = router({
           lte: maxPrice,
         },
 
-        // 2. Categories
-        // Checks if product.category.name is inside the input array
+        // 2. Categories (Exact match by Name)
         category: categories.length > 0
           ? { name: { in: categories } }
           : undefined,
 
-        // 3. Materials (FIXED)
-        // Since 'material' is String[], use 'hasSome'.
-        // Meaning: If product has ['Wood', 'Iron'] and filter is ['Wood'], it matches.
+        // 3. Materials (Array Overlap)
+        // Since 'material' is String[], we use hasSome
         material: materials.length > 0
           ? { hasSome: materials }
           : undefined,
 
-        // 4. Colors (FIXED)
-        // Since 'colors' is String[], use 'hasSome'.
+        // 4. Colors (Array Overlap)
         colors: colors.length > 0
           ? { hasSome: colors }
           : undefined,
@@ -76,7 +175,7 @@ export const productRouter = router({
         ] : undefined,
       };
 
-      // --- B. Build 'ORDER BY' Clause ---
+      // --- B. Build Sort Order ---
       let orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
 
       switch (sort) {
@@ -87,17 +186,16 @@ export const productRouter = router({
           orderBy = [{ price: 'desc' }];
           break;
         case 'rating':
-          // Sort by review count/rating is complex in Prisma without raw SQL.
-          // Using a proxy: Sort by products with most reviews for now.
+          // Proxy sort by review count if average isn't stored
           orderBy = [{ reviews: { _count: 'desc' } }];
           break;
-        // case 'newest':
+        case 'newest':
         default:
           orderBy = [{ createdAt: 'desc' }];
           break;
       }
 
-      // --- C. Execute Query ---
+      // --- C. Execute (Count + Data) ---
       const [total, rawItems] = await prisma.$transaction([
         prisma.product.count({ where }),
         prisma.product.findMany({
@@ -105,7 +203,6 @@ export const productRouter = router({
           orderBy,
           take: limit,
           skip: (page - 1) * limit,
-          // Select only necessary fields
           select: {
             id: true,
             name: true,
@@ -127,9 +224,8 @@ export const productRouter = router({
         }),
       ]);
 
-      // --- D. Transform & Filter Data ---
+      // --- D. Transform Data ---
       const items = rawItems.map((p) => {
-        // Calculate Rating
         const avgRating = p.reviews.length > 0
           ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
           : 0;
@@ -140,21 +236,17 @@ export const productRouter = router({
           slug: p.slug,
           price: Number(p.price),
           discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
-
-          // Calculated
           rating: avgRating,
           isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
           isOnSale: !!p.discountPrice,
-
-          // Data
           category: p.category,
           images: p.images,
-          colors: p.colors || [],     // Handle null array
-          material: p.material || [], // Handle null array
+          colors: p.colors || [],
+          material: p.material || [],
         };
       });
 
-      // Post-Query Filter for Rating (if specific star count requested)
+      // Optional: Post-filter by strict rating if required
       const finalItems = rating
         ? items.filter(i => i.rating >= rating)
         : items;
@@ -177,9 +269,11 @@ export const productRouter = router({
    */
   getBySlug: publicProcedure
     // FIX 1: Input must be an object schema
-    .input(z.object({
-      slug: z.string()
-    }))
+    .input(
+      z.object({
+        slug: z.string(),
+      })
+    )
     .query(async ({ input }) => {
       // FIX 2: Use findUnique so we can handle the null state manually below
       const product = await prisma.product.findUnique({
@@ -232,8 +326,8 @@ export const productRouter = router({
         price: Number(product.price),
         discountPrice: product.discountPrice ? Number(product.discountPrice) : null,
         rating: averageRating,
-        isNew: isNew,
-        isOnSale: isOnSale,
+        isNew,
+        isOnSale,
         slug: product.slug,
         category: product.category,
         images: product.images,
@@ -256,7 +350,7 @@ export const productRouter = router({
     });
 
     // 2. Fetch All Attributes (Materials & Colors) in ONE query
-    // We don't use 'distinct' here because these are arrays. 
+    // We don't use 'distinct' here because these are arrays.
     // We fetch all of them and process them in JavaScript.
     const attributesData = await prisma.product.findMany({
       where: {
@@ -264,22 +358,18 @@ export const productRouter = router({
       },
       select: {
         material: true, // This is String[]
-        colors: true,   // This is String[]
+        colors: true, // This is String[]
       },
     });
 
     // 3. Process Materials
     // Logic: [[Wood, Metal], [Wood, Plastic]] -> [Wood, Metal, Wood, Plastic] -> Set(Wood, Metal, Plastic)
-    const uniqueMaterials = Array.from(
-      new Set(attributesData.flatMap((p) => p.material || []))
-    )
+    const uniqueMaterials = Array.from(new Set(attributesData.flatMap((p) => p.material || [])))
       .filter(Boolean) // Remove empty strings or nulls
       .sort();
 
     // 4. Process Colors
-    const uniqueColors = Array.from(
-      new Set(attributesData.flatMap((p) => p.colors || []))
-    )
+    const uniqueColors = Array.from(new Set(attributesData.flatMap((p) => p.colors || [])))
       .filter(Boolean)
       .sort();
 
@@ -289,6 +379,4 @@ export const productRouter = router({
       colors: uniqueColors,
     };
   }),
-
-
 });

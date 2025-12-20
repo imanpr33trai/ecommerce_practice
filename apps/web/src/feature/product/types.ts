@@ -1,12 +1,10 @@
-import type { RouterOutputs } from "@/trpc/client";
 import { z } from "zod";
 
+import type { RouterOutputs } from "@/trpc/client";
 
 // 1. Zod Schema
 export const ProductFilterSchema = z.object({
-  sort: z
-    .enum(["newest", "price_asc", "price_desc", "rating"])
-    .default("newest"),
+  sort: z.enum(["newest", "price_asc", "price_desc", "rating"]).default("newest"),
   minPrice: z.number().min(0).default(0),
   maxPrice: z.number().min(0).default(3000),
   inStock: z.boolean().default(false),
@@ -36,12 +34,10 @@ export const INITIAL_PRODUCT_FILTERS: ProductFilters = {
   rating: null,
 };
 
-
 // 1. Zod Schema (Matches Backend Input)
 // We use this for form validation in the Sidebar
 
 // 2. Inferred Types for State
-
 
 // 3. API Output Types (For Components)
 // "What does the list endpoint return?" -> { items: [], pagination: {} }
@@ -50,7 +46,8 @@ export type ProductListGrid = RouterOutputs["product"]["list"];
 // "What does a single product look like in the grid?"
 export type ProductSingle = ProductListGrid["items"][number];
 export type ProductGetBySlug = RouterOutputs["product"]["getBySlug"];
-
+export type ProductLanding = RouterOutputs["product"]["getLandingProducts"];
+export type ProductLandingSingle = ProductLanding[number];
 // "What does the Detail Page need?"
 // export const ProductFilterSchema = z.object({
 //   categorySlug: z.string().optional(),

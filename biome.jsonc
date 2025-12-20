@@ -1,9 +1,9 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"extends": [
-		"./packages/config/biome/core/biome.jsonc",
-		"./packages/config/biome/react/biome.jsonc",
-		"./packages/config/biome/next/biome.jsonc"
+		// "./packages/config/biome/core/biome.jsonc",
+		// "./packages/config/biome/react/biome.jsonc"
+		// "./packages/config/biome/next/biome.jsonc"
 	],
 	"vcs": {
 		"enabled": true,
