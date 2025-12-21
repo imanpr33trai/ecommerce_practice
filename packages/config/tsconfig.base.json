@@ -23,5 +23,8 @@
 			"bun"
 		],
 		"verbatimModuleSyntax": false
-	}
+	},
+	"include": [
+		"packages/**/*",
+	]
 }

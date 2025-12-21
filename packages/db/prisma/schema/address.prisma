@@ -1,15 +1,14 @@
-model Address{
-    id         String   @id @map("_id")
-    street     String
-    city       String
-    state      String
-    postalCode String
-    country    String
-    userId     String
-    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt  DateTime
-    updatedAt  DateTime
-    
-    
-    @@map("address")
+model Address {
+  id         String   @id @map("_id")
+  street     String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  userId     String
+  createdAt  DateTime
+  updatedAt  DateTime
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("address")
 }

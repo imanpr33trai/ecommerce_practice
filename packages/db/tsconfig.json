@@ -1,10 +1,28 @@
 {
-	"extends": "@ecomerceNextjs/config/tsconfig.base.json",
+	"extends": [
+		"@ecomerceNextjs/config/tsconfig.base.json",
+		"../../tsconfig.json"
+	],
 	"compilerOptions": {
+		"module": "esnext",
+		"moduleResolution": "bundler",
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
 		"outDir": "dist",
-		"composite": true
-	}
+		"paths": {
+			"@/*": [
+				"../../*"
+			]
+		}
+	},
+	"include": [
+		"prisma/**/*",
+		"src/**/*"
+	],
+	"exclude": [
+		"dist",
+		"node_modules",
+		"prisma/migrations"
+	]
 }

@@ -1,21 +1,16 @@
 // import { Prisma.Decimal } from "./generated/";
 
 import { PrismaPg } from "@prisma/adapter-pg";
-
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import { Pool } from "pg";
-import {
-  OrderStatus,
-  PaymentStatus,
-  Prisma,
-  PrismaClient,
-} from "../prisma/generated/client"; // path may differ
 
-dotenv.config({
-  path: "./.env",
-});
+import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "../prisma/generated/client"; // path may differ
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL || "" });
+// dotenv.config({
+//   path: "../../../apps/server/.env", quiet: true, override: true, debug: true
+// });
+
+const pool = new Pool({ connectionString: import.meta.env.DATABASE_URL || "" });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 // Initialize Prisma Client
@@ -175,20 +170,7 @@ async function main() {
     },
   });
 
-  console.log(
-    "Categories created:",
-    [
-      electronics.name,
-      furniture.name,
-      books.name,
-      laptops.name,
-      smartphones.name,
-      sofas.name,
-      chairs.name,
-      sectionalSofas.name,
-      fiction.name,
-    ].join(", ")
-  );
+  console.log("Categories created:", [electronics.name, furniture.name, books.name, laptops.name, smartphones.name, sofas.name, chairs.name, sectionalSofas.name, fiction.name].join(", "));
 
   // --- 4. CREATE PRODUCTS & IMAGES (ASSIGN TO SPECIFIC CATEGORIES) ---
   console.log("Creating products and images...");

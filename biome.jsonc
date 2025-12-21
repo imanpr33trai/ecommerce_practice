@@ -2,7 +2,7 @@
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"extends": [
 		// "./packages/config/biome/core/biome.jsonc",
-		// "./packages/config/biome/react/biome.jsonc"
+		"./packages/config/biome/react/biome.jsonc"
 		// "./packages/config/biome/next/biome.jsonc"
 	],
 	"vcs": {
@@ -15,7 +15,9 @@
 		"includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!.source"]
 	},
 	"formatter": {
-		"lineWidth": 320
+		"lineWidth": 320,
+		"attributePosition": "multiline",
+		"indentStyle": "space"
 	},
 	"linter": {
 		"rules": {

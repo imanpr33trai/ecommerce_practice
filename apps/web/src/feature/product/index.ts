@@ -1,16 +1,13 @@
-import * as ProductTypes from "./types";
+import { useProductQueries } from "./client";
 import { productKeys } from "./keys";
 import { productOptions } from "./server";
-import { useProductQueries } from "./client";
+import * as ProductTypes from "./types";
 
-// Export individual parts if needed
-export * from "./types";
-
-// Export the Feature Namespace
 export const Product = {
     types: ProductTypes,
     keys: productKeys,
-    //   options: productOptions,
+    //   server: productOptions,
     hooks: useProductQueries,
-    // mutations: ... (Add admin mutations here later)
 };
+
+export * from "./types"

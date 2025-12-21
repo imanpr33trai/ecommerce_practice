@@ -1,25 +1,57 @@
 "use client";
-import React, { useState } from "react";
+
 import Link from "next/link";
-import BentoCard from "@/components/ui/BentoCard";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import type React from "react";
+
+import { Input } from "@comp/input";
+import { Label } from "@comp/label";
+import { toast } from "sonner";
+
+import BentoCard from "@/components/BentoCard";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/auth-client";
 
 export default function SignUpPage() {
-  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
-  const { login } = useAuth();
-  const navigate = useRouter();
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const name = firstName + lastName;
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, firstName);
-    navigate.push("/account");
+    setIsLoading(true);
+
+    const { data: signData, error } = await signUp.email(
+      {
+        email,
+        name,
+        password,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          toast.success("Account created successfully!");
+          router.push("/");
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message);
+          console.log(ctx.error.message);
+          setIsLoading(false);
+        },
+      },
+    );
+    console.log(signData);
+    console.log(error);
   };
 
   return (
-    <div className="h-[90svh] flex flex-col items-center justify-center p-4 bg-nest-bg">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-nest-bg">
       <div className="mb-8">
         <Link
           href="/"
@@ -35,18 +67,17 @@ export default function SignUpPage() {
       <BentoCard className="w-full max-w-md p-8 bg-white">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-light mb-2">Create Account</h1>
-          <p className="text-gray-500 text-sm">
-            Join Nestify for exclusive deals.
-          </p>
+          <p className="text-gray-500 text-sm">Join Nestify for exclusive deals.</p>
         </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form
+          className="space-y-4"
+          onSubmit={handleSubmit}
+        >
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                First Name
-              </label>
-              <input
+              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">First Name</Label>
+              <Input
                 type="text"
                 required
                 value={firstName}
@@ -55,20 +86,19 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                Last Name
-              </label>
-              <input
+              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Last Name</Label>
+              <Input
                 type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-              Email
-            </label>
-            <input
+            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email</Label>
+            <Input
               type="email"
               required
               value={email}
@@ -78,10 +108,8 @@ export default function SignUpPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-              Password
-            </label>
-            <input
+            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Password</Label>
+            <Input
               type="password"
               placeholder="Create a password"
               className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
@@ -89,7 +117,10 @@ export default function SignUpPage() {
           </div>
 
           <div className="pt-4">
-            <Button className="w-full" type="submit">
+            <Button
+              className="w-full"
+              type="submit"
+            >
               Create Account
             </Button>
           </div>
@@ -97,7 +128,10 @@ export default function SignUpPage() {
 
         <div className="mt-6 text-center text-sm text-gray-500">
           Already have an account?{" "}
-          <Link href="/log-in" className="text-black font-bold hover:underline">
+          <Link
+            href="/log-in"
+            className="text-black font-bold hover:underline"
+          >
             Log in
           </Link>
         </div>

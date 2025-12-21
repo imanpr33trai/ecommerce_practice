@@ -1,20 +1,30 @@
-import { trpc } from "@/trpc/server"; // Your Server Proxy
-import { ProductFilters } from "./types";
+import { useQuery } from "@tanstack/react-query";
+
+import { trpc } from "@/trpc/server";
+
+import type { ProductFilters } from "./types";
 
 export const productOptions = {
     /**
-     * Options for prefetching the Product List on the server.
-     * Useful for SEO on Category Pages.
+     * Prefetch a list of products (Category pages, Search results)
      */
     list: (filters: ProductFilters) => {
-        return trpc.product.list.queryOptions(filters);
+        return useQuery(trpc.product.list.queryOptions(filters));
     },
 
     /**
-     * Options for prefetching a Single Product Detail.
-     * Useful for SEO on PDP (Product Detail Page).
+     * Prefetch a single product (Product Detail Page)
      */
     detail: (slug: string) => {
-        return trpc.product.getBySlug.queryOptions({ slug });
+        return useQuery(trpc.product.getBySlug.queryOptions({ slug }));
+    },
+
+    /**
+     * Prefetch specific landing page sections
+     */
+    landing: {
+        newDeals: () => useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isNew: true })),
+        exclusive: () => useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isExclusive: true })),
+        greatValue: () => useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 8, isGreatValue: true })),
     },
 };

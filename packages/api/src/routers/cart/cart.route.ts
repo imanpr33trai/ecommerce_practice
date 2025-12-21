@@ -2,7 +2,7 @@ import prisma from "@ecomerceNextjs/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../../index";
+import { protectedProcedure, publicProcedure, router } from "../../index";
 
 // --- 1. Validators & Selectors ---
 
@@ -86,7 +86,7 @@ export const cartRouter = router({
             z.object({
                 productId: z.string(),
                 quantity: z.number().min(1).default(1),
-            })
+            }),
         )
         .mutation(async ({ ctx, input }) => {
             const userId = ctx.session.user.id;
@@ -98,7 +98,7 @@ export const cartRouter = router({
                 select: { id: true, stock: true, isActive: true, name: true },
             });
 
-            if (!(product?.isActive)) {
+            if (!product?.isActive) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
                     message: "Product not available",
@@ -157,7 +157,7 @@ export const cartRouter = router({
             z.object({
                 itemId: z.string(), // We use cartItemId here for precision
                 quantity: z.number().min(1),
-            })
+            }),
         )
         .mutation(async ({ input }) => {
             const { itemId, quantity } = input;

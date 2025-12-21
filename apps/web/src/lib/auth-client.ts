@@ -1,8 +1,10 @@
-import type { auth } from "@ecomerceNextjs/auth";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+import type { auth } from "@ecomerceNextjs/auth";
 
 export const authClient = createAuthClient({
-	baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+	baseURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001",
 	plugins: [inferAdditionalFields<typeof auth>()],
 });
+
+export const { signIn, signUp, signOut, useSession } = authClient

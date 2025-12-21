@@ -1,14 +1,17 @@
-import { ProductFilters } from "./types";
+import type { ProductFilters } from "./types";
 
 export const productKeys = {
     all: ["product"] as const,
 
-    // Key for the List: e.g., ['product', 'list', { category: 'shoes', page: 1 }]
+    // List with specific filters (e.g. { category: 'shoes', sort: 'price_asc' })
     list: (filters: ProductFilters) => ["product", "list", filters] as const,
 
-    // Key for Details: e.g., ['product', 'detail', 'nike-air-max']
+    // Single Product Detail
     detail: (slug: string) => ["product", "detail", slug] as const,
 
-    // Key for Infinite Scroll (if you add it later)
-    infinite: (filters: ProductFilters) => ["product", "infinite", filters] as const,
+    // Facets (Categories, Colors, Materials)
+    filters: () => ["product", "filters"] as const,
+
+    // Landing Page Sections
+    landing: () => ["product", "landing"] as const,
 };

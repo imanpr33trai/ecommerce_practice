@@ -1,17 +1,17 @@
-name: ecommerce-practice
+name: ecommerce
 
 services:
   postgres:
     image: postgres
-    container_name: ecommerce-practice-postgres
+    container_name: ecommerce-postgres
     environment:
-      POSTGRES_DB: ecommerce-practice
+      POSTGRES_DB: ecommerce
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: 12345
     ports:
       - "5432:5432"
     volumes:
-      - ecommerce-practice_postgres_data:/var/lib/postgresql
+      - ecommerce_postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -20,4 +20,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  ecommerce-practice_postgres_data:
+  ecommerce_postgres_data:

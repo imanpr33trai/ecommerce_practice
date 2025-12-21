@@ -2,118 +2,72 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { trpc } from "@/trpc/client";
 
-import type { ProductFilters } from "./types";
+import { ProductFilterSchema, type ProductFilters } from "./types";
 
 export const useProductQueries = {
     /**
      * Hook: useList
-     * Usage: Main Product Grid with Filters
+     * Usage: /products page, Category pages
+     * Features: Keeps previous data while loading new filters (no flicker)
      */
-    list: (filters: ProductFilters, enabled = true) => {
+    useList: (filters: ProductFilters, enabled = true) => {
         return useQuery(
             trpc.product.list.queryOptions(filters, {
                 enabled,
-                // UX: Keep old data visible while new filters load (prevents flashing)
                 placeholderData: keepPreviousData,
-                staleTime: 1000 * 60 * 1, // 1 minute cache
-            })
+                staleTime: 1000 * 60 * 1, // 1 minute
+            }),
         );
     },
 
-
     /**
      * Hook: useDetail
-     * Usage: Single Product Page
+     * Usage: /product/[slug] page
      */
-    detail: (slug: string) => {
+    useDetail: (slug: string) => {
         return useQuery(
             trpc.product.getBySlug.queryOptions(
                 { slug },
                 {
                     enabled: !!slug,
+                    retry: false, // Don't retry 404s
                     staleTime: 1000 * 60 * 5, // 5 minutes
-                    retry: false,
                 },
             ),
         );
     },
 
     /**
-     * Hook: all (For Landing Page)
-     * REFACTORED: Uses standard useQuery calls one by one.
-     * Returns an Array to match your HomePage indexing [0], [1], etc.
+     * Hook: useFilterOptions
+     * Usage: The Sidebar (fetches available colors, materials from DB)
      */
-    all: () => {
-        // 1. New Deals
-        const newDeals = useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 4,
-                isNew: true,
-            }),
-        );
-
-        // 2. Exclusive Deals
-        const exclusiveDeals = useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 4,
-                isExclusive: true,
-            }),
-        );
-
-        // 3. Great Value
-        const greatValue = useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 8,
-                isGreatValue: true,
-            }),
-        );
-
-        // 4. All Products
-        const allProducts = useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 20,
-            }),
-        );
-
-        // Return as array so results[0] works in HomePage
-        return [newDeals, exclusiveDeals, greatValue, allProducts];
-    },
-
-    // --- Individual Hooks (Optional helpers) ---
-
-    newDeals: () => {
+    useFilterOptions: () => {
         return useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 4,
-                isNew: true,
+            trpc.product.getFilters.queryOptions(undefined, {
+                staleTime: 1000 * 60 * 10, // 10 minutes (rarely changes)
+                refetchOnWindowFocus: false,
             }),
         );
     },
 
-    exclusiveDeals: () => {
-        return useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 4,
-                isExclusive: true,
-            }),
-        );
+    /**
+     * Hook: useLandingData
+     * Usage: Home Page
+     * Returns: Array of query results [New, Exclusive, Great, All]
+     * Note: We use individual useQuery calls to ensure stable hook counts.
+     */
+    useLandingData: () => {
+        const newDeals = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isNew: true }));
+
+        const exclusiveDeals = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isExclusive: true }));
+
+        const greatValue = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 8, isGreatValue: true }));
+
+        const allProducts = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 20 }));
+
+        return [newDeals, exclusiveDeals, greatValue, allProducts] as const;
     },
 
-    greatValue: () => {
-        return useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 8,
-                isGreatValue: true,
-            }),
-        );
-    },
-
-    trendingCategory: (slug: string) => {
-        return useQuery(
-            trpc.product.getLandingProducts.queryOptions({
-                limit: 4,
-                categorySlug: slug,
-            }),
-        );
-    },
+    // Helper to get fresh default filters
+    getInitialFilters: () => ProductFilterSchema.parse({}),
 };

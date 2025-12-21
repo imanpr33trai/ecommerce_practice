@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { Prisma } from "@ecomerceNextjs/db";
 
 import { publicProcedure, router } from "../../index"; // Adjust path to your trpc init
-import { ProductFilterSchema } from "./product.type";
+import { INITIAL_PRODUCT_FILTERS, ProductFilterSchema } from "./product.type";
 
 
 // --- 3. The Router ---
@@ -128,152 +128,103 @@ export const productRouter = router({
   /**
    * List Products (Filtered & Paginated)
    */
-  list: publicProcedure
-    .input(ProductFilterSchema) // Make filters optional
+  list: publicProcedure.input(ProductFilterSchema.default(INITIAL_PRODUCT_FILTERS)) // Make filters optional
     .query(async ({ input }) => {
-      const {
-        categories, colors, materials,
-        minPrice, maxPrice,
-        onSale, inStock, rating, search,
-        sort, page, limit
-      } = input;
 
-      // --- A. Build Dynamic WHERE Clause ---
-      const where: Prisma.ProductWhereInput = {
-        isActive: true,
 
-        // 1. Price Range
-        price: {
-          gte: minPrice,
-          lte: maxPrice,
+      const placeholderProducts = await prisma.product.findMany({
+        take: input.limit,
+        skip: (input.page - 1) * input.limit,
+        // Apply filters in the actual query
+        where: {
+          isActive: true, // Example filter
+          // Add your input filter logic here
         },
-
-        // 2. Categories (Exact match by Name)
-        category: categories.length > 0
-          ? { name: { in: categories } }
-          : undefined,
-
-        // 3. Materials (Array Overlap)
-        // Since 'material' is String[], we use hasSome
-        material: materials.length > 0
-          ? { hasSome: materials }
-          : undefined,
-
-        // 4. Colors (Array Overlap)
-        colors: colors.length > 0
-          ? { hasSome: colors }
-          : undefined,
-
-        // 5. Toggles
-        discountPrice: onSale ? { not: null } : undefined,
-        stock: inStock ? { gt: 0 } : undefined,
-
-        // 6. Search
-        OR: search ? [
-          { name: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-        ] : undefined,
-      };
-
-      // --- B. Build Sort Order ---
-      let orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
-
-      switch (sort) {
-        case 'price_asc':
-          orderBy = [{ price: 'asc' }];
-          break;
-        case 'price_desc':
-          orderBy = [{ price: 'desc' }];
-          break;
-        case 'rating':
-          // Proxy sort by review count if average isn't stored
-          orderBy = [{ reviews: { _count: 'desc' } }];
-          break;
-        case 'newest':
-        default:
-          orderBy = [{ createdAt: 'desc' }];
-          break;
-      }
-
-      // --- C. Execute (Count + Data) ---
-      const [total, rawItems] = await prisma.$transaction([
-        prisma.product.count({ where }),
-        prisma.product.findMany({
-          where,
-          orderBy,
-          take: limit,
-          skip: (page - 1) * limit,
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            price: true,
-            discountPrice: true,
-            stock: true,
-            createdAt: true,
-            colors: true,
-            material: true,
-            category: { select: { name: true, slug: true } },
-            images: {
-              where: { isPrimary: true },
-              take: 1,
-              select: { url: true, altText: true }
-            },
-            reviews: { select: { rating: true } },
-          },
-        }),
-      ]);
-
-      // --- D. Transform Data ---
-      const items = rawItems.map((p) => {
-        const avgRating = p.reviews.length > 0
-          ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
-          : 0;
-
-        return {
-          id: p.id,
-          name: p.name,
-          slug: p.slug,
-          price: Number(p.price),
-          discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
-          rating: avgRating,
-          isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
-          isOnSale: !!p.discountPrice,
-          category: p.category,
-          images: p.images,
-          colors: p.colors || [],
-          material: p.material || [],
-        };
+        select: {
+          id: true, name: true, slug: true, price: true, discountPrice: true, description: true,
+          stock: true, createdAt: true, colors: true, material: true,
+          category: { select: { name: true, slug: true } },
+          images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true, id: true } },
+          reviews: { select: { rating: true } },
+        }
       });
 
-      // Optional: Post-filter by strict rating if required
-      const finalItems = rating
-        ? items.filter(i => i.rating >= rating)
-        : items;
+      // Transform data for frontend (Decimal to Number, etc.)
+      const transformedProducts = placeholderProducts.map(p => ({
+        ...p,
+        price: Number(p.price),
+        discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
+        rating: p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0,
+        isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
+        isOnSale: !!p.discountPrice,
 
+      }));
+
+      // Dummy pagination
       return {
-        items: finalItems,
+        items: transformedProducts,
         pagination: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
-          hasNextPage: page * limit < total,
-        },
+          total: 100, // Replace with actual count
+          page: input.page,
+          limit: input.limit,
+          totalPages: Math.ceil(100 / input.limit),
+          hasNextPage: input.page * input.limit < 100
+        }
       };
     }),
 
+  /**
+   * Get Filter Options (Facets)
+   * Fetches distinct values for categories, materials, colors from active products.
+   */
+  getFilters: publicProcedure.query(async () => {
+    // 1. Fetch Categories with Product Counts
+    const categories = await prisma.category.findMany({
+      where: { parentId: null }, // Fetch top-level categories for main navigation
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        _count: { select: { products: true } },
+      },
+      orderBy: { name: "asc" },
+    });
+
+    // 2. Fetch Unique Attributes (Materials & Colors) in ONE query
+    const attributesData = await prisma.product.findMany({
+      where: { isActive: true }, // Only from active products
+      select: { material: true, colors: true },
+    });
+
+    // 3. Process Materials
+    const uniqueMaterials = Array.from(
+      new Set(attributesData.flatMap((p) => p.material || []))
+    )
+      .filter(Boolean) // Remove any empty strings or nulls
+      .sort();
+
+    // 4. Process Colors
+    const uniqueColors = Array.from(
+      new Set(attributesData.flatMap((p) => p.colors || []))
+    )
+      .filter(Boolean)
+      .sort();
+
+    return {
+      categories,
+      materials: uniqueMaterials,
+      colors: uniqueColors,
+    };
+  }),
 
   /**
    * Get Product by Slug
    */
-  getBySlug: publicProcedure
-    // FIX 1: Input must be an object schema
-    .input(
-      z.object({
-        slug: z.string(),
-      })
-    )
+  getBySlug: publicProcedure.input(
+    z.object({
+      slug: z.string(),
+    })
+  )
     .query(async ({ input }) => {
       // FIX 2: Use findUnique so we can handle the null state manually below
       const product = await prisma.product.findUnique({
@@ -287,14 +238,14 @@ export const productRouter = router({
           description: true,
           material: true,
           colors: true,
-          slug: true,
+          slug: true, stock: true,
           category: {
             select: { name: true, slug: true },
           },
           images: {
             take: 1,
             where: { isPrimary: true },
-            select: { altText: true, url: true },
+            select: { altText: true, url: true, id: true },
           },
           reviews: {
             select: { rating: true },
@@ -326,7 +277,10 @@ export const productRouter = router({
         price: Number(product.price),
         discountPrice: product.discountPrice ? Number(product.discountPrice) : null,
         rating: averageRating,
+        reviews: product.reviews,
         isNew,
+        createdAt: product.createdAt,
+        stock: product.stock,
         isOnSale,
         slug: product.slug,
         category: product.category,
@@ -336,47 +290,5 @@ export const productRouter = router({
       };
     }),
 
-  getFilters: publicProcedure.query(async () => {
-    // 1. Fetch Categories (Needs separate query for the relation count)
-    const categories = await prisma.category.findMany({
-      where: { parentId: null },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        _count: { select: { products: true } },
-      },
-      orderBy: { name: "asc" },
-    });
-
-    // 2. Fetch All Attributes (Materials & Colors) in ONE query
-    // We don't use 'distinct' here because these are arrays.
-    // We fetch all of them and process them in JavaScript.
-    const attributesData = await prisma.product.findMany({
-      where: {
-        isActive: true, // Only get attributes from active products
-      },
-      select: {
-        material: true, // This is String[]
-        colors: true, // This is String[]
-      },
-    });
-
-    // 3. Process Materials
-    // Logic: [[Wood, Metal], [Wood, Plastic]] -> [Wood, Metal, Wood, Plastic] -> Set(Wood, Metal, Plastic)
-    const uniqueMaterials = Array.from(new Set(attributesData.flatMap((p) => p.material || [])))
-      .filter(Boolean) // Remove empty strings or nulls
-      .sort();
-
-    // 4. Process Colors
-    const uniqueColors = Array.from(new Set(attributesData.flatMap((p) => p.colors || [])))
-      .filter(Boolean)
-      .sort();
-
-    return {
-      categories,
-      materials: uniqueMaterials,
-      colors: uniqueColors,
-    };
-  }),
 });
+

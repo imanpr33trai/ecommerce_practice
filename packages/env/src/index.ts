@@ -1,2 +1,7 @@
-export { serverEnv } from "./server";
-export { clientEnv } from "./client";
+
+declare module "bun" {
+    interface Env {
+        AWESOME: string;
+    }
+}
+

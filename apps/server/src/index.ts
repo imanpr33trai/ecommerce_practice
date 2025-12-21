@@ -1,7 +1,8 @@
-import "dotenv/config";
+// import "dotenv/config";
 import { createContext } from "@ecomerceNextjs/api/context";
 import { appRouter } from "@ecomerceNextjs/api/routers/index";
 import { auth } from "@ecomerceNextjs/auth";
+
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -13,7 +14,7 @@ app.use(logger());
 app.use(
 	"/*",
 	cors({
-		origin: process.env.CORS_ORIGIN || "",
+		origin: Bun.env.CORS_ORIGIN || "http://localhost:3001",
 		allowMethods: ["GET", "POST", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 		credentials: true,

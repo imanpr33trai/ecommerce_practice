@@ -4,20 +4,29 @@ export const ProductFilterSchema = z.object({
     categories: z.array(z.string()).default([]),
     colors: z.array(z.string()).default([]),
     materials: z.array(z.string()).default([]),
-
+    // ... other filters ...
     minPrice: z.number().default(0),
-    maxPrice: z.number().default(10000),
-
+    maxPrice: z.number().default(5000),
     onSale: z.boolean().default(false),
     inStock: z.boolean().default(false),
-    search: z.string().optional(),
-
     rating: z.number().nullable().optional(),
-
+    search: z.string().optional(),
     sort: z.enum(["newest", "price_asc", "price_desc", "rating"]).default("newest"),
     page: z.number().min(1).default(1),
     limit: z.number().min(1).max(100).default(20),
 });
+
+export const INITIAL_PRODUCT_FILTERS: z.infer<typeof ProductFilterSchema> = {
+    sort: "newest",
+    minPrice: 0,
+    maxPrice: 3000,
+    inStock: false,
+    onSale: false,
+    categories: [],
+    materials: [],
+    colors: [],
+    rating: null, limit: 10, page: 1
+};
 
 
 

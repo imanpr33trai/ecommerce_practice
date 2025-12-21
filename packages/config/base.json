@@ -18,8 +18,11 @@
 		"noUncheckedIndexedAccess": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"strict": true,
-		"target": "ES2022"
+		"target": "ES2022",
+		"types": [
+			"bun"
+		],
+		"strict": true
 	},
 	"display": "Default"
 }

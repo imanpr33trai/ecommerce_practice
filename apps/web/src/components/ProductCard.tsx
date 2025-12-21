@@ -4,8 +4,12 @@ import { useContext, useRef, useState } from "react";
 import type React from "react";
 
 import { ArrowLeftRight, Eye, Heart, ShoppingBag, Star } from "lucide-react";
+import { toast } from "sonner";
 
-import type { ProductSingle } from "@/feature/product";
+import { Cart } from "@/feature/cart";
+import { Product, type ProductSingle } from "@/feature/product";
+import { Wish } from "@/feature/wish";
+import { useWishQueries } from "@/feature/wish/client";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
@@ -19,20 +23,22 @@ type ProductCardProps = {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) => {
-	const [isAdding, setIsAdding] = useState(false);
 	const { toggleCart } = useContext(LayoutContext);
-	const { addToast } = useToast();
-	const { addToRecentlyViewed, setQuickViewProduct, addToCompare, compareList, addToCart, toggleWishlist, isInWishlist, cart } = useShop();
-	const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "#D9D9D9");
 
+	const { addToRecentlyViewed, setQuickViewProduct, compareList, addToCompare } = useShop();
+
+	const { addItem, isAdding, updateQuantity } = Cart.hooks.useActions();
+	const { mutate: toggleWish } = Wish.hooks.useToggle();
+	const isWishlisted = useWishQueries.useIsWishlisted(product.id);
+
+	// 4. Local UI State
+	const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "#D9D9D9");
 	const [hoverState, setHoverState] = useState<"idle" | "hovering" | "expanded">("idle");
 	const [alignment, setAlignment] = useState<"right" | "left">("right");
 	const [isCollapsing, setIsCollapsing] = useState(false);
 
 	const cardRef = useRef<HTMLDivElement>(null);
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const isWishlisted = isInWishlist(product.id);
 	const isInCompare = compareList.some((p) => p.id === product.id);
 
 	const handleMouseEnter = () => {
@@ -62,32 +68,36 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 		setTimeout(() => setIsCollapsing(false), 1000);
 	};
 
+	// --- DB ACTION: Wishlist ---
 	const handleWishlist = (e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		toggleWishlist(product);
-		addToast(isWishlisted ? "Removed from wishlist" : "Added to wishlist", isWishlisted ? "info" : "success");
+
+		// Optimistic mutation (Toast handled in the hook)
+		toggleWish({ productId: product.id });
 	};
 
+	// --- DB ACTION: Add to Cart ---
 	const handleAddToCart = (e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setIsAdding(true);
 
-		const existingItem = cart.find((item) => item.id === product.id);
-		addToCart(product, { color: selectedColor });
-
-		setTimeout(() => {
-			setIsAdding(false);
-			toggleCart();
-			if (existingItem) {
-				addToast(`Quantity updated for ${product.name}`, "info");
-			} else {
-				addToast(`Added ${product.name} to cart`, "success");
-			}
-		}, 600);
+		// Call the mutation
+		addItem(
+			{
+				productId: product.id,
+				quantity: 1,
+			},
+			{
+				onSuccess: () => {
+					// Open the cart drawer on success
+					toggleCart();
+				},
+			},
+		);
 	};
 
+	// --- Client Actions (Compare / Quick View / Recent) ---
 	const handleQuickView = (e: React.MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -98,7 +108,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 		e.preventDefault();
 		e.stopPropagation();
 		if (isInCompare) {
-			addToast(`${product.name} is already in compare`, "info");
+			toast.info("Info", { description: `${product.name} is already in compare` });
 		} else {
 			addToCompare(product);
 		}
@@ -113,6 +123,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 		setSelectedColor(color);
 	};
 
+	// --- Styles Logic (Kept as is) ---
 	const isExpanded = hoverState === "expanded";
 	const isHovering = hoverState === "hovering";
 
@@ -126,10 +137,142 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 	}
 
 	const isLeftAlign = alignment === "left";
+	// ... (rest of style calculations)
+
+	const badges = [];
+	if (product.isNew) {
+		badges.push({ text: "NEW", color: "bg-black text-white", id: 1 });
+	}
+	if (product.isOnSale) {
+		badges.push({
+			// Calculate discount percentage dynamically if available, else hardcode
+			text: product.discountPrice ? `-${Math.round((1 - Number(product.discountPrice) / Number(product.price)) * 100)}%` : "SALE",
+			color: "bg-red-500 text-white",
+			id: 2,
+		});
+	}
+	if ((product.rating || 0) >= 4.9) {
+		badges.push({ text: "TOP RATED", color: "bg-blue-600 text-white", id: 3 });
+	}
+
+	const displayColors = product.colors && product.colors.length > 0 ? product.colors : ["#D9D9D9", "#3A3A3A", "#8C7A6B"];
 	const containerStyle = {
 		left: isLeftAlign ? "auto" : "0",
 		right: isLeftAlign ? "0" : "auto",
 	};
+
+	// {
+	// const [isAdding, setIsAdding] = useState(false);
+	// const { toggleCart } = useContext(LayoutContext);
+	// const { addToast } = useToast();
+	// const { addToRecentlyViewed, setQuickViewProduct, addToCompare, compareList, addToCart, toggleWishlist, isInWishlist, cart } = useShop();
+	// const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "#D9D9D9");
+
+	// const [hoverState, setHoverState] = useState<"idle" | "hovering" | "expanded">("idle");
+	// const [alignment, setAlignment] = useState<"right" | "left">("right");
+	// const [isCollapsing, setIsCollapsing] = useState(false);
+
+	// const cardRef = useRef<HTMLDivElement>(null);
+	// const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	// const isWishlisted = isInWishlist(product.id);
+	// const isInCompare = compareList.some((p) => p.id === product.id);
+
+	// const handleMouseEnter = () => {
+	// 	if (cardRef.current) {
+	// 		const rect = cardRef.current.getBoundingClientRect();
+	// 		const windowWidth = document.documentElement.clientWidth;
+	// 		const expandedWidth = rect.width * 1.85;
+	// 		if (rect.left + expandedWidth > windowWidth - 24) {
+	// 			setAlignment("left");
+	// 		} else {
+	// 			setAlignment("right");
+	// 		}
+	// 	}
+	// 	setHoverState("hovering");
+	// 	setIsCollapsing(false);
+	// 	timerRef.current = setTimeout(() => {
+	// 		setHoverState("expanded");
+	// 	}, 1500);
+	// };
+
+	// const handleMouseLeave = () => {
+	// 	if (timerRef.current) {
+	// 		clearTimeout(timerRef.current);
+	// 	}
+	// 	setHoverState("idle");
+	// 	setIsCollapsing(true);
+	// 	setTimeout(() => setIsCollapsing(false), 1000);
+	// };
+
+	// const handleWishlist = (e: React.MouseEvent) => {
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	toggleWishlist(product);
+	// 	addToast(isWishlisted ? "Removed from wishlist" : "Added to wishlist", isWishlisted ? "info" : "success");
+	// };
+
+	// const handleAddToCart = (e: React.MouseEvent) => {
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	setIsAdding(true);
+
+	// 	const existingItem = cart.find((item) => item.id === product.id);
+	// 	addToCart(product, { color: selectedColor });
+
+	// 	setTimeout(() => {
+	// 		setIsAdding(false);
+	// 		toggleCart();
+	// 		if (existingItem) {
+	// 			addToast(`Quantity updated for ${product.name}`, "info");
+	// 		} else {
+	// 			addToast(`Added ${product.name} to cart`, "success");
+	// 		}
+	// 	}, 600);
+	// };
+
+	// const handleQuickView = (e: React.MouseEvent) => {
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	setQuickViewProduct(product);
+	// };
+
+	// const handleCompare = (e: React.MouseEvent) => {
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	if (isInCompare) {
+	// 		addToast(`${product.name} is already in compare`, "info");
+	// 	} else {
+	// 		addToCompare(product);
+	// 	}
+	// };
+
+	// const handleClick = () => {
+	// 	addToRecentlyViewed(product);
+	// };
+
+	// const handleSelectColor = (e: React.MouseEvent, color: string) => {
+	// 	e.preventDefault();
+	// 	setSelectedColor(color);
+	// };
+
+	// const isExpanded = hoverState === "expanded";
+	// const isHovering = hoverState === "hovering";
+
+	// let zIndexClass = "z-0";
+	// if (isExpanded) {
+	// 	zIndexClass = "z-[101]";
+	// } else if (isHovering) {
+	// 	zIndexClass = "z-[60]";
+	// } else if (isCollapsing) {
+	// 	zIndexClass = "z-[50]";
+	// }
+
+	// const isLeftAlign = alignment === "left";
+	// const containerStyle = {
+	// 	left: isLeftAlign ? "auto" : "0",
+	// 	right: isLeftAlign ? "0" : "auto",
+	// };
 	const imageStyle = {
 		left: isLeftAlign ? "auto" : "0",
 		right: isLeftAlign ? "0" : "auto",
@@ -146,19 +289,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 		left: isExpanded ? (isLeftAlign ? "auto" : "16px") : "auto",
 	};
 
-	const badges = [];
-	if (product.isNew) {
-		badges.push({ text: "NEW", color: "bg-black text-white", id: 1 });
-	}
-	if (product.isOnSale) {
-		badges.push({ text: `-${product.discountPrice}%`, color: "bg-red-500 text-white", id: 2 });
-	}
-	if (product.rating >= 4.9) {
-		badges.push({ text: "TOP RATED", color: "bg-blue-600 text-white", id: 3 });
-	}
+	// const badges = [];
+	// if (product.isNew) {
+	// 	badges.push({ text: "NEW", color: "bg-black text-white", id: 1 });
+	// }
+	// if (product.isOnSale) {
+	// 	badges.push({ text: `-${product.discountPrice}%`, color: "bg-red-500 text-white", id: 2 });
+	// }
+	// if (product.rating >= 4.9) {
+	// 	badges.push({ text: "TOP RATED", color: "bg-blue-600 text-white", id: 3 });
+	// }
 
-	const displayColors = product.colors && product.colors.length > 0 ? product.colors : ["#D9D9D9", "#3A3A3A", "#8C7A6B"];
-
+	// const displayColors = product.colors && product.colors.length > 0 ? product.colors : ["#D9D9D9", "#3A3A3A", "#8C7A6B"];
+	// }
 	return (
 		<>
 			<div className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-[100] opacity-100" : "z-[-1] opacity-0"}`} />
@@ -173,7 +316,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 					<Link className="group relative block h-full w-full" href={`/product/${product.id}`} onClick={handleClick}>
 						<div className={`absolute top-0 overflow-hidden bg-[#F9F9F9] transition-all duration-1000 ease-premium ${isExpanded ? "h-full w-[54%]" : "h-[280px] w-full"}`} style={imageStyle}>
 							{product.images.map((image) => (
-								<Image alt={image.altText} className={`h-full w-full object-cover object-top transition-transform duration-1000 ease-premium ${hoverState !== "idle" ? "scale-105" : ""}`} key={image.id} src={image.url} />
+								<Image alt={image.altText || product.name} width={100} height={100} className={`h-full w-full object-cover object-top transition-transform duration-1000 ease-premium ${hoverState !== "idle" ? "scale-105" : ""}`} key={image.id} src={image.url} />
 							))}
 							<div className="pointer-events-none absolute top-5 left-5 z-10 flex flex-col gap-2">
 								{badges.map((badge) => (

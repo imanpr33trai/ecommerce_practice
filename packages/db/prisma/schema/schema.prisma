@@ -1,11 +1,11 @@
 generator client {
   provider               = "prisma-client"
   output                 = "../generated"
+  previewFeatures        = ["postgresqlExtensions"]
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
   moduleFormat           = "esm"
   runtime                = "bun"
-  generatedFileExtension = "ts"
-  previewFeatures        = ["postgresqlExtensions"]
-  importFileExtension    = "ts"
 }
 
 datasource db {

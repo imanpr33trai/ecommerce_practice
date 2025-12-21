@@ -14,6 +14,7 @@ import BentoCard from "../../components/ui/BentoCard";
 import Button from "../../components/ui/Button";
 import { REVIEWS, TEAM } from "../../constants";
 import { useShop } from "../../context/ShopContext";
+import { useProduct } from "@/hooks/useProduct";
 
 // import type { Product } from "../types";
 
@@ -78,40 +79,33 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
 };
 
 export default function HomePage() {
+	// --- 1. ALL HOOKS CALLED UNCONDITIONALLY AT TOP ---
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [isHeroWishlisted, setIsHeroWishlisted] = useState(false);
 	const { recentlyViewed } = useShop();
+	
+	// Call each hook individually - NEVER conditionally
+	const newDealsQ = Product.hooks.newDeals();
+	// const exclusiveDealsQ = Product.hooks.exclusiveDeals();
+	// const greatValueQ = Product.hooks.greatValue();
+	const allProductsQ = Product.hooks.allProducts();
 
-	const queries = Product.hooks.all();
-
-	const newDealsQ = queries[0];
-	const exclusiveDealsQ = queries[1];
-	const greatValueQ = queries[2];
-	const allProductsQ = queries[3];
-
-	if (!newDealsQ || !allProductsQ || !exclusiveDealsQ || !greatValueQ) {
-		return <h1>products is undefined or null</h1>;
-	}
-
-	if (allProductsQ.isLoading || exclusiveDealsQ.isLoading || greatValueQ.isLoading) {
+	// --- 2. DATA EXTRACTION (after hooks) ---
+	// Handle loading states
+	if (newDealsQ.isLoading || allProductsQ.isLoading) {
 		return <h1>Loading...</h1>;
 	}
 
-	const newDeals = newDealsQ.data;
-	const exclusiveDeals = exclusiveDealsQ.data;
-	const greatValue = greatValueQ.data;
-	const allProducts = allProductsQ.data;
+	const newDeals = newDealsQ.data || [];
+	// const exclusiveDeals = exclusiveDealsQ.data || [];
+	// const greatValue = greatValueQ.data || [];
+	const allProducts = allProductsQ.data || [];
 
-	if (!newDeals || !allProducts || !exclusiveDeals || !greatValue) {
+	if (!newDeals || !allProducts) {
 		return <h1>products is undefined or null</h1>;
 	}
 
-	// const newDealsf = PRODUCTS.filter((p) => p.isNew);
 	const featuredProduct = newDeals[currentSlide % newDeals.length] || newDeals[0];
-
-	if (!featuredProduct) {
-		return <h1>featuredProduct undefined</h1>;
-	}
 
 	const nextSlide = () => setCurrentSlide((p) => (p + 1) % newDeals.length);
 	const prevSlide = () => setCurrentSlide((p) => (p - 1 + newDeals.length) % newDeals.length);
