@@ -9,7 +9,9 @@ export const auth = betterAuth<BetterAuthOptions>({
 	trustedOrigins: [process.env.CORS_ORIGIN || "http://localhost:3001"],
 	emailAndPassword: {
 		enabled: true,
+		autoSignIn: true,
 	},
+	secret: process.env.BETTER_AUTH_SECRET,
 	advanced: {
 		defaultCookieAttributes: {
 			sameSite: "none",

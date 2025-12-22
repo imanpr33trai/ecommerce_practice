@@ -32,7 +32,7 @@ export default function SignUpPage() {
         email,
         name,
         password,
-        callbackURL: "/",
+        callbackURL: "/product",
       },
       {
         onSuccess: () => {
@@ -112,6 +112,7 @@ export default function SignUpPage() {
             <Input
               type="password"
               placeholder="Create a password"
+              onChange={(e)=>setPassword(e.target.value)}
               className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
             />
           </div>

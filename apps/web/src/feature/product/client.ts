@@ -57,16 +57,10 @@ export const useProductQueries = {
      * Note: We use individual useQuery calls to ensure stable hook counts.
      */
     useLandingData: () => {
-        const newDeals = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isNew: true }));
 
-        const exclusiveDeals = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isExclusive: true }));
+        return useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 20 }));
 
-        const greatValue = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 8, isGreatValue: true }));
-
-        const allProducts = useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 20 }));
-
-        return [newDeals, exclusiveDeals, greatValue, allProducts] as const;
-    },
+          },
 
     // Helper to get fresh default filters
     getInitialFilters: () => ProductFilterSchema.parse({}),

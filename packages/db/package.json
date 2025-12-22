@@ -29,6 +29,7 @@
 		"db:migrate": "prisma migrate dev",
 		"db:push": "prisma db push",
 		"db:pull": "prisma db pull",
+		"db:studio":"prisma studio",
 		"db:seed": "bun run prisma/seed.ts",
 		"db:start": "docker compose up -d",
 		"db:watch": "docker compose up",

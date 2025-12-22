@@ -76,6 +76,7 @@ export const productRouter = router({
           name: true,
           slug: true,
           price: true, material: true,
+
           discountPrice: true,
           stock: true, colors: true,
           createdAt: true, description: true,
@@ -110,8 +111,11 @@ export const productRouter = router({
           name: p.name,
           slug: p.slug,
           price,
+          createdAt:p.createdAt,
+          stock:p.stock,
+          reviews:p.reviews,
           rating: avgRating,
-          description: p.description,
+          description: p.description || "",
           discountPrice,
           isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
           isOnSale: !!p.discountPrice,
@@ -151,8 +155,8 @@ export const productRouter = router({
 
       // Transform data for frontend (Decimal to Number, etc.)
       const transformedProducts = placeholderProducts.map(p => ({
-        ...p,
-        price: Number(p.price),
+        ...p,createdAt:p.createdAt,
+        price: Number(p.price),category:p.category,colors:p.colors,material:p.material,
         discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
         rating: p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0,
         isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
@@ -291,4 +295,3 @@ export const productRouter = router({
     }),
 
 });
-

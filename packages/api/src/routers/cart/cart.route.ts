@@ -17,9 +17,15 @@ export const cartRouter = router({
      * Returns: Items, Subtotal, and Item Count
      */
     get: protectedProcedure.query(async ({ ctx }) => {
-        const userId = ctx.session.user.id;
+      if(!ctx){
+         throw new TRPCError({
+          code:"UNAUTHORIZED",
+          message:"user is not found"
+        })
+      }
+        const userId = ctx.user.id;
 
-        // 1. Fetch Cart
+        // 1. Fetch Carts
         const cart = await prisma.cart.findUnique({
             where: { userId },
             include: {

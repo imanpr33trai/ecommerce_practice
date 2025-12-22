@@ -31,7 +31,7 @@ export default function LoginPage() {
 			{
 				email,
 				password,
-				callbackURL: "/",
+				callbackURL: "/product",
 			},
 			{
 				onSuccess: () => {
@@ -40,6 +40,7 @@ export default function LoginPage() {
 				},
 				onError: (ctx) => {
 					toast.error(ctx.error.message);
+					console.log(ctx.error.message)
 					setIsLoading(false);
 				},
 			},
@@ -70,17 +71,7 @@ export default function LoginPage() {
 					className="space-y-4"
 					onSubmit={handleSubmit}
 				>
-					<div>
-						<Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Name</Label>
-						<Input
-							type="email"
-							required
-							value={email}
-							onChange={(e) => setName(e.target.value)}
-							placeholder="hello@example.com"
-							className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
-						/>
-					</div>
+
 					<div>
 						<Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email</Label>
 						<Input
