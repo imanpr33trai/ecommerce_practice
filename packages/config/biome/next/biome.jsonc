@@ -1,7 +1,7 @@
 {
 	/** Snapshot of Ultracite config: https://github.com/haydenbleasel/ultracite/tree/main/packages/cli/config/next/biome.jsonc */
 	"root": false,
-	"$schema": "../../../../node_modules/@biomejs/biome/configuration_schema.json",
+	"$schema": "../../../../node_modules/@biomejs/biome/configuration_schema.json","javascript":{"formatter":{"attributePosition":"multiline"}},
 	"linter": {
 		"rules": {
 			"nursery": {

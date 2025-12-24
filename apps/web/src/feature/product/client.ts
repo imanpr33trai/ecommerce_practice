@@ -29,7 +29,7 @@ export const useProductQueries = {
             trpc.product.getBySlug.queryOptions(
                 { slug },
                 {
-                    enabled: !!slug,
+                    // enabled: !!slug,
                     retry: false, // Don't retry 404s
                     staleTime: 1000 * 60 * 5, // 5 minutes
                 },

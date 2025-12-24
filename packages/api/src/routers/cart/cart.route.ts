@@ -23,7 +23,7 @@ export const cartRouter = router({
           message:"user is not found"
         })
       }
-        const userId = ctx.user.id;
+        const userId = ctx.session.user.id;
 
         // 1. Fetch Carts
         const cart = await prisma.cart.findUnique({
@@ -40,7 +40,11 @@ export const cartRouter = router({
                                 images: { where: { isPrimary: true }, take: 1 },
                                 slug: true,
                                 discountPrice: true,
-                                stock: true,
+                                stock: true,category:{
+                                  select:{
+                                    name:true,
+                                  }
+                                }
                             },
                         },
                     },
@@ -92,23 +96,32 @@ export const cartRouter = router({
             z.object({
                 productId: z.string(),
                 quantity: z.number().min(1).default(1),
+                color:z.string()
+
             }),
         )
         .mutation(async ({ ctx, input }) => {
             const userId = ctx.session.user.id;
-            const { productId, quantity } = input;
+            const { productId, quantity, color} = input;
 
             // A. Validate Product & Stock
             const product = await prisma.product.findUnique({
                 where: { id: productId },
-                select: { id: true, stock: true, isActive: true, name: true },
+                select: { id: true, stock: true, isActive: true, name: true ,colors:true},
             });
 
-            if (!product?.isActive) {
+            if (!product?.isActive || !product) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
                     message: "Product not available",
                 });
+            }
+
+            if(color && (!product.colors||!product.colors.includes(color))){
+              throw new TRPCError({
+                code:"BAD_REQUEST",
+                message:`Color ${color} is not available for this Product`
+              })
             }
 
             // B. Find or Create Cart
@@ -120,10 +133,12 @@ export const cartRouter = router({
             // C. Check Existing Item in Cart
             const existingItem = await prisma.cartItem.findUnique({
                 where: {
-                    cartId_productId: {
+                    cartId_productId_color: {
                         cartId: cart.id,
                         productId,
+                        color
                     },
+
                 },
             });
 
@@ -141,7 +156,7 @@ export const cartRouter = router({
             // D. Upsert (Update or Create)
             return prisma.cartItem.upsert({
                 where: {
-                    cartId_productId: { cartId: cart.id, productId },
+                    cartId_productId_color: { cartId: cart.id, productId,color },
                 },
                 update: {
                     quantity: { increment: quantity },
@@ -149,7 +164,7 @@ export const cartRouter = router({
                 create: {
                     cartId: cart.id,
                     productId,
-                    quantity,
+                    quantity,color
                 },
             });
         }),

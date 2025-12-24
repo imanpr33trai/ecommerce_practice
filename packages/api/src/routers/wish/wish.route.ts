@@ -11,8 +11,9 @@ export const wishRouter = router({
      * Usage: My Wishlist Page
      */
 
-    // biome-ignore lint/suspicious/useAwait: <Yhan Aise hi hoga>
+
     getAll: protectedProcedure.query(async ({ ctx }) => {
+
         const userId = ctx.session.user.id;
 
         return prisma.wish.findMany({

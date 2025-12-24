@@ -103,16 +103,6 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
 
 export default function HomePage() {
 
-
-
-
-
-
-
-
-
-
-
   // --- 1. ALL HOOKS CALLED UNCONDITIONALLY AT TOP ---
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHeroWishlisted, setIsHeroWishlisted] = useState(false);
@@ -181,7 +171,7 @@ export default function HomePage() {
 
               <div className="flex gap-3 pt-4">
                 <Link
-                  href={`/products/${featuredProduct.id}`}
+                  href={`/product/${featuredProduct.id}`}
                   className="flex-1"
                 >
                   <Button className="w-full !px-8 h-12">View Product</Button>

@@ -16,29 +16,29 @@ export const router = t.router;
 export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  const isDev = process.env.NODE_ENV === "development";
-      const bypass = process.env.TRPC_BYPASS_AUTH === true;
+  // const isDev = process.env.NODE_ENV === "development";
+  //     const bypass = process.env.TRPC_BYPASS_AUTH === true;
 
-      // ✅ DEV BYPASS
-      if (isDev && bypass && !ctx.session) {
-        return next({
-          ctx: {
-            ...ctx,
-            user: {
-              id: "C6MpMPLWZ7jhzbhmee4V0SV7rPttJL7X",
-              email: "manpreet.singh01356@gmail.com",
-              name: "sdfsdf",
-            },
-          },
-        });
-      }
-  // if (!ctx.session) {
-  //   throw new TRPCError({
-  //     code: "UNAUTHORIZED",
-  //     message: "Authentication require",
-  //     cause: "No session",
-  //   });
-  // }
+      // // ✅ DEV BYPASS
+      // if (isDev && bypass && !ctx.session) {
+      //   return next({
+      //     ctx: {
+      //       ...ctx,
+      //       user: {
+      //         id: "C6MpMPLWZ7jhzbhmee4V0SV7rPttJL7X",
+      //         email: "manpreet.singh01356@gmail.com",
+      //         name: "sdfsdf",
+      //       },
+      //     },
+      //   });
+      // }
+  if (!ctx.session) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Authentication require",
+      cause: "No session",
+    });
+  }
   return next({
     ctx: {
       ...ctx,

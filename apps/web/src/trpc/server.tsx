@@ -1,22 +1,29 @@
 // web/src/trpc/server.tsx
 import "server-only";
-import { createTRPCOptionsProxy, type TRPCQueryOptions } from "@trpc/tanstack-react-query";
-import { cache } from "react";
-import { createQueryClient } from "./query-client";
-import { appRouter } from "@ecomerceNextjs/api/routers/index";
+
 import { headers } from "next/headers";
+import { cache } from "react";
+
+import { appRouter } from "@ecomerceNextjs/api/routers/index";
 import { auth } from "@ecomerceNextjs/auth";
-import { createTRPCClient, httpLink } from "@trpc/client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { createTRPCClient, httpLink } from "@trpc/client";
+import { createTRPCOptionsProxy, type TRPCQueryOptions } from "@trpc/tanstack-react-query";
 import SuperJSON from "superjson";
+
+import { createQueryClient } from "./query-client";
 
 export const getQueryClient = cache(createQueryClient);
 
+// Create server context that matches your API's context structure
 async function createServerContext() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  return { session };
+
+  return {
+    session,
+  };
 }
 
 // For server-side calls that go through HTTP
@@ -27,6 +34,7 @@ function getUrl() {
   return process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/trpc` : "http://localhost:3000/trpc";
 }
 
+// HTTP client for server-side tRPC calls
 const serverClient = createTRPCClient<typeof appRouter>({
   links: [
     httpLink({
@@ -34,9 +42,24 @@ const serverClient = createTRPCClient<typeof appRouter>({
       url: getUrl(),
       headers: async () => {
         const h = await headers();
+
+        // Get all cookies and forward them
+        const cookie = h.get("cookie") || "";
+
         return {
-          cookie: h.get("cookie") || "",
+          cookie,
+          // Forward all relevant headers
+          "x-forwarded-for": h.get("x-forwarded-for") || "",
+          "x-forwarded-proto": h.get("x-forwarded-proto") || "",
+          "x-forwarded-host": h.get("x-forwarded-host") || "",
         };
+      },
+      // Important: Include credentials for authentication
+      fetch: async (url, options) => {
+        return fetch(url, {
+          ...options,
+          credentials: "include", // Include cookies
+        });
       },
     }),
   ],
@@ -48,9 +71,16 @@ export const trpc = createTRPCOptionsProxy({
   queryClient: getQueryClient,
 });
 
-// Create caller with context (for direct server-side calls without HTTP)
+// Create caller with context (for direct server-side calls)
+// This is the RECOMMENDED way for server components
 export const getCaller = cache(async () => {
   const context = await createServerContext();
+
+  // Debug: log session info
+  if (process.env.NODE_ENV === "development") {
+    console.log("Server Caller - Session:", context.session ? "✅ Authenticated" : "❌ Not authenticated");
+  }
+
   return appRouter.createCaller(context);
 });
 

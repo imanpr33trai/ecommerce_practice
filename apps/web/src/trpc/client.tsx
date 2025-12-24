@@ -1,12 +1,15 @@
+// web/src/trpc/client.tsx
 "use client";
-import type { QueryClient } from "@tanstack/react-query";
+
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { createTRPCContext, createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-import { createQueryClient } from "./query-client";
-import type { AppRouter } from "@ecomerceNextjs/api/routers/index";
 import SuperJSON from "superjson";
+import type { AppRouter } from "@ecomerceNextjs/api/routers/index";
+import type { QueryClient } from "@tanstack/react-query";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+
+import { createQueryClient } from "./query-client";
 
 export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
@@ -45,12 +48,23 @@ export const trpcClient = createTRPCClient<AppRouter>({
     httpBatchLink({
       transformer: SuperJSON,
       url: getUrl(),
-      // Add credentials if you're using cookies for auth
+
+      // CRITICAL: Include credentials to send cookies
+      fetch(url, options) {
+        return fetch(url, {
+          ...options,
+          credentials: "include", // This sends cookies with the request
+        });
+      },
+
+      // Headers for authentication
       headers() {
-        return {
-          // Forward cookies for authentication
-          ...(typeof window !== "undefined" ? {} : {}),
-        };
+        const headers: Record<string, string> = {};
+
+        // Client-side: cookies are automatically included with credentials: "include"
+        // Server-side: headers are handled differently (not needed here since we're client-only)
+
+        return headers;
       },
     }),
   ],
@@ -66,11 +80,14 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
 export function TRPCReactProvider(
   props: Readonly<{
     children: React.ReactNode;
-  }>
+  }>,
 ) {
   return (
     <QueryClientProvider client={queryClient}>
-      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+      <TRPCProvider
+        trpcClient={trpcClient}
+        queryClient={queryClient}
+      >
         {props.children}
       </TRPCProvider>
     </QueryClientProvider>

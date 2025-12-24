@@ -1,7 +1,15 @@
-"use client"
-import React from 'react';
+"use client";
 
-export const LayoutContext = React.createContext({
+import React from "react";
+
+interface LayoutContextType {
+  isCartOpen: boolean;
+  toggleCart: () => void;
+  isAuthModalOpen: boolean;
+  setAuthModalOpen: (open: boolean) => void;
+}
+
+export const LayoutContext = React.createContext<LayoutContextType>({
   isCartOpen: false,
-  toggleCart: () => {},
+  toggleCart: () => { }, isAuthModalOpen: false, setAuthModalOpen: () => { }
 });

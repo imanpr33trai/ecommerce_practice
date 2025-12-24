@@ -16,7 +16,7 @@ export const useCartQueries = {
             trpc.cart.get.queryOptions(undefined, {
                 // Don't cache cart too long (stock changes, price changes)
                 staleTime: 0,
-                refetchOnWindowFocus: true,
+                refetchOnWindowFocus: false,
             }),
         );
     },
@@ -111,7 +111,7 @@ export const useCartMutations = {
             },
             onError: (err, _, context) => {
                 utils.setQueryData(trpc.cart.get.queryKey(), context?.previousCart);
-                toast.error("Failed to remove item");
+                toast.error(`Failed to remove item ${err.message}`);
             },
             onSettled: () => {
                 utils.invalidateQueries({ queryKey: trpc.cart.get.queryKey() });

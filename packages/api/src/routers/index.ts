@@ -6,6 +6,7 @@ import {
 } from "../index";
 import { cartRouter } from "./cart/cart.route";
 import { productRouter } from "./product/product.route";
+import { userRouter } from "./user/user.route";
 import { wishRouter } from "./wish/wish.route";
 
 export const appRouter = router({
@@ -18,7 +19,8 @@ export const appRouter = router({
 
   product: productRouter,
   wish: wishRouter,
-  cart: cartRouter
+  cart: cartRouter,
+  user:userRouter
 });
 
 export const createCaller = createCallerFactory(appRouter);

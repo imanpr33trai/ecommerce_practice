@@ -9,12 +9,11 @@ import { Input } from "@comp/input";
 import { Clock, X as CloseIcon, Heart, LogIn, Menu, Search, ShoppingBag, User as UserIcon, X } from "lucide-react";
 
 import { Cart } from "@/feature/cart";
+import { authClient } from "@/lib/auth-client";
 
-import { useAuth } from "../context/AuthContext";
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
 import Button from "./ui/Button";
-import { useSession } from "@/lib/auth-client";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,12 +69,18 @@ const Navbar: React.FC = () => {
     }
   };
 
+  // const { data: isAuthenticated, isLoading: authLoading } = useSessionQuery();
 
-  const {data:isAuthenticated,error:authError} = useSession();
-
-
-
+  const { data: isAuthenticated, isPending, error: authError } = authClient.useSession();
   const { data: cart, isLoading, isError, error } = Cart.hooks.useCart();
+  if (isPending) {
+    return <div>Auth is pending...wait </div>;
+  }
+
+  if (authError) {
+    return <div>auth{authError.message}</div>;
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -157,7 +162,7 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {isAuthenticated ? (
+            {isAuthenticated?.session ? (
               <Link href="/account">
                 <Button
                   variant="icon"
@@ -261,7 +266,7 @@ const Navbar: React.FC = () => {
             {wishlist.length > 0 && <span className="bg-black text-white px-2 rounded-full text-xs py-1">{wishlist.length}</span>}
           </Link>
 
-          {isAuthenticated ? (
+          {isAuthenticated?.session ? (
             <Link
               href="/account"
               onClick={() => setIsOpen(false)}
