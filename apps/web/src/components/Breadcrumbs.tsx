@@ -1,8 +1,12 @@
-import React from "react";
+"use client";
+
 import Link from "next/link";
-import { ChevronRight, Home } from "lucide-react";
-import { PRODUCTS } from "../constants";
 import { usePathname } from "next/navigation";
+import type React from "react";
+
+import { ChevronRight, Home } from "lucide-react";
+
+import { PRODUCTS } from "../constants";
 
 const Breadcrumbs: React.FC = () => {
   const location = usePathname();
@@ -16,7 +20,11 @@ const Breadcrumbs: React.FC = () => {
         href="/"
         className="hover:text-black flex items-center transition-colors"
       >
-        <Home size={14} className="mr-1" /> Home
+        <Home
+          size={14}
+          className="mr-1"
+        />{" "}
+        Home
       </Link>
 
       {pathnames.map((value, index) => {
@@ -29,12 +37,17 @@ const Breadcrumbs: React.FC = () => {
         if (productMatch) displayName = productMatch.name;
 
         // Capitalize first letter
-        displayName =
-          displayName.charAt(0).toUpperCase() + displayName.slice(1);
+        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
 
         return (
-          <div key={to} className="flex items-center">
-            <ChevronRight size={14} className="mx-2 text-gray-300" />
+          <div
+            key={to}
+            className="flex items-center"
+          >
+            <ChevronRight
+              size={14}
+              className="mx-2 text-gray-300"
+            />
             {isLast ? (
               <span className="font-medium text-black">{displayName}</span>
             ) : (

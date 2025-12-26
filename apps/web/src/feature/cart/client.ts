@@ -37,7 +37,7 @@ export const useCartMutations = {
         toast.success("Added to cart");
       },
       onError: (err) => {
-        console.log(err.message)
+        console.log(err.message);
         // Handle "Stock Limit" error specifically
         if (err.data?.code === "CONFLICT") {
           toast.error(err.message); // e.g., "Only 5 items remaining"
@@ -79,10 +79,14 @@ export const useCartMutations = {
         // Return snapshot
         return { previousCart };
       },
+      onSuccess: (data) => {
+        console.log(data);
+      },
       onError: (err, newVar, context) => {
         // Rollback on error (e.g., Not enough stock)
         utils.setQueryData(trpc.cart.get.queryKey(), context?.previousCart);
         toast.error(err.message);
+        console.log(err.message);
       },
       onSettled: () => {
         // Sync with server logic
@@ -113,6 +117,7 @@ export const useCartMutations = {
       onError: (err, _, context) => {
         utils.setQueryData(trpc.cart.get.queryKey(), context?.previousCart);
         toast.error(`Failed to remove item ${err.message}`);
+        console.log(err.message);
       },
       onSettled: () => {
         utils.invalidateQueries({ queryKey: trpc.cart.get.queryKey() });

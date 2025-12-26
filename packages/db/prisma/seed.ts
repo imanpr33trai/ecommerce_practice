@@ -492,9 +492,9 @@ async function main() {
         userId: users[3].id, // user_4
         items: {
           create: [
-            { productId: products[1].id, quantity: 1,color: "#D9D9D9" }, // Lightweight Ultrabook
-            { productId: products[7].id, quantity: 1 ,color:"#3A3A3A"}, // Accent Armchair
-            { productId: products[9].id, quantity: 2 ,color:"#FFFFFF"}, // Project Hail Mary (x2)
+            { productId: products[1].id, quantity: 1, color: "#D9D9D9" }, // Lightweight Ultrabook
+            { productId: products[7].id, quantity: 1, color: "#3A3A3A" }, // Accent Armchair
+            { productId: products[9].id, quantity: 2, color: "#FFFFFF" }, // Project Hail Mary (x2)
           ],
         },
       },
@@ -506,7 +506,7 @@ async function main() {
       data: {
         userId: users[4].id, // user_5
         items: {
-          create: { productId: products[5].id, quantity: 1 ,color:"#111111"}, // L-Shape Sectional
+          create: { productId: products[5].id, quantity: 1, color: "#111111" }, // L-Shape Sectional
         },
       },
     });

@@ -6,99 +6,97 @@ import { protectedProcedure, router } from "../../index";
 import { wishItemSelect } from "./wish.type";
 
 export const wishRouter = router({
-    /**
-     * Get All Wishlist Items
-     * Usage: My Wishlist Page
-     */
+  /**
+   * Get All Wishlist Items
+   * Usage: My Wishlist Page
+   */
 
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
 
-    getAll: protectedProcedure.query(async ({ ctx }) => {
+    return prisma.wish.findMany({
+      where: { userId },
+      select: wishItemSelect,
+      orderBy: { createdAt: "desc" },
+    });
+  }),
 
-        const userId = ctx.session.user.id;
+  /**
+   * Check Status (Lightweight)
+   * Usage: Product Grid (to color the heart icons red/grey)
+   * Returns an array of Product IDs that the user has liked.
+   */
+  getIds: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
 
-        return prisma.wish.findMany({
-            where: { userId },
-            select: wishItemSelect,
-            orderBy: { createdAt: "desc" },
-        });
-    }),
+    const wishes = await prisma.wish.findMany({
+      where: { userId },
+      select: { productId: true },
+    });
 
-    /**
-     * Check Status (Lightweight)
-     * Usage: Product Grid (to color the heart icons red/grey)
-     * Returns an array of Product IDs that the user has liked.
-     */
-    getIds: protectedProcedure.query(async ({ ctx }) => {
-        const userId = ctx.session.user.id;
+    // Return simple array: ['prod_123', 'prod_456']
+    return wishes.map((w) => w.productId);
+  }),
 
-        const wishes = await prisma.wish.findMany({
-            where: { userId },
-            select: { productId: true },
-        });
+  /**
+   * Toggle Wishlist Item
+   * Usage: Clicking the Heart Button
+   * Logic: If exists -> Remove. If not exists -> Add.
+   */
+  toggle: protectedProcedure.input(z.object({ productId: z.string() })).mutation(async ({ ctx, input }) => {
+    const userId = ctx.session.user.id;
+    const { productId } = input;
 
-        // Return simple array: ['prod_123', 'prod_456']
-        return wishes.map((w) => w.productId);
-    }),
+    // 1. Check if it exists
+    const existing = await prisma.wish.findUnique({
+      where: {
+        userId_productId: {
+          userId,
+          productId,
+        },
+      },
+    });
 
-    /**
-     * Toggle Wishlist Item
-     * Usage: Clicking the Heart Button
-     * Logic: If exists -> Remove. If not exists -> Add.
-     */
-    toggle: protectedProcedure.input(z.object({ productId: z.string() })).mutation(async ({ ctx, input }) => {
-        const userId = ctx.session.user.id;
-        const { productId } = input;
+    if (existing) {
+      // --- REMOVE ---
+      await prisma.wish.delete({
+        where: { id: existing.id },
+      });
+      return { added: false, message: "Removed from wishlist" };
+    }
+    // --- ADD ---
 
-        // 1. Check if it exists
-        const existing = await prisma.wish.findUnique({
-            where: {
-                userId_productId: {
-                    userId,
-                    productId,
-                },
-            },
-        });
+    // Robustness: Ensure product actually exists first
+    const productExists = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { id: true },
+    });
 
-        if (existing) {
-            // --- REMOVE ---
-            await prisma.wish.delete({
-                where: { id: existing.id },
-            });
-            return { added: false, message: "Removed from wishlist" };
-        }
-        // --- ADD ---
+    if (!productExists) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Product not found",
+      });
+    }
 
-        // Robustness: Ensure product actually exists first
-        const productExists = await prisma.product.findUnique({
-            where: { id: productId },
-            select: { id: true },
-        });
+    await prisma.wish.create({
+      data: {
+        userId,
+        productId,
+      },
+    });
+    return { added: true, message: "Added to wishlist" };
+  }),
 
-        if (!productExists) {
-            throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "Product not found",
-            });
-        }
-
-        await prisma.wish.create({
-            data: {
-                userId,
-                productId,
-            },
-        });
-        return { added: true, message: "Added to wishlist" };
-    }),
-
-    /**
-     * Clear Wishlist
-     * Usage: "Remove All" button
-     */
-    clear: protectedProcedure.mutation(async ({ ctx }) => {
-        const userId = ctx.session.user.id;
-        await prisma.wish.deleteMany({
-            where: { userId },
-        });
-        return { success: true, message: "Wishlist cleared" };
-    }),
+  /**
+   * Clear Wishlist
+   * Usage: "Remove All" button
+   */
+  clear: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    await prisma.wish.deleteMany({
+      where: { userId },
+    });
+    return { success: true, message: "Wishlist cleared" };
+  }),
 });

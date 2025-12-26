@@ -1,20 +1,15 @@
 {
-	"extends": "@ecomerceNextjs/config/tsconfig.base.json",
-	"compilerOptions": {
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"declaration": true,
-		"declarationMap": true,
-		"sourceMap": true,
-		"outDir": "dist",
-		"composite": true,
-		"noEmit": false
-	},
-	"include": [
-		"src/**/*"
-	],
-	"exclude": [
-		"dist",
-		"node_modules"
-	]
+  "extends": "@ecomerceNextjs/config/tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true,
+    "noEmit": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
 }

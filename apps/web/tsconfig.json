@@ -1,51 +1,32 @@
 {
-	"compilerOptions": {
-		"allowImportingTsExtensions": true,
-		"allowJs": true,
-		"esModuleInterop": true,
-		"incremental": true,
-		"isolatedModules": true,
-		"jsx": "react-jsx",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"noEmit": true,
-		"paths": {
-			"@/*": [
-				"./src/*"
-			],
-			"@comp/*": [
-				"../../packages/ui/src/components/*"
-			],
-			"@workspace/ui/*": [
-				"../../packages/ui/src/*"
-			]
-		},
-		"plugins": [
-			{
-				"name": "next"
-			}
-		],
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"target": "ES2017",
-		"verbatimModuleSyntax": false
-	},
-	"exclude": [
-		"./node_modules"
-	],
-	"extends": "@ecomerceNextjs/config/nextjs.json",
-	"include": [
-		"./next-env.d.ts",
-		"./**/*.ts",
-		"./**/*.tsx",
-		"./.next/types/**/*.ts",
-		".next/types/**/*.ts",
-		".next/dev/types/**/*.ts"
-	]
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@comp/*": ["../../packages/ui/src/components/*"],
+      "@workspace/ui/*": ["../../packages/ui/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2017",
+    "verbatimModuleSyntax": false
+  },
+  "exclude": ["./node_modules"],
+  "extends": "@ecomerceNextjs/config/nextjs.json",
+  "include": ["./next-env.d.ts", "./**/*.ts", "./**/*.tsx", "./.next/types/**/*.ts", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"]
 }

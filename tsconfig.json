@@ -1,17 +1,12 @@
 {
-	"extends": "@ecomerceNextjs/config/base.json",
-	"compilerOptions": {
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"noEmit": true,
-		"allowImportingTsExtensions": true,
-		"types": [
-			"bun"
-		],
-		"strict": true
-	},
-	"include": [
-		"packages/**/*",
-		"apps/**/*"
-	]
+  "extends": "@ecomerceNextjs/config/base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["bun"],
+    "strict": true
+  },
+  "include": ["packages/**/*", "apps/**/*"]
 }

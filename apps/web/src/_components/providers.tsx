@@ -33,13 +33,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             <ShopProvider>
               {/* <TRPCProvider queryClient={queryClient} trpcClient={trpcClient}> */}
               <ReactQueryDevtools />
-{isUser &&
-
-              <CartDrawer
-                isOpen={isCartOpen}
-                onClose={() => setIsCartOpen(false)}
-              />
-}
+              {isUser && (
+                <CartDrawer
+                  isOpen={isCartOpen}
+                  onClose={() => setIsCartOpen(false)}
+                />
+              )}
 
               <Toaster richColors />
               {children}
