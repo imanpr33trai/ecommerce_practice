@@ -2,7 +2,7 @@ import prisma from "@ecomerceNextjs/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { protectedProcedure, publicProcedure, router } from "../../index";
+import { protectedProcedure, router } from "../../index";
 
 // --- 1. Validators & Selectors ---
 
@@ -63,7 +63,7 @@ export const cartRouter = router({
         const items = cart.items.map((item) => {
             const price = Number(item.product.discountPrice ?? item.product.price);
             const lineTotal = price * item.quantity;
-
+            item.color,
             subtotal += lineTotal;
             totalItems += item.quantity;
 
@@ -71,6 +71,7 @@ export const cartRouter = router({
                 ...item,
                 // Helper: Is the quantity in cart > available stock?
                 isOutOfStock: item.quantity > item.product.stock,
+
                 product: {
                     ...item.product,
                     price: Number(item.product.price),

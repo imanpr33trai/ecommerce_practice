@@ -1,16 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
 import type React from "react";
-
-import { Input } from "@comp/input";
-import { Clock, X as CloseIcon, Heart, LogIn, Menu, Search, ShoppingBag, User as UserIcon, X } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { Cart } from "@/feature/cart";
 import { authClient } from "@/lib/auth-client";
 
+import { Input } from "@comp/input";
+import { Clock, X as CloseIcon, Heart, LogIn, Menu, Search, ShoppingBag, UserIcon } from "lucide-react";
+import Link from "next/link";
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
 import Button from "./ui/Button";
@@ -27,71 +26,58 @@ const Navbar: React.FC = () => {
 
   const { toggleCart } = useContext(LayoutContext);
   const { wishlist } = useShop();
-  // const { user, isAuthenticated } = useAuth();
+  // const { user, isAuthenticated } = ;
+  // --- Search History Logic ---
+   useEffect(() => {
+     if (typeof window !== "undefined") {
+         const history = localStorage.getItem("nestify_search_history");
+         if (history) setSearchHistory(JSON.parse(history));
+     }
+   }, []);
 
-  useEffect(() => {
-    const history = localStorage.getItem("nestify_search_history");
-    if (history) {
-      setSearchHistory(JSON.parse(history));
-    }
-  }, []);
+   useEffect(() => {
+     const handleClickOutside = (event: MouseEvent) => {
+       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+         setShowSearchHistory(false);
+       }
+     };
+     document.addEventListener("mousedown", handleClickOutside);
+     return () => document.removeEventListener("mousedown", handleClickOutside);
+   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSearchHistory(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+   const addToSearchHistory = (query: string) => {
+     const newHistory = [query, ...searchHistory.filter((h) => h !== query)].slice(0, 5);
+     setSearchHistory(newHistory);
+     localStorage.setItem("nestify_search_history", JSON.stringify(newHistory));
+   };
 
-  const addToSearchHistory = (query: string) => {
-    const newHistory = [query, ...searchHistory.filter((h) => h !== query)].slice(0, 5);
-    setSearchHistory(newHistory);
-    localStorage.setItem("nestify_search_history", JSON.stringify(newHistory));
-  };
+   const removeHistoryItem = (e: React.MouseEvent, item: string) => {
+     e.stopPropagation();
+     const newHistory = searchHistory.filter((h) => h !== item);
+     setSearchHistory(newHistory);
+     localStorage.setItem("nestify_search_history", JSON.stringify(newHistory));
+   };
 
-  const removeHistoryItem = (e: React.MouseEvent, item: string) => {
-    e.stopPropagation();
-    const newHistory = searchHistory.filter((h) => h !== item);
-    setSearchHistory(newHistory);
-    localStorage.setItem("nestify_search_history", JSON.stringify(newHistory));
-  };
+   const handleSearch = (e: React.FormEvent) => {
+     e.preventDefault();
+     if (searchQuery.trim()) {
+       addToSearchHistory(searchQuery);
+       navigate.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+       setIsOpen(false);
+       setShowSearchHistory(false);
+     }
+   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      addToSearchHistory(searchQuery);
-      navigate.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-      setIsOpen(false);
-      setShowSearchHistory(false);
-    }
-  };
+   // --- DATA FETCHING (Non-Blocking) ---
+   const { data: isAuthenticated, isPending: isAuthPending } = authClient.useSession();
 
-  // const { data: isAuthenticated, isLoading: authLoading } = useSessionQuery();
+   // Only fetch cart if user is logged in
+   const { data: cart } = Cart.hooks.useCart();
 
-  const { data: isAuthenticated, isPending, error: authError } = authClient.useSession();
-  const { data: cart, isLoading, isError, error } = Cart.hooks.useCart();
-  if (isPending) {
-    return <div>Auth is pending...wait </div>;
-  }
+   const isActive = (path: string) => location === path;
 
-  if (authError) {
-    return <div>auth{authError.message}</div>;
-  }
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError || !cart || error) {
-    return <div>{error?.message}</div>;
-  }
-
-  const isActive = (path: string) => location === path;
-  const cartItemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
-
+   // Calculate count safely (default to 0 if loading/error/guest)
+   const cartItemCount = cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
   return (
     <nav className="sticky top-0 z-50 py-4 px-4 md:px-8 bg-nest-bg/90 backdrop-blur-md transition-all duration-300 border-b border-gray-200/50">
       <div className="flex flex-col gap-4">
@@ -216,7 +202,7 @@ const Navbar: React.FC = () => {
               className="md:hidden"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
+              {isOpen ? <CloseIcon size={20} /> : <Menu size={20} />}
             </Button>
           </div>
         </div>

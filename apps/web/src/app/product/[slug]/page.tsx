@@ -1,14 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import { use, useContext, useState } from "react";
 
 import { Heart, PenTool, ShieldCheck, Star, Truck } from "lucide-react";
 import { toast } from "sonner";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
-import ProductCard from "@/components/ProductCard";
 import BentoCard from "@/components/ui/BentoCard";
 import Button from "@/components/ui/Button";
 // import { PRODUCTS } from "@/constants";
@@ -69,6 +67,8 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
             <Image
               src={image.url}
               key={image.id}
+              width={100}
+              height={100}
               alt={image.altText || product.name}
               className="w-full h-full object-cover object-center"
             />
@@ -188,7 +188,8 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
           <Image
             src="https://images.unsplash.com/photo-1581539250439-c96689b516dd?auto=format&fit=crop&q=80&w=1200"
             alt="Craftsmanship"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover" width={100}
+            height={100}
           />
         </div>
       </div>

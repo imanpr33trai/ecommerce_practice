@@ -1,16 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useContext, useRef, useState } from "react";
 import type React from "react";
+import { useContext, useRef, useState } from "react";
 
 import { ArrowLeftRight, Eye, Heart, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
 
 import { Cart } from "@/feature/cart";
+import type { ProductSingle } from "@/feature/product";
 import { Wish } from "@/feature/wish";
 import { useWishQueries } from "@/feature/wish/client";
 import { authClient } from "@/lib/auth-client";
-import type { ProductSingle } from "@/feature/product";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
@@ -159,7 +159,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
     badges.push({ text: "TOP RATED", color: "bg-blue-600 text-white", id: 3 });
   }
 
-  const displayColors = product.colors && product.colors.length > 0 ? product.colors : ["#D9D9D9", "#3A3A3A", "#8C7A6B"];
+  // const displayColors = product.colors && product.colors.length > 0 ? product.colors : ["#D9D9D9", "#3A3A3A", "#8C7A6B"];
+  const displayColors = product.colors;
   const containerStyle = {
     left: isLeftAlign ? "auto" : "0",
     right: isLeftAlign ? "0" : "auto",
