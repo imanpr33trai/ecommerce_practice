@@ -39,6 +39,8 @@
     "dev:native": "turbo -F native dev",
     "dev:server": "turbo -F server dev",
     "dev:web": "turbo -F web dev",
+    "docker:build": "docker compose build",
+    "docker:run": "docker compose up",
     "ui:add": "bunx shadcn@latest add"
   },
   "type": "module",

@@ -13,7 +13,8 @@
     "build": "tsc"
   },
   "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*"
+    "@ecomerceNextjs/config": "workspace:*",
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
     "typescript": "^5"
