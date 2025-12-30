@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner"; // Assuming sonner, replace with your toast lib
+import { util } from "zod/v4/core";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/trpc/client";
@@ -9,12 +10,20 @@ export const useWishQueries = {
    * Hook: Get Full Wishlist
    * Usage: Wishlist Page
    */
-  useList: () => {
+  useWishList: () => {
     return useQuery(
       trpc.wish.getAll.queryOptions(undefined, {
         staleTime: 1000 * 60 * 5, // 5 minutes
       }),
     );
+  },
+  useWishListCount: () => {
+    const { data: ids } = useQuery(
+      trpc.wish.getIds.queryOptions(undefined, {
+        staleTime: 1000 * 60 * 10,
+      }),
+    );
+    return ids?.length ?? 0;
   },
 
   /**
@@ -46,7 +55,7 @@ export const useWishQueries = {
       console.log(`useIsWishlisted ${error.message}`);
       return;
     }
-    return ids?.includes(productId);
+    return !!ids?.includes(productId);
   },
 };
 
@@ -58,21 +67,22 @@ export const useWishMutations = {
   useToggle: () => {
     const utils = useQueryClient();
     const toggleKey = trpc.wish.toggle.mutationKey();
-    const previousIds = utils.getQueryData(toggleKey);
+
     return useMutation(
       trpc.wish.toggle.mutationOptions({
         // 1. OPTIMISTIC UPDATE
         onMutate: async ({ productId }) => {
           // Cancel outgoing refetches
-          await utils.cancelQueries({ queryKey: toggleKey });
+          await utils.cancelQueries({ queryKey: trpc.wish.getIds.queryKey() });
           // await utils.wish.getIds.cancel();
 
           // Snapshot previous value
+          const previousIds = utils.getQueryData(trpc.wish.getIds.queryKey());
 
           // const previousIds = utils.wish.getIds.getData();
 
           // Optimistically update the cache
-          utils.setQueryData(toggleKey, (oldIds: string[]) => {
+          utils.setQueryData(trpc.wish.getIds.queryKey(), (oldIds) => {
             if (!oldIds) {
               return [productId]; // Initialize if empty
             }
@@ -85,9 +95,10 @@ export const useWishMutations = {
         },
 
         // 2. ERROR HANDLING
-        onError: () => {
+        onError: (error, newVariables, context) => {
           // Rollback to snapshot
-          utils.setQueryData(toggleKey, previousIds);
+          utils.setQueryData(trpc.wish.getIds.queryKey(), context?.previousIds);
+          console.log(error);
           toast.error("Failed to update wishlist");
         },
 
@@ -101,6 +112,7 @@ export const useWishMutations = {
         // 4. SUCCESS FEEDBACK
         onSuccess: (data) => {
           toast.success(data.message, { duration: 2000 });
+          console.log(data);
         },
       }),
     );

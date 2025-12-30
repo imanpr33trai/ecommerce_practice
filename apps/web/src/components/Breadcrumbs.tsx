@@ -6,8 +6,6 @@ import type React from "react";
 
 import { ChevronRight, Home } from "lucide-react";
 
-import { PRODUCTS } from "../constants";
-
 const Breadcrumbs: React.FC = () => {
   const location = usePathname();
   const pathnames = location.split("/").filter((x) => x);
@@ -33,8 +31,6 @@ const Breadcrumbs: React.FC = () => {
 
         // Resolve Product Name if ID is in URL
         let displayName = value.replace(/-/g, " ");
-        const productMatch = PRODUCTS.find((p) => p.id === value);
-        if (productMatch) displayName = productMatch.name;
 
         // Capitalize first letter
         displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);

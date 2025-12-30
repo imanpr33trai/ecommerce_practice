@@ -19,19 +19,19 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   // const isDev = process.env.NODE_ENV === "development";
   //     const bypass = process.env.TRPC_BYPASS_AUTH === true;
 
-      // // ✅ DEV BYPASS
-      // if (isDev && bypass && !ctx.session) {
-      //   return next({
-      //     ctx: {
-      //       ...ctx,
-      //       user: {
-      //         id: "C6MpMPLWZ7jhzbhmee4V0SV7rPttJL7X",
-      //         email: "manpreet.singh01356@gmail.com",
-      //         name: "sdfsdf",
-      //       },
-      //     },
-      //   });
-      // }
+  // // ✅ DEV BYPASS
+  // if (isDev && bypass && !ctx.session) {
+  //   return next({
+  //     ctx: {
+  //       ...ctx,
+  //       user: {
+  //         id: "C6MpMPLWZ7jhzbhmee4V0SV7rPttJL7X",
+  //         email: "manpreet.singh01356@gmail.com",
+  //         name: "sdfsdf",
+  //       },
+  //     },
+  //   });
+  // }
   if (!ctx.session) {
     throw new TRPCError({
       code: "UNAUTHORIZED",

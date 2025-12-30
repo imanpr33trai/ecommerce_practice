@@ -1,6 +1,6 @@
 // packages/api/src/routers/user.ts
 
-import prisma, { OrderStatus, Prisma } from "@ecomerceNextjs/db";
+import prisma from "@ecomerceNextjs/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -53,295 +53,285 @@ export const userRouter = router({
     });
   }),
 
-  /**
-   * Update user profile
-   * Protected - only authenticated users can update their profile
-   */
+  getProfile: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    return prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        _count: {
+          select: {
+            order: true,
+            wishList: true,
+            reviews: true,
+            address: true, // Use mapped name "addresses" if defined in schema, else field name
+          },
+        },
+      },
+    });
+  }),
+
   updateProfile: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(1).max(100).optional(),
-        image: z.string().url().optional(),
+        name: z.string().optional(),
+        image: z.string().optional(),
+        // Add other fields from your User schema if needed
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
-
-      // Add your database update logic here
-      // Example: await db.user.update({ where: { id: userId }, data: input })
-
-      return {
-        success: true,
-        user: {
-          id: userId,
-          ...input,
-        },
-      };
+    .mutation(async ({ ctx, input }) => {
+      return prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: input,
+      });
     }),
 
-  /**
-   * Delete user account
-   * Protected - users can delete their own account
-   */
-  deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
+  // /**
+  //  * Delete user account
+  //  * Protected - users can delete their own account
+  //  */
+  // deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
+  //   const userId = ctx.session.user.id;
 
-    // Add your database delete logic here
-    // Example: await db.user.delete({ where: { id: userId } })
+  //   // Add your database delete logic here
+  //   // Example: await db.user.delete({ where: { id: userId } })
 
-    return {
-      success: true,
-      message: "Account deleted successfully",
-    };
-  }),
+  //   return {
+  //     success: true,
+  //     message: "Account deleted successfully",
+  //   };
+  // }),
 
-  /**
-   * Get user preferences
-   * Protected
-   */
-  getPreferences: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
+  // /**
+  //  * Get user preferences
+  //  * Protected
+  //  */
+  // getPreferences: protectedProcedure.query(async ({ ctx }) => {
+  //   const userId = ctx.session.user.id;
 
-    // Query preferences from database
-    // Example: const prefs = await db.userPreferences.findUnique({ where: { userId } })
+  //   // Query preferences from database
+  //   // Example: const prefs = await db.userPreferences.findUnique({ where: { userId } })
 
-    return {
-      theme: "light",
-      emailNotifications: true,
-      marketingEmails: false,
-      language: "en",
-    };
-  }),
+  //   return {
+  //     theme: "light",
+  //     emailNotifications: true,
+  //     marketingEmails: false,
+  //     language: "en",
+  //   };
+  // }),
 
-  /**
-   * Update user preferences
-   * Protected
-   */
-  updatePreferences: protectedProcedure
-    .input(
-      z.object({
-        theme: z.enum(["light", "dark", "system"]).optional(),
-        emailNotifications: z.boolean().optional(),
-        marketingEmails: z.boolean().optional(),
-        language: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
+  // /**
+  //  * Update user preferences
+  //  * Protected
+  //  */
+  // updatePreferences: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       theme: z.enum(["light", "dark", "system"]).optional(),
+  //       emailNotifications: z.boolean().optional(),
+  //       marketingEmails: z.boolean().optional(),
+  //       language: z.string().optional(),
+  //     }),
+  //   )
+  //   .mutation(async ({ input, ctx }) => {
+  //     const userId = ctx.session.user.id;
 
-      // Update preferences in database
-      // Example: await db.userPreferences.upsert({
-      //   where: { userId },
-      //   update: input,
-      //   create: { userId, ...input }
-      // })
+  //     // Update preferences in database
+  //     // Example: await db.userPreferences.upsert({
+  //     //   where: { userId },
+  //     //   update: input,
+  //     //   create: { userId, ...input }
+  //     // })
 
-      return {
-        success: true,
-        preferences: input,
-      };
-    }),
+  //     return {
+  //       success: true,
+  //       preferences: input,
+  //     };
+  //   }),
 
-  /**
-   * Get user's order history
-   * Protected
-   */
-  getOrderHistory: protectedProcedure
-    .input(
-      z
-        .object({
-          limit: z.number().min(1).max(100).default(10),
-          cursor: z.string().optional(),
-          // status: z.enum(["pending", "processing", "shipped", "delivered", "cancelled"]).optional(),
-          status: z.enum(OrderStatus),
-        })
-        .optional(),
-    )
-    .query(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
-      const limit = input?.limit ?? 10;
+  // /**
+  //  * Get user's order history
+  //  * Protected
+  //  */
+  // getOrderHistory: protectedProcedure
+  //   .input(
+  //     z
+  //       .object({
+  //         limit: z.number().min(1).max(100).default(10),
+  //         cursor: z.string().optional(),
+  //         // status: z.enum(["pending", "processing", "shipped", "delivered", "cancelled"]).optional(),
+  //         status: z.enum(OrderStatus),
+  //       })
+  //       .optional(),
+  //   )
+  //   .query(async ({ input, ctx }) => {
+  //     const userId = ctx.session.user.id;
+  //     const limit = input?.limit ?? 10;
 
-      // Query orders from database
-      // Example:
-      // const orders = await prisma.order.findMany({
-      //   where: { userId, status: input?.status },
-      //   take: limit + 1,
-      //   cursor: input?.cursor ? { id: input.cursor } : undefined,
-      //   orderBy: { createdAt: "desc" },
-      // });
+  //     // Query orders from database
+  //     // Example:
+  //     // const orders = await prisma.order.findMany({
+  //     //   where: { userId, status: input?.status },
+  //     //   take: limit + 1,
+  //     //   cursor: input?.cursor ? { id: input.cursor } : undefined,
+  //     //   orderBy: { createdAt: "desc" },
+  //     // });
 
-      // Mock data for now
-      const orders = [];
-      const hasNextPage = orders.length > limit;
-      const items = hasNextPage ? orders.slice(0, -1) : orders;
+  //     // Mock data for now
+  //     const orders = [];
+  //     const hasNextPage = orders.length > limit;
+  //     const items = hasNextPage ? orders.slice(0, -1) : orders;
 
-      return {
-        items,
-        nextCursor: hasNextPage ? items[items.length - 1]?.id : undefined,
-      };
-    }),
+  //     return {
+  //       items,
+  //       nextCursor: hasNextPage ? items[items.length - 1]?.id : undefined,
+  //     };
+  //   }),
 
-  /**
-   * Get user's wishlist
-   * Protected
-   */
-  getWishlist: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
+  // /**
+  //  * Get user's wishlist
+  //  * Protected
+  //  */
+  // getWishlist: protectedProcedure.query(async ({ ctx }) => {
+  //   const userId = ctx.session.user.id;
 
-    // Query wishlist from database
-    // const wishlist = await db.wishlist.findMany({
-    //   where: { userId },
-    //   include: { product: true }
-    // })
+  //   // Query wishlist from database
+  //   // const wishlist = await db.wishlist.findMany({
+  //   //   where: { userId },
+  //   //   include: { product: true }
+  //   // })
 
-    return {
-      items: [],
-      count: 0,
-    };
-  }),
+  //   return {
+  //     items: [],
+  //     count: 0,
+  //   };
+  // }),
 
-  /**
-   * Add item to wishlist
-   * Protected
-   */
-  addToWishlist: protectedProcedure.input(z.object({ productId: z.string() })).mutation(async ({ input, ctx }) => {
-    const userId = ctx.session.user.id;
+  // /**
+  //  * Add item to wishlist
+  //  * Protected
+  //  */
+  // addToWishlist: protectedProcedure.input(z.object({ productId: z.string() })).mutation(async ({ input, ctx }) => {
+  //   const userId = ctx.session.user.id;
 
-    // Add to wishlist
-    // await db.wishlist.create({
-    //   data: { userId, productId: input.productId }
-    // })
+  //   // Add to wishlist
+  //   // await db.wishlist.create({
+  //   //   data: { userId, productId: input.productId }
+  //   // })
 
-    return {
-      success: true,
-      message: "Added to wishlist",
-    };
-  }),
+  //   return {
+  //     success: true,
+  //     message: "Added to wishlist",
+  //   };
+  // }),
 
-  /**
-   * Remove item from wishlist
-   * Protected
-   */
-  removeFromWishlist: protectedProcedure.input(z.object({ productId: z.string() })).mutation(async ({ input, ctx }) => {
-    const userId = ctx.session.user.id;
+  // /**
+  //  * Remove item from wishlist
+  //  * Protected
+  //  */
+  // removeFromWishlist: protectedProcedure.input(z.object({ productId: z.string() })).mutation(async ({ input, ctx }) => {
+  //   const userId = ctx.session.user.id;
 
-    // Remove from wishlist
-    // await db.wishlist.delete({
-    //   where: { userId_productId: { userId, productId: input.productId } }
-    // })
+  //   // Remove from wishlist
+  //   // await db.wishlist.delete({
+  //   //   where: { userId_productId: { userId, productId: input.productId } }
+  //   // })
 
-    return {
-      success: true,
-      message: "Removed from wishlist",
-    };
-  }),
+  //   return {
+  //     success: true,
+  //     message: "Removed from wishlist",
+  //   };
+  // }),
 
   /**
    * Get user's addresses
    * Protected
    */
-  getAddresses: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
-
-    // Query addresses from database
-    // const addresses = await db.address.findMany({ where: { userId } })
-
-    return [];
+  list: protectedProcedure.query(async ({ ctx }) => {
+    return prisma.address.findMany({
+      where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
   }),
 
-  /**
-   * Add new address
-   * Protected
-   */
-  addAddress: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1),
-        street: z.string().min(1),
-        city: z.string().min(1),
-        state: z.string().min(1),
-        zipCode: z.string().min(1),
-        country: z.string().min(1),
-        phone: z.string().min(1),
-        isDefault: z.boolean().default(false),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
+  // create: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       street: z.string().min(1),
+  //       city: z.string().min(1),
+  //       state: z.string().min(1),
+  //       postalCode: z.string().min(1),
+  //       country: z.string().min(1),
+  //     }),
+  //   )
+  //   .mutation(async ({ ctx, input }) => {
+  //     return prisma.address.create({
+  //       data: {
+  //         // Manually gen ID since schema uses @map("_id")
+  //         userId: ctx.session.user.id,
+  //         ...input,
+  //       },
+  //     });
+  //   }),
 
-      // Add address to database
-      // const address = await db.address.create({
-      //   data: { ...input, userId }
-      // })
+  // delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+  //   return prisma.address.deleteMany({
+  //     where: {
+  //       id: input.id,
+  //       userId: ctx.session.user.id,
+  //     },
+  //   });
+  // }),
 
-      return {
-        success: true,
-        address: { id: "new-address-id", ...input },
-      };
-    }),
+  // /**
+  //  * Update address
+  //  * Protected
+  //  */
+  // updateAddress: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       addressId: z.string(),
+  //       name: z.string().min(1).optional(),
+  //       street: z.string().min(1).optional(),
+  //       city: z.string().min(1).optional(),
+  //       state: z.string().min(1).optional(),
+  //       zipCode: z.string().min(1).optional(),
+  //       country: z.string().min(1).optional(),
+  //       phone: z.string().min(1).optional(),
+  //       isDefault: z.boolean().optional(),
+  //     }),
+  //   )
+  //   .mutation(async ({ input, ctx }) => {
+  //     const userId = ctx.session.user.id;
+  //     const { addressId, ...data } = input;
 
-  /**
-   * Update address
-   * Protected
-   */
-  updateAddress: protectedProcedure
-    .input(
-      z.object({
-        addressId: z.string(),
-        name: z.string().min(1).optional(),
-        street: z.string().min(1).optional(),
-        city: z.string().min(1).optional(),
-        state: z.string().min(1).optional(),
-        zipCode: z.string().min(1).optional(),
-        country: z.string().min(1).optional(),
-        phone: z.string().min(1).optional(),
-        isDefault: z.boolean().optional(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.session.user.id;
-      const { addressId, ...data } = input;
+  //     // Update address in database
+  //     // await db.address.update({
+  //     //   where: { id: addressId, userId },
+  //     //   data
+  //     // })
 
-      // Update address in database
-      // await db.address.update({
-      //   where: { id: addressId, userId },
-      //   data
-      // })
+  //     return {
+  //       success: true,
+  //       message: "Address updated",
+  //     };
+  //   }),
 
-      return {
-        success: true,
-        message: "Address updated",
-      };
-    }),
+  // /**
+  //  * Delete address
+  //  * Protected
+  //  */
 
-  /**
-   * Delete address
-   * Protected
-   */
-  deleteAddress: protectedProcedure.input(z.object({ addressId: z.string() })).mutation(async ({ input, ctx }) => {
-    const userId = ctx.session.user.id;
+  // /**
+  //  * Check if email is available
+  //  * Public - used during registration
+  //  */
+  // checkEmailAvailable: publicProcedure.input(z.object({ email: z.string().email() })).query(async ({ input }) => {
+  //   // Check if email exists in database
+  //   // const exists = await db.user.findUnique({ where: { email: input.email } })
 
-    // Delete address from database
-    // await db.address.delete({
-    //   where: { id: input.addressId, userId }
-    // })
-
-    return {
-      success: true,
-      message: "Address deleted",
-    };
-  }),
-
-  /**
-   * Check if email is available
-   * Public - used during registration
-   */
-  checkEmailAvailable: publicProcedure.input(z.object({ email: z.string().email() })).query(async ({ input }) => {
-    // Check if email exists in database
-    // const exists = await db.user.findUnique({ where: { email: input.email } })
-
-    return {
-      available: true, // !exists
-    };
-  }),
+  //   return {
+  //     available: true, // !exists
+  //   };
+  // }),
 });

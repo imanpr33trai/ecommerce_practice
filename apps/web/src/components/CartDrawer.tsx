@@ -9,7 +9,7 @@ import { ArrowRight, LogIn, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-r
 import { Cart } from "@/feature/cart";
 import { authClient } from "@/lib/auth-client";
 
-import Button from "./ui/Button";
+import Button from "./Button";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -35,7 +35,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
           onClick={onClose}
-          type="button"
         />
         <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-[70] p-6 flex flex-col justify-center items-center text-center space-y-6 animate-slide-left">
           <ShoppingBag
@@ -134,7 +133,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-gray-200 rounded-full">
                         <button
-                          onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity +( -1) })}
+                          onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })}
                           type="button"
                           className="w-6 h-6 flex items-center justify-center hover:bg-gray-50 rounded-l-full transition-colors"
                         >
@@ -142,7 +141,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                         </button>
                         <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity +1 })}
+                          onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })}
                           type="button"
                           className="w-6 h-6 flex items-center justify-center hover:bg-gray-50 rounded-r-full transition-colors"
                         >
@@ -184,7 +183,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                   </Button>
                 </Link>
                 <Link
-                  href="/checkout"
+                  href={{pathname:"/checkout"}}
                   onClick={onClose}
                   className="flex-[2]"
                 >
@@ -202,38 +201,6 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
         </div>
       </div>
     </>
-
-
-    //         {cart?.items.length > 0 && (
-    //           <div className="p-6 bg-gray-50 border-t border-gray-100 space-y-4">
-    //             <div className="space-y-2">
-    //               <div className="flex justify-between text-sm">
-    //                 <span className="text-gray-500">Subtotal</span>
-    //                 <span className="font-bold">${total.toFixed(2)}</span>
-    //               </div>
-    //               <div className="flex justify-between text-sm">
-    //                 <span className="text-gray-500">Shipping</span>
-    //                 <span className="text-green-600 font-medium">Free</span>
-    //               </div>
-    //             </div>
-
-    //             <div className="flex gap-3 pt-2">
-    //               <Link to="/cart" onClick={onClose} className="flex-1">
-    //                 <Button variant="secondary" className="w-full border border-gray-200 hover:bg-white">
-    //                   View Cart
-    //                 </Button>
-    //               </Link>
-    //               <Link to="/checkout" onClick={onClose} className="flex-[2]">
-    //                 <Button className="w-full justify-between group">
-    //                   Checkout <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-    //                 </Button>
-    //               </Link>
-    //             </div>
-    //           </div>
-    //         )}
-    //       </div>
-    //     </div>
-    //   </>
   );
 };
 

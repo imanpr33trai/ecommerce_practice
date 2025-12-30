@@ -1,20 +1,19 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { useRef, useState } from "react";
 import type React from "react";
 
 import { ArrowLeft, ArrowRight, ArrowUpRight, Heart, RefreshCcw, ShieldCheck, Star, Truck } from "lucide-react";
 
+import BentoCard from "@/components/BentoCard";
+import Button from "@/components/Button";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
+import ProductCard from "@/components/ProductCard";
+import { REVIEWS, TEAM } from "@/constants";
+import { useShop } from "@/context/ShopContext";
 import { Product, type ProductSingle } from "@/feature/product";
-import { useProduct } from "@/hooks/useProduct";
-
-import ProductCard from "../../components/ProductCard";
-import BentoCard from "../../components/ui/BentoCard";
-import Button from "../../components/ui/Button";
-import { REVIEWS, TEAM } from "../../constants";
-import { useShop } from "../../context/ShopContext";
 
 // import type { Product } from "../types";
 
@@ -56,7 +55,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
           <h2 className="text-3xl font-light">{title}</h2>
           <p className="text-gray-500 text-sm mt-1">{subtitle}</p>
         </div>
-        <Link href={categoryLink}>
+        <Link href={{ pathname: categoryLink }}>
           <Button
             variant="outline"
             size="sm"
@@ -91,7 +90,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
         {products.map((product) => (
           <div
             key={product.id}
-            className="min-w-[300px] md:min-w-[340px] snap-center shrink-0"
+            className="min-w-75 md:min-w-85 snap-center shrink-0"
           >
             <ProductCard product={product} />
           </div>
@@ -102,7 +101,6 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
 };
 
 export default function HomePage() {
-
   // --- 1. ALL HOOKS CALLED UNCONDITIONALLY AT TOP ---
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHeroWishlisted, setIsHeroWishlisted] = useState(false);
@@ -116,14 +114,7 @@ export default function HomePage() {
 
   // --- 2. DATA EXTRACTION (after hooks) ---
   // Handle loading states
-  if (isLoading) {
-    return <h1>Loading...</h1>;
-  }
-
-  // const newDeals = newDealsQ.data || [];
-  // const exclusiveDeals = exclusiveDealsQ.data || [];
-  // const greatValue = greatValueQ.data || [];
-  // const allProducts = allProductsQ.data || [];
+  if (isLoading) return <LoadingSkeleton type="home" />;
 
   if (!data) {
     return <h1>products is undefined or null</h1>;
@@ -131,8 +122,8 @@ export default function HomePage() {
 
   const featuredProduct = data[currentSlide % data.length] || data[0];
 
-  if(!featuredProduct){
-    console.log("featuredProduct is null or undefined")
+  if (!featuredProduct) {
+    console.log("featuredProduct is null or undefined");
     return;
   }
 
@@ -143,8 +134,8 @@ export default function HomePage() {
   // const workspaceProducts = data.filter((p) => ["Table", "Lamps", "Dressers"].includes(p.category?.name || "not"));
 
   return (
-    <div className="p-4 md:px-8 pb-8 space-y-16 max-w-[1600px] mx-auto animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-[600px]">
+    <div className="p-4 md:px-8 pb-8 space-y-16 max-w-400 mx-auto animate-fade-in">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-150">
         <BentoCard className="lg:col-span-8 relative bg-[#F2F2F0] flex flex-col justify-center overflow-hidden group">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vw] font-bold text-white uppercase tracking-tighter leading-none select-none">Nestify</div>
 
@@ -174,7 +165,7 @@ export default function HomePage() {
                   href={`/product/${featuredProduct.id}`}
                   className="flex-1"
                 >
-                  <Button className="w-full !px-8 h-12">View Product</Button>
+                  <Button className="w-full px-8! h-12">View Product</Button>
                 </Link>
                 <Button
                   variant="icon"
@@ -189,11 +180,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex-1 relative w-full max-w-[400px] aspect-square">
+            <div className="flex-1 relative w-full max-w-100 aspect-square">
               <div className="absolute inset-0 bg-white/40 rounded-full blur-3xl transform scale-75"></div>
-              <img
-                src={featuredProduct.image}
+              <Image
+                src={featuredProduct.images.at(0)?.url || featuredProduct.name}
                 alt={featuredProduct.name}
+                width={100}
+                height={200}
                 className="relative w-full h-full object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-105"
               />
             </div>
@@ -224,10 +217,15 @@ export default function HomePage() {
               Summer <br />
               Sale
             </h2>
-            <p className="text-gray-400 text-sm max-w-[200px]">Get up to 50% off on selected items.</p>
+            <p className="text-gray-400 text-sm max-w-50">Get up to 50% off on selected items.</p>
           </div>
           <div className="relative z-10 mt-8">
-            <Link href="/products?sale=true">
+            <Link
+              href={{
+                pathname: "/product",
+                query: "sale=true",
+              }}
+            >
               <Button
                 variant="secondary"
                 className="w-full justify-between group-hover:pl-8"
@@ -242,12 +240,12 @@ export default function HomePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { icon: Truck, title: "Free Shipping", desc: "On all orders over $200" },
-          { icon: ShieldCheck, title: "Secure Payment", desc: "100% secure payment methods" },
-          { icon: RefreshCcw, title: "30 Days Return", desc: "If goods have problems" },
-        ].map((item, idx) => (
+          { icon: Truck, id: 1, title: "Free Shipping", desc: "On all orders over $200" },
+          { icon: ShieldCheck, id: 2, title: "Secure Payment", desc: "100% secure payment methods" },
+          { icon: RefreshCcw, id: 3, title: "30 Days Return", desc: "If goods have problems" },
+        ].map((item) => (
           <BentoCard
-            key={idx}
+            key={item.id}
             className="p-6 flex items-center gap-4 bg-white"
           >
             <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center shrink-0">
@@ -269,13 +267,14 @@ export default function HomePage() {
           title="Recently Viewed"
           subtitle="Pick up where you left off."
           products={recentlyViewed}
-          categoryLink="/products"
+          categoryLink="/product"
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[400px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-100">
         <BentoCard className="md:col-span-2 relative group overflow-hidden bg-[#E8E8E6]">
-          <img
+          <Image
+            alt="Modern sofas"
             src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1200"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
@@ -283,7 +282,10 @@ export default function HomePage() {
           <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-6 py-4 rounded-3xl">
             <h3 className="text-xl font-bold mb-1">Modern Sofas</h3>
             <Link
-              href="/products?category=Sofa"
+              href={{
+                pathname: "/product",
+                query: "category=Sofa",
+              }}
               className="text-xs font-bold uppercase tracking-wider hover:underline flex items-center gap-1"
             >
               Explore Collection <ArrowRight size={12} />
@@ -292,24 +294,32 @@ export default function HomePage() {
         </BentoCard>
         <div className="flex flex-col gap-4">
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
-            <img
+            <Image
+              alt="Lighting"
               src="https://images.unsplash.com/photo-1507473888900-52e1ad14db3d?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">Lighting</div>
             <Link
-              href="/products?category=Lamps"
+              href={{
+                pathname: "/product",
+                query: "category=Lamps",
+              }}
               className="absolute inset-0"
             />
           </BentoCard>
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
-            <img
+            <Image
+              alt="Chairs"
               src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
             <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">Chairs</div>
             <Link
-              href="/products?category=Chair"
+              href={{
+                pathname: "/product",
+                query: "category=Chair",
+              }}
               className="absolute inset-0"
             />
           </BentoCard>
@@ -350,7 +360,8 @@ export default function HomePage() {
                 </div>
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed">"{review.text}"</p>
                 <div className="flex items-center gap-3">
-                  <img
+                  <Image
+                    alt="review"
                     src={review.avatar}
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -375,7 +386,8 @@ export default function HomePage() {
           <div className="relative z-10 flex items-center justify-between mt-8">
             <div className="flex -space-x-3">
               {TEAM.map((member) => (
-                <img
+                <Image
+                  alt={member.name}
                   key={member.id}
                   src={member.image}
                   className="w-10 h-10 rounded-full border-2 border-[#C6BAA8] object-cover"

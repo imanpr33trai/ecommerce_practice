@@ -9,18 +9,15 @@ import { Input } from "@comp/input";
 import { Label } from "@comp/label";
 import { toast } from "sonner";
 
-import BentoCard from "@/components/ui/BentoCard";
-import Button from "@/components/ui/Button";
-import { useAuth } from "@/context/AuthContext";
+import BentoCard from "@/components/BentoCard";
+import Button from "@/components/Button";
 import { signIn } from "@/lib/auth-client";
 
 export default function LoginPage() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {

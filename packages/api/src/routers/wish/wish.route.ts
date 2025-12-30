@@ -2,8 +2,7 @@ import prisma from "@ecomerceNextjs/db";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../../index";
-import { wishItemSelect } from "./wish.type";
+import { protectedProcedure, publicProcedure, router } from "../../index";
 
 export const wishRouter = router({
   /**
@@ -14,11 +13,56 @@ export const wishRouter = router({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
 
-    return prisma.wish.findMany({
+    const product = await prisma.wish.findMany({
       where: { userId },
-      select: wishItemSelect,
-      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        createdAt: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            price: true,
+            discountPrice: true,
+            description: true,
+            stock: true,
+            createdAt: true,
+            colors: true,
+            material: true,
+            category: { select: { name: true, slug: true } },
+            images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true, id: true } },
+            reviews: { select: { rating: true } },
+          },
+        },
+      },
     });
+
+    const transformedProducts = product.map((p) => {
+      const avgRating = p.product.reviews.length > 0 ? p.product.reviews.reduce((s, r) => s + r.rating, 0) / p.product.reviews.length : 0;
+
+      return {
+        name: p.product.name,
+        slug: p.product.slug,
+        description: p.product.description,
+        stock: p.product.stock,
+        images: p.product.images,
+        category: p.product.category,
+        reviews: p.product.reviews,
+        id: p.product.id,
+        createdAt: p.product.createdAt,
+        price: Number(p.product.price),
+        discountPrice: p.product.discountPrice ? Number(p.product.discountPrice) : null,
+        rating: avgRating,
+        isNew: (Date.now() - new Date(p.product.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
+        isOnSale: !!p.product.discountPrice,
+
+        // Ensure arrays are not null
+        colors: p.product.colors || [],
+        material: p.product.material || [],
+      };
+    });
+    return transformedProducts;
   }),
 
   /**
@@ -99,4 +143,20 @@ export const wishRouter = router({
     });
     return { success: true, message: "Wishlist cleared" };
   }),
+  getWishCount: publicProcedure.query(async ({ ctx }) => {
+    if (!ctx) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Login",
+      });
+    }
+    const wished = await prisma.wish.findMany({
+      where: { userId: ctx.session?.user.id },
+      select: {
+        id: true,
+      },
+    });
+    return wished;
+  }),
 });
+3;

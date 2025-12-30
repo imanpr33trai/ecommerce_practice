@@ -6,7 +6,6 @@ import type { Prisma } from "@ecomerceNextjs/db";
 import { publicProcedure, router } from "../../index"; // Adjust path to your trpc init
 import { INITIAL_PRODUCT_FILTERS, ProductFilterSchema } from "./product.type";
 
-
 // --- 3. The Router ---
 
 export const productRouter = router({
@@ -20,10 +19,10 @@ export const productRouter = router({
         categorySlug: z.string().optional(),
 
         // Landing Page Flags
-        isNew: z.boolean().default(false),        // "New Arrivals"
-        isExclusive: z.boolean().default(false),  // "Exclusive Deals" (Discounted)
+        isNew: z.boolean().default(false), // "New Arrivals"
+        isExclusive: z.boolean().default(false), // "Exclusive Deals" (Discounted)
         isGreatValue: z.boolean().default(false), // "Great Value" (Low Price)
-      })
+      }),
     )
     .query(async ({ input }) => {
       const { limit, categorySlug, isNew, isExclusive, isGreatValue } = input;
@@ -75,11 +74,14 @@ export const productRouter = router({
           id: true,
           name: true,
           slug: true,
-          price: true, material: true,
+          price: true,
+          material: true,
 
           discountPrice: true,
-          stock: true, colors: true,
-          createdAt: true, description: true,
+          stock: true,
+          colors: true,
+          createdAt: true,
+          description: true,
           category: {
             select: { name: true, slug: true },
           },
@@ -91,7 +93,7 @@ export const productRouter = router({
           _count: {
             select: { reviews: true },
           },
-          reviews: { select: { rating: true } }
+          reviews: { select: { rating: true } },
         },
       });
 
@@ -111,9 +113,9 @@ export const productRouter = router({
           name: p.name,
           slug: p.slug,
           price,
-          createdAt:p.createdAt,
-          stock:p.stock,
-          reviews:p.reviews,
+          createdAt: p.createdAt,
+          stock: p.stock,
+          reviews: p.reviews,
           rating: avgRating,
           description: p.description || "",
           discountPrice,
@@ -132,51 +134,120 @@ export const productRouter = router({
   /**
    * List Products (Filtered & Paginated)
    */
-  list: publicProcedure.input(ProductFilterSchema.default(INITIAL_PRODUCT_FILTERS)) // Make filters optional
-    .query(async ({ input }) => {
+  list: publicProcedure.input(ProductFilterSchema).query(async ({ input }) => {
+    const filters = {
+      ...INITIAL_PRODUCT_FILTERS,
+      ...input,
+    };
+    const { categories, colors, inStock, limit, materials, maxPrice, minPrice, onSale, page, rating, search, sort } = filters;
+    // --- 1. BUILD DYNAMIC WHERE CLAUSE ---
+    const where: Prisma.ProductWhereInput = {
+      isActive: true,
 
+      // Price Range
+      price: {
+        gte: minPrice,
+        lte: maxPrice,
+      },
 
-      const placeholderProducts = await prisma.product.findMany({
-        take: input.limit,
-        skip: (input.page - 1) * input.limit,
-        // Apply filters in the actual query
-        where: {
-          isActive: true, // Example filter
-          // Add your input filter logic here
-        },
+      // Search (Name or Description)
+      OR: search ? [{ name: { contains: search, mode: "insensitive" } }, { description: { contains: search, mode: "insensitive" } }] : undefined,
+
+      // Categories (Relation Filter)
+      // Checks if product.category.name is in the array
+      category: categories.length > 0 ? { name: { in: categories } } : undefined,
+
+      // Materials (String Array Column)
+      // Uses 'hasSome' to check overlap
+      material: materials.length > 0 ? { hasSome: materials } : undefined,
+
+      // Colors (String Array Column)
+      colors: colors.length > 0 ? { hasSome: colors } : undefined,
+
+      // Toggles
+      discountPrice: onSale ? { not: null } : undefined,
+      stock: inStock ? { gt: 0 } : undefined,
+    };
+
+    // --- 2. BUILD SORT ORDER ---
+    let orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
+
+    switch (sort) {
+      case "price_asc":
+        orderBy = [{ price: "asc" }];
+        break;
+      case "price_desc":
+        orderBy = [{ price: "desc" }];
+        break;
+      case "rating":
+        orderBy = [{ reviews: { _count: "desc" } }];
+        break; // Proxy for rating
+      // case "newest":
+      default:
+        orderBy = [{ createdAt: "desc" }];
+        break;
+    }
+
+    // --- 3. EXECUTE QUERY (Count + Data) ---
+    // We use a transaction to get the total count based on the *current filters*
+    // so pagination works correctly with filtered results.
+    const [total, rawItems] = await prisma.$transaction([
+      prisma.product.count({ where }),
+      prisma.product.findMany({
+        where,
+        orderBy,
+        take: limit,
+        skip: (page - 1) * limit,
         select: {
-          id: true, name: true, slug: true, price: true, discountPrice: true, description: true,
-          stock: true, createdAt: true, colors: true, material: true,
+          id: true,
+          name: true,
+          slug: true,
+          price: true,
+          discountPrice: true,
+          description: true,
+          stock: true,
+          createdAt: true,
+          colors: true,
+          material: true,
           category: { select: { name: true, slug: true } },
           images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true, id: true } },
           reviews: { select: { rating: true } },
-        }
-      });
+        },
+      }),
+    ]);
 
-      // Transform data for frontend (Decimal to Number, etc.)
-      const transformedProducts = placeholderProducts.map(p => ({
-        ...p,createdAt:p.createdAt,
-        price: Number(p.price),category:p.category,colors:p.colors,material:p.material,
+    // --- 4. TRANSFORM DATA ---
+    const transformedProducts = rawItems.map((p) => {
+      const avgRating = p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0;
+
+      return {
+        ...p,
+        price: Number(p.price),
         discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
-        rating: p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0,
+        rating: avgRating,
         isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
         isOnSale: !!p.discountPrice,
 
-      }));
-
-      // Dummy pagination
-      return {
-        items: transformedProducts,
-        pagination: {
-          total: 100, // Replace with actual count
-          page: input.page,
-          limit: input.limit,
-          totalPages: Math.ceil(100 / input.limit),
-          hasNextPage: input.page * input.limit < 100
-        }
+        // Ensure arrays are not null
+        colors: p.colors || [],
+        material: p.material || [],
       };
-    }),
+    });
 
+    // Optional: Post-filter by strict rating if database sort wasn't enough
+    const finalItems = rating ? transformedProducts.filter((i) => i.rating >= rating) : transformedProducts;
+
+    return {
+      items: finalItems,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page * limit < total,
+      },
+    };
+  }),
   /**
    * Get Filter Options (Facets)
    * Fetches distinct values for categories, materials, colors from active products.
@@ -201,16 +272,12 @@ export const productRouter = router({
     });
 
     // 3. Process Materials
-    const uniqueMaterials = Array.from(
-      new Set(attributesData.flatMap((p) => p.material || []))
-    )
+    const uniqueMaterials = Array.from(new Set(attributesData.flatMap((p) => p.material || [])))
       .filter(Boolean) // Remove any empty strings or nulls
       .sort();
 
     // 4. Process Colors
-    const uniqueColors = Array.from(
-      new Set(attributesData.flatMap((p) => p.colors || []))
-    )
+    const uniqueColors = Array.from(new Set(attributesData.flatMap((p) => p.colors || [])))
       .filter(Boolean)
       .sort();
 
@@ -224,11 +291,12 @@ export const productRouter = router({
   /**
    * Get Product by Slug
    */
-  getBySlug: publicProcedure.input(
-    z.object({
-      slug: z.string(),
-    })
-  )
+  getBySlug: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      }),
+    )
     .query(async ({ input }) => {
       // FIX 2: Use findUnique so we can handle the null state manually below
       const product = await prisma.product.findUnique({
@@ -242,7 +310,8 @@ export const productRouter = router({
           description: true,
           material: true,
           colors: true,
-          slug: true, stock: true,
+          slug: true,
+          stock: true,
           category: {
             select: { name: true, slug: true },
           },
@@ -292,6 +361,31 @@ export const productRouter = router({
         colors: product.colors || [], // Add fallback if array is null
         material: product.material,
       };
-    }),
+    }) /**
+   * Real-time Search Suggestions
+   * Lightweight query for the Navbar dropdown
+   */,
+  getSuggestions: publicProcedure.input(z.object({ query: z.string().min(1) })).query(async ({ input }) => {
+    const products = await prisma.product.findMany({
+      where: {
+        isActive: true,
+        OR: [{ name: { contains: input.query, mode: "insensitive" } }, { category: { name: { contains: input.query, mode: "insensitive" } } }],
+      },
+      take: 5, // Limit to 5 results for the dropdown
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        price: true,
+        category: { select: { name: true } },
+        images: { where: { isPrimary: true }, take: 1, select: { url: true } },
+      },
+    });
 
+    return products.map((p) => ({
+      ...p,
+      price: Number(p.price),
+      image: p.images[0]?.url || "/placeholder.jpg",
+    }));
+  }),
 });

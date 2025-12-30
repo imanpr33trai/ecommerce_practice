@@ -1,21 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import type React from "react";
 import { useContext, useRef, useState } from "react";
+import type React from "react";
 
-import { ArrowLeftRight, Eye, Heart, ShoppingBag, Star } from "lucide-react";
+import { ArrowLeftRight, Heart, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
 
 import { Cart } from "@/feature/cart";
-import type { ProductSingle } from "@/feature/product";
 import { Wish } from "@/feature/wish";
 import { useWishQueries } from "@/feature/wish/client";
-import { authClient } from "@/lib/auth-client";
+import type { ProductSingle } from "@/feature/product";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
+import Button from "./Button";
 import ModalProductCardExpanded from "./ModalProductCardExpanded";
-import Button from "./ui/Button";
 
 type ProductCardProps = {
   product: ProductSingle;
@@ -23,12 +22,11 @@ type ProductCardProps = {
 };
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) => {
-  const { data: session } = authClient.useSession();
   const { toggleCart } = useContext(LayoutContext);
 
   const { addToRecentlyViewed, setQuickViewProduct, compareList, addToCompare } = useShop();
 
-  const { addItem, isAdding, updateQuantity } = Cart.hooks.useActions();
+  const { addItem, isAdding } = Cart.hooks.useActions();
   const { mutate: toggleWish } = Wish.hooks.useToggle();
 
   // Only check wishlist status if logged in, otherwise false
@@ -40,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const [alignment, setAlignment] = useState<"right" | "left">("right");
   const [isCollapsing, setIsCollapsing] = useState(false);
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLButtonElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInCompare = compareList.some((p) => p.id === product.id);
 
@@ -171,11 +169,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
     right: isLeftAlign ? "0" : "auto",
     borderRadius: isExpanded ? (isLeftAlign ? "0 2rem 2rem 0" : "2rem 0 0 2rem") : "2rem 2rem 0 0",
   };
-  const contentStyle = {
-    left: isLeftAlign ? "0" : "auto",
-    right: isLeftAlign ? "auto" : "0",
-    ...(isExpanded ? (isLeftAlign ? { right: "54%" } : { left: "54%" }) : isLeftAlign ? { right: "0" } : { left: "0" }),
-  };
+  const contentStyle: React.CSSProperties = (() => {
+    if (isExpanded) {
+      return isLeftAlign ? { right: "54%" } : { left: "54%" };
+    }
+
+    return isLeftAlign ? { left: "0", right: "auto" } : { right: "0", left: "auto" };
+  })();
+
   const wishlistButtonStyle = {
     top: isExpanded ? "calc(100% - 60px)" : "16px",
     right: isExpanded ? (isLeftAlign ? "16px" : "auto") : "16px",
@@ -197,17 +198,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   // }
   return (
     <>
-      <div className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-[100] opacity-100" : "z-[-1] opacity-0"}`} />
+      <div className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`} />
 
-      <div
-        className={`relative h-[440px] w-full transition-all duration-300 ${zIndexClass} ${className}`}
+      <button
+        className={`relative h-110 w-full transition-all duration-300 ${zIndexClass} ${className}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         ref={cardRef}
+        type="button"
       >
         <div
-          className={`absolute top-0 origin-top overflow-hidden rounded-[2rem] bg-white shadow-sm ring-1 ring-black/5 transition-all duration-1000 ease-premium will-change-transform ${isHovering ? "scale-[1.02] shadow-xl ring-black/10" : ""}
-            ${isExpanded ? "h-[440px] w-[185%] shadow-2xl ring-black/0" : "h-full w-full"}
+          className={`absolute top-0 origin-top overflow-hidden rounded-4xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-1000 ease-premium will-change-transform ${isHovering ? "scale-[1.02] shadow-xl ring-black/10" : ""}
+            ${isExpanded ? "h-110 w-[185%] shadow-2xl ring-black/0" : "h-full w-full"}
           `}
           style={containerStyle}
         >
@@ -215,9 +217,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             className="group relative block h-full w-full"
             href={`/product/${product.slug}`}
             onClick={handleClick}
+            scroll={false}
           >
             <div
-              className={`absolute top-0 overflow-hidden bg-[#F9F9F9] transition-all duration-1000 ease-premium ${isExpanded ? "h-full w-[54%]" : "h-[280px] w-full"}`}
+              className={`absolute top-0 overflow-hidden bg-[#F9F9F9] transition-all duration-1000 ease-premium ${isExpanded ? "h-full w-[54%]" : "h-70 w-full"}`}
               style={imageStyle}
             >
               {product.images.map((image) => (
@@ -241,19 +244,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 ))}
               </div>
 
-              <Button
-                className="absolute z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all duration-1000 ease-premium hover:scale-110 hover:bg-white active:scale-95"
+              <button
+                className="absolute z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all duration-1000 ease-premium hover:scale-110 hover:bg-white active:scale-95 "
                 onClick={handleWishlist}
                 style={wishlistButtonStyle}
+                type="button"
               >
                 <Heart
-                  className={`transition-colors duration-300 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-500"}`}
+                  className={`transition-colors duration-300  ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-500"}`}
                   size={20}
                 />
-              </Button>
+              </button>
 
               <div className={`-translate-x-1/2 absolute bottom-4 left-1/2 z-20 flex gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}>
-                <Button
+                {/*<Button
                   className="h-10 w-10 rounded-full"
                   onClick={handleQuickView}
                   size="icon"
@@ -261,9 +265,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                   variant="icon"
                 >
                   <Eye size={18} />
-                </Button>
+                </Button>*/}
                 <Button
-                  className={`h-10 w-10 rounded-full ${isInCompare ? "!bg-black !text-white" : ""}`}
+                  className={`h-10 w-10 rounded-full ${isInCompare ? "bg-black! text-white!" : ""}`}
                   onClick={handleCompare}
                   size="icon"
                   title="Compare"
@@ -275,7 +279,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             </div>
 
             <div
-              className={`absolute overflow-hidden bg-white transition-all duration-1000 ease-premium ${isExpanded ? "top-0 h-full w-[46%]" : "top-[280px] h-[160px] w-full"}`}
+              className={`absolute overflow-hidden bg-white transition-all duration-1000 ease-premium ${isExpanded ? "top-0 h-full w-[46%]" : "top-70 h-40 w-full"}`}
               style={contentStyle}
             >
               <div className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}>
@@ -320,7 +324,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             </div>
           </Link>
         </div>
-      </div>
+      </button>
     </>
   );
 };

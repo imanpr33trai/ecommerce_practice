@@ -1,1 +1,0 @@
-// Unused - Moved to components/ProductCard.tsx

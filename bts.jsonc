@@ -9,16 +9,9 @@
   "orm": "prisma",
   "backend": "hono",
   "runtime": "bun",
-  "frontend": [
-    "next"
-  ],
-  "addons": [
-    "biome",
-    "turborepo"
-  ],
-  "examples": [
-    "todo"
-  ],
+  "frontend": ["next"],
+  "addons": ["biome", "turborepo"],
+  "examples": ["todo"],
   "auth": "better-auth",
   "packageManager": "bun",
   "dbSetup": "none",

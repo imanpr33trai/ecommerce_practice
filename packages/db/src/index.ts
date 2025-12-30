@@ -3,21 +3,17 @@ import dotenv from "dotenv";
 
 import { PrismaClient } from "../prisma/generated/client";
 
-// dotenv.config({
-//   path: "../../../apps/server/.env",
-// });
+dotenv.config({
+  path: "../../.env",
+  debug: true,
+});
 console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
 const adapter = new PrismaPg({
-  connectionString: import.meta.env.DATABASE_URL || "postgresql://postgres:12345@localhost:5432/ecommerce",
+  connectionString: process.env.DATABASE_URL || "postgresql://postgres:12345@localhost:5432/ecommerce",
 });
 const prisma = new PrismaClient({ adapter, errorFormat: "pretty" });
 
 export default prisma;
 
-export {
-  OrderStatus,
-  PaymentStatus,
-  Prisma,
-  UserRole,
-} from "../prisma/generated/client";
+export { $Enums, AddressType, OrderStatus, PaymentStatus, Prisma, UserRole } from "../prisma/generated/client";

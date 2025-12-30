@@ -17,3 +17,7 @@ enum PaymentStatus {
   FAILED
   REFUNDED
 }
+enum AddressType {
+  SHIPPING
+  BILLING
+}

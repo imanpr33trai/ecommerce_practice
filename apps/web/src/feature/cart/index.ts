@@ -4,11 +4,11 @@ import { cartOptions } from "./server";
 import * as CartTypes from "./types";
 
 export const Cart = {
-    types: CartTypes,
-    keys: cartKeys,
-    // server: cartOptions,
-    hooks: {
-        ...useCartQueries,
-        ...useCartMutations,
-    },
+  types: CartTypes,
+  keys: cartKeys,
+  // server: cartOptions,
+  hooks: {
+    ...useCartQueries,
+    ...useCartMutations,
+  },
 };

@@ -29,4 +29,4 @@ export interface Review {
   avatar: string;
 }
 
-export type Category = 'All' | 'Table' | 'Dressers' | 'Sofa' | 'Chair' | 'Bed' | 'Lamps';
+export type Category = "All" | "Table" | "Dressers" | "Sofa" | "Chair" | "Bed" | "Lamps";

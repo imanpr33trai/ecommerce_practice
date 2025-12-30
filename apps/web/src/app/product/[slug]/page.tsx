@@ -6,9 +6,10 @@ import { use, useContext, useState } from "react";
 import { Heart, PenTool, ShieldCheck, Star, Truck } from "lucide-react";
 import { toast } from "sonner";
 
+import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import BentoCard from "@/components/ui/BentoCard";
-import Button from "@/components/ui/Button";
+import Button from "@/components/Button";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 // import { PRODUCTS } from "@/constants";
 import { LayoutContext } from "@/context/LayoutContext";
 import { useShop } from "@/context/ShopContext";
@@ -25,9 +26,7 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
 
   // const product = PRODUCT.find((p) => p.id === id) || product[0];
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <LoadingSkeleton type="detail" />;
 
   if (!product || isError || error) {
     return <div>{error?.message}</div>;
@@ -37,7 +36,8 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
 
   const handleWishlist = () => {
     toggleWishlist(product);
-    toast(isWishlisted ? "Removed from wishlist" : "Added to wishlist", isWishlisted ? "info" : "success");
+    isWishlisted ? toast.info("Removed from wishlist") : toast.success("Added to wishlist");
+    // toast(isWishlisted ? "Removed from wishlist" : "Added to wishlist", isWishlisted ? "info" : "success");
   };
 
   const handleAddToCart = () => {
@@ -52,17 +52,17 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
     }
   };
 
-  // const relatedProducts = product.id.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+  // const relatedProducts = product.id.match((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   return (
-    <div className="p-4 md:px-8 max-w-[1600px] mx-auto pb-12 animate-fade-in">
+    <div className="p-4 md:px-8 max-w-400 mx-auto pb-12 animate-fade-in">
       <Breadcrumbs />
       {/* <Link href={{pathname:"/product"}} className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-black mb-6">
         <ArrowLeft size={16} /> Back to Collection
       </Link> */}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-16">
-        <BentoCard className="lg:col-span-8 min-h-[500px] lg:h-[650px] bg-[#F4F4F4] relative group overflow-hidden">
+        <BentoCard className="lg:col-span-8 min-h-125 lg:h-162.5 bg-[#F4F4F4] relative group overflow-hidden">
           {product.images.map((image) => (
             <Image
               src={image.url}
@@ -75,6 +75,7 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
           ))}
           <button
             onClick={handleWishlist}
+            type="button"
             className="absolute top-6 right-6 p-3 rounded-full bg-white/90 backdrop-blur shadow-md transition-all duration-300 hover:scale-110 active:scale-95"
           >
             <Heart
@@ -112,6 +113,7 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
               {(product.colors || ["#D9D9D9", "#3A3A3A", "#8C7A6B"]).map((color, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => setActiveColor(color)}
                   className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${activeColor === color ? "border-black scale-110" : "border-transparent"}`}
                   style={{ backgroundColor: color }}
@@ -188,7 +190,8 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
           <Image
             src="https://images.unsplash.com/photo-1581539250439-c96689b516dd?auto=format&fit=crop&q=80&w=1200"
             alt="Craftsmanship"
-            className="w-full h-full object-cover" width={100}
+            className="w-full h-full object-cover"
+            width={100}
             height={100}
           />
         </div>

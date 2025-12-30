@@ -4,7 +4,7 @@ import { ArrowLeftRight, ArrowRight, Check, Eye } from "lucide-react";
 
 import type { ProductSingle } from "@/feature/product";
 
-import Button from "./ui/Button";
+import Button from "./Button";
 
 type ModalProductCardExpandedProps = {
   product: ProductSingle;
@@ -24,11 +24,29 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({ pro
     <p className="line-clamp-2 text-gray-500 text-sm leading-relaxed">{product.description} Crafted with precision to elevate your living space.</p>
 
     <div className="flex gap-2">
-      <Button className="h-10 flex-1 border-none bg-gray-50 font-bold text-xs uppercase tracking-wider hover:bg-gray-100" onClick={onQuickView} size="sm" variant="secondary">
-        <Eye className="mr-2" size={14} /> Quick View
-      </Button>
-      <Button className={`h-10 flex-1 border-none font-bold text-xs uppercase tracking-wider ${isInCompare ? "bg-black text-white hover:bg-gray-800" : "bg-gray-50 hover:bg-gray-100"}`} onClick={onCompare} size="sm" variant="secondary">
-        <ArrowLeftRight className="mr-2" size={14} /> Compare
+      {/*<Button
+        className="h-10 flex-1 border-none bg-gray-50 font-bold text-xs uppercase tracking-wider hover:bg-gray-100"
+        onClick={onQuickView}
+        size="sm"
+        variant="secondary"
+      >
+        <Eye
+          className="mr-2"
+          size={14}
+        />{" "}
+        Quick View
+      </Button>*/}
+      <Button
+        className={`h-10 flex-1 border-none font-bold text-xs uppercase tracking-wider ${isInCompare ? "bg-black text-white hover:bg-gray-800" : "bg-gray-50 hover:bg-gray-100"}`}
+        onClick={onCompare}
+        size="sm"
+        variant="secondary"
+      >
+        <ArrowLeftRight
+          className="mr-2"
+          size={14}
+        />{" "}
+        Compare
       </Button>
     </div>
 
@@ -42,18 +60,33 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({ pro
             onClick={(e) => onSelectColor(e, color)}
             style={{ backgroundColor: color }}
           >
-            {selectedColor === color && <Check className="text-white mix-blend-difference" size={14} />}
+            {selectedColor === color && (
+              <Check
+                className="text-white mix-blend-difference"
+                size={14}
+              />
+            )}
           </Button>
         ))}
       </div>
     </div>
 
     <div className="mt-auto flex gap-3 pt-2">
-      <Button className={`hover:-translate-y-0.5 h-12 flex-1 font-bold text-sm shadow-lg transition-all duration-300 hover:shadow-xl ${isAdding ? "bg-green-600" : "bg-black text-white hover:bg-gray-800"}`} onClick={onAddToCart}>
+      <Button
+        className={`hover:-translate-y-0.5 h-12 flex-1 font-bold text-sm shadow-lg transition-all duration-300 hover:shadow-xl ${isAdding ? "bg-green-600" : "bg-black text-white hover:bg-gray-800"}`}
+        onClick={onAddToCart}
+      >
         {isAdding ? "Added" : "Add to Cart"}
       </Button>
-      <Button className="h-12 border border-gray-100 px-5 hover:border-gray-300 hover:bg-gray-50" variant="secondary">
-        Details <ArrowRight className="ml-2" size={16} />
+      <Button
+        className="h-12 border border-gray-100 px-5 hover:border-gray-300 hover:bg-gray-50"
+        variant="secondary"
+      >
+        Details{" "}
+        <ArrowRight
+          className="ml-2"
+          size={16}
+        />
       </Button>
     </div>
   </div>

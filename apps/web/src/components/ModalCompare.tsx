@@ -7,13 +7,10 @@ import { Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { useShop } from "../context/ShopContext";
-import Button from "./ui/Button";
-
-
+import Button from "./Button";
 
 const ModalCompare: React.FC = () => {
   const { compareList, isCompareOpen, setCompareOpen, removeFromCompare } = useShop();
-
 
   if (!isCompareOpen) {
     return null;
@@ -32,6 +29,7 @@ const ModalCompare: React.FC = () => {
           </h2>
           <button
             onClick={() => setCompareOpen(false)}
+            type="button"
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X size={20} />

@@ -3,8 +3,8 @@ import { createAuthClient } from "better-auth/react";
 import type { auth } from "@ecomerceNextjs/auth";
 
 export const authClient = createAuthClient({
-	baseURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
-	plugins: [inferAdditionalFields<typeof auth>()],
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
+  plugins: [inferAdditionalFields<typeof auth>()],
 });
 
-export const { signIn, signUp, signOut, useSession,getSession } = authClient
+export const { signIn, signUp, signOut, useSession, getSession } = authClient;

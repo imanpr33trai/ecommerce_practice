@@ -7,9 +7,9 @@ import Link from "next/link";
 
 import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
 
+import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import BentoCard from "@/components/ui/BentoCard";
-import Button from "@/components/ui/Button";
+import Button from "@/components/Button";
 import { Cart } from "@/feature/cart";
 
 export default function CartPage() {
@@ -149,7 +149,7 @@ export default function CartPage() {
             </div>
 
             <Link
-              href="/checkout"
+              href={{ pathname: "/checkout" }}
               className="block w-full"
             >
               <Button className="w-full group !justify-between px-6">
