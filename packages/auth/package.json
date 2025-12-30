@@ -9,7 +9,9 @@
     }
   },
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "devDependencies": {
     "@ecomerceNextjs/config": "workspace:*"
   },
@@ -17,8 +19,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "better-auth": "catalog:",
-    "dotenv": "catalog:",
+    "better-auth": "^1.4.0",
+    "dotenv": "^17.2.2",
     "zod": "^4.1.11",
     "@ecomerceNextjs/db": "workspace:*"
   }

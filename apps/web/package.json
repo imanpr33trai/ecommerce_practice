@@ -1,16 +1,17 @@
 {
   "dependencies": {
     "@ecomerceNextjs/api": "workspace:*",
+    "@workspace/ui": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
-    "@prisma/client": "catalog:",
+    "@prisma/client": "^7.0.0",
     "@tanstack/react-form": "^1.12.3",
     "@tanstack/react-query": "^5.90.12",
-    "@trpc/client": "catalog:",
-    "@trpc/server": "catalog:",
+    "@trpc/client": "^11.8.0",
+    "@trpc/server": "^11.8.0",
     "@trpc/tanstack-react-query": "^11.5.0",
     "babel-plugin-react-compiler": "^1.0.0",
-    "better-auth": "catalog:",
+    "better-auth": "^1.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -21,7 +22,7 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "sonner": "^2.0.5",
-    "superjson": "catalog:",
+    "superjson": "^2.2.6",
     "tailwind-merge": "^3.3.1",
     "tw-animate-css": "^1.3.4",
     "zod": "^4.1.12"
@@ -40,8 +41,9 @@
   "private": true,
   "scripts": {
     "build": "next build",
+       "start": "next start -p 3001",
     "dev": "next dev --port=3001",
-    "start": "next start",
+
     "check-types": "tsc -b",
     "lint": "next lint"
   },

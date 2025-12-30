@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "ui:add": "bunx shadcn@latest add"
+    "ui:add": "bunx shadcn@latest add","build": "tsc"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",

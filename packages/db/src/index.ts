@@ -16,4 +16,4 @@ const prisma = new PrismaClient({ adapter, errorFormat: "pretty" });
 
 export default prisma;
 
-export { $Enums, AddressType, OrderStatus, PaymentStatus, Prisma, UserRole } from "../prisma/generated/client";
+export { $Enums, AddressType, OrderStatus, PaymentStatus, Prisma, PrismaClient, UserRole } from "../prisma/generated/client";

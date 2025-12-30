@@ -1,4 +1,4 @@
-import type { Prisma, PrismaClient } from "../../../db/prisma/generated/client";
+import type { Prisma, PrismaClient } from "@ecomerceNextjs/db";
 
 export async function getDescendantCategoryIds(categoryId: string, prismaClient: PrismaClient | Prisma.TransactionClient): Promise<string[]> {
   const categoryWithChildren = await prismaClient.category.findUnique({

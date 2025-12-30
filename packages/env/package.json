@@ -2,9 +2,11 @@
   "main": "src/schema.ts",
   "name": "@ecomerceNextjs/env",
   "type": "module",
-  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "version": "1.0.0",
   "devDependencies": {
-    "zod": "catalog:"
+    "zod": "^4.2.1"
   }
 }

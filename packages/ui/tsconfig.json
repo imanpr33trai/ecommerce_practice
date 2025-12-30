@@ -2,10 +2,14 @@
   "extends": "@ecomerceNextjs/config/react-library.json",
   "compilerOptions": {
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "bundler",  "outDir": "dist",
+      "declaration": true,
+      "emitDeclarationOnly": false,
+    "allowImportingTsExtensions": false,
     "baseUrl": ".",
     "paths": {
-      "@workspace/ui/*": ["./src/*"]
+      "@workspace/ui/*": ["./src/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["."],
