@@ -7,7 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "composite": true,
+    "composite": true,"rootDir": "src",
     "noEmit": false
   },
   "include": ["src/**/*"],

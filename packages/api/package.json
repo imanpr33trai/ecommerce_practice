@@ -10,7 +10,8 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@ecomerceNextjs/config": "workspace:*",
