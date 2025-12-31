@@ -22,7 +22,8 @@
   "name": "server",
   "scripts": {
     "build": "tsdown",
-    "check-types": "tsc -b",
+    "type-check": "tsc -b",
+    "lint": "biome check .",
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "bun run --hot src/index.ts",
     "start": "node dist/index.mjs"

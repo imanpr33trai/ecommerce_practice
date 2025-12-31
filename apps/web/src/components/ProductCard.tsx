@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Img from "@/components/AppImage";
 import Link from "next/link";
 import { useContext, useRef, useState } from "react";
 import type React from "react";
@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const [alignment, setAlignment] = useState<"right" | "left">("right");
   const [isCollapsing, setIsCollapsing] = useState(false);
 
-  const cardRef = useRef<HTMLButtonElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInCompare = compareList.some((p) => p.id === product.id);
 
@@ -200,12 +200,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
     <>
       <div className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`} />
 
-      <button
+      <div
         className={`relative h-110 w-full transition-all duration-300 ${zIndexClass} ${className}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         ref={cardRef}
-        type="button"
       >
         <div
           className={`absolute top-0 origin-top overflow-hidden rounded-4xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-1000 ease-premium will-change-transform ${isHovering ? "scale-[1.02] shadow-xl ring-black/10" : ""}
@@ -224,7 +223,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
               style={imageStyle}
             >
               {product.images.map((image) => (
-                <Image
+                <Img
                   alt={image.altText || product.name}
                   width={100}
                   height={100}
@@ -324,7 +323,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             </div>
           </Link>
         </div>
-      </button>
+      </div>
     </>
   );
 };

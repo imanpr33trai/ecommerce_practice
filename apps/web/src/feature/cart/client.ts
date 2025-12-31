@@ -20,6 +20,18 @@ export const useCartQueries = {
       }),
     );
   },
+  useClearCart: () => {
+    const utils = useQueryClient();
+    return useMutation(
+      trpc.cart.clear.mutationOptions({
+        onSuccess: () => {
+          toast.success("Cart cleared");
+          utils.invalidateQueries({ queryKey: trpc.cart.get.queryKey() }); // Refresh UI
+        },
+        onError: (err) => toast.error(err.message),
+      }),
+    );
+  },
 };
 
 export const useCartMutations = {

@@ -2,7 +2,7 @@
 
 // import React from 'react';
 
-import Image from "next/image";
+import Image from "@/components/AppImage";
 import Link from "next/link";
 
 import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";

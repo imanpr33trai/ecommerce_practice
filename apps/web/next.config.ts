@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites(){
+    return [
+      {source:"/api/:path*",destination: "http://localhost:3001/api/:path*", // Proxy to Hono
+            },
+            {
+              source: "/trpc/:path*",
+              destination: "http://localhost:3001/trpc/:path*", // Proxy tRPC too
+            },
+    ]
+  }
 };
 
 export default nextConfig;

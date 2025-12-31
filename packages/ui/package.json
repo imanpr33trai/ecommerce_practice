@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit",
     "ui:add": "bunx shadcn@latest add","build": "tsc"
   },
   "dependencies": {

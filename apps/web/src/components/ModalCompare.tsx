@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/AppImage";
 import type React from "react";
 
 import { Trash2, X } from "lucide-react";

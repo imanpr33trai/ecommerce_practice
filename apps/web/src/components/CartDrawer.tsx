@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/AppImage";
 import Link from "next/link";
 import type React from "react";
 

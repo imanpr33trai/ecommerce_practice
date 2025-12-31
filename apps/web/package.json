@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@ecomerceNextjs/api": "workspace:*",
-    "@workspace/ui": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@prisma/client": "^7.0.0",
@@ -10,8 +9,11 @@
     "@trpc/client": "^11.8.0",
     "@trpc/server": "^11.8.0",
     "@trpc/tanstack-react-query": "^11.5.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "@workspace/ui": "workspace:*",
     "babel-plugin-react-compiler": "^1.0.0",
     "better-auth": "^1.4.0",
+    "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -41,11 +43,10 @@
   "private": true,
   "scripts": {
     "build": "next build",
-       "start": "next start -p 3001",
+    "start": "next start -p 3001",
     "dev": "next dev --port=3001",
-
-    "check-types": "tsc -b",
-    "lint": "next lint"
+    "type-check": "tsc -b",
+    "lint": "biome check . && next lint"
   },
   "version": "0.1.0"
 }

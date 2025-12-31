@@ -1,26 +1,29 @@
 "use client";
 
-import Image from "@/components/AppImage";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button as ShadcnButton } from "@comp/button";
-import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ArrowRight, Heart, ShieldCheck, ShoppingBag, Star, Truck, X } from "lucide-react";
+import { Skeleton } from "@comp/skeleton";
+import { ArrowRight, Heart, ShoppingBag, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
+import Image from "@/components/AppImage";
+import Img from "@/components/AppImage";
 import Button from "@/components/Button";
-import { useShop } from "@/context/ShopContext";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { Cart } from "@/feature/cart";
 import { Product } from "@/feature/product";
 import { useWishMutations, useWishQueries } from "@/feature/wish/client";
 import { authClient } from "@/lib/auth-client";
+import type { ProductDetailOutput } from "@/feature/product/types";
 
-// Next.js 15+ Params are Promises
-export default function ModalProduct({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
+interface ProductModalClientProps {
+  slug: string;
+}
+
+export default function ProductModalClient({ slug }: ProductModalClientProps) {
   const router = useRouter();
-  const { quickViewProduct, setQuickViewProduct } = useShop();
 
   // --- HOOKS ---
   const { data: product, isLoading } = Product.hooks.useDetail(slug);
@@ -28,16 +31,16 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   const { mutate: toggleWish } = useWishMutations.useToggle();
   const { data: session } = authClient.useSession();
 
-  // Safe access to wishlist status (requires product id)
-
   // --- UI STATE ---
   const [activeColor, setActiveColor] = useState<string>("");
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const productId = product?.id;
+
   // Initialize color when product loads
   useEffect(() => {
     if (product?.colors && product.colors.length > 0) {
-      setActiveColor(product.colors[0] || "No Color");
+      setActiveColor(product.colors[0] || "select Any Color");
     }
   }, [product]);
 
@@ -57,12 +60,22 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
   // --- HANDLERS ---
 
+  const isWishlisted = useWishQueries.useIsWishlisted(product?.id || null);
+
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
+
+  if (!product) {
+    toast.error("product is undefined");
+    return;
+  }
+
   const handleAddToCart = () => {
     if (!session) return toast.error("Please login to add to cart");
-    if (!product) return;
 
     addItem({
-      productId: product.id,
+      productId: product?.id,
       quantity: 1,
       color: activeColor,
     });
@@ -70,15 +83,8 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
   const handleWishlist = () => {
     if (!session) return toast.error("Please login to save items");
-    if (!product) return;
-    toggleWish({ productId: product.id });
+    toggleWish({ productId: product?.id });
   };
-
-  // --- RENDER ---
-
-  const isWishlisted = useWishQueries.useIsWishlisted(product?.id ?? null);
-  if (isLoading) return null; // Or a transparent spinner
-  if (!product) return <Skeleton />;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
@@ -98,6 +104,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
       >
         <button
           onClick={onDismiss}
+          type="button"
           className="absolute top-3 right-3 z-20 p-2 bg-white/80 backdrop-blur-md rounded-full hover:bg-black hover:text-white transition-all duration-300"
         >
           <X size={24} />
@@ -105,8 +112,8 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
         {/* Left: Image */}
         <div className="w-full md:w-[60%] h-[40vh] md:h-full bg-gray-100 relative group">
-          {product.images[0] && (
-            <Image
+          {product?.images[0] && (
+            <Img
               src={product.images[0].url}
               alt={product.name}
               fill
@@ -114,8 +121,8 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
             />
           )}
           <div className="absolute bottom-8 left-8 flex gap-3">
-            {product.isNew && <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">New Arrival</span>}
-            {product.isOnSale && <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">Sale</span>}
+            {product?.isNew && <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">New Arrival</span>}
+            {product?.isOnSale && <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">Sale</span>}
           </div>
         </div>
 
@@ -123,31 +130,31 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
         <div className="w-full md:w-[40%] flex flex-col h-full bg-white overflow-y-auto no-scrollbar p-8 md:p-10">
           <div className="mb-auto">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">{product.category?.name}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">{product?.category?.name}</span>
               <div className="flex items-center gap-1 text-yellow-500 bg-yellow-50 px-2 py-1 rounded-lg">
                 <Star
                   size={14}
                   fill="currentColor"
                 />
-                <span className="text-sm font-bold text-black">{product.rating?.toFixed(1) || "New"}</span>
+                <span className="text-sm font-bold text-black">{product?.rating?.toFixed(1) || "New"}</span>
               </div>
             </div>
 
-            <h2 className="text-4xl font-light mb-4 leading-tight">{product.name}</h2>
+            <h2 className="text-4xl font-light mb-4 leading-tight">{product?.name}</h2>
 
             <div className="flex items-baseline gap-3 mb-8">
-              <span className="text-3xl font-medium">${Number(product.price).toFixed(2)}</span>
-              {product.discountPrice && <span className="text-lg text-gray-400 line-through">${Number(product.discountPrice).toFixed(2)}</span>}
+              <span className="text-3xl font-medium">${Number(product?.price).toFixed(2)}</span>
+              {product?.discountPrice && <span className="text-lg text-gray-400 line-through">${Number(product?.discountPrice).toFixed(2)}</span>}
             </div>
 
-            <p className="text-gray-600 leading-relaxed mb-8 text-lg">{product.description || "No description available."}</p>
+            <p className="text-gray-600 leading-relaxed mb-8 text-lg">{product?.description || "No description available."}</p>
 
             {/* Colors */}
-            {product.colors && product.colors.length > 0 && (
+            {product?.colors && product.colors.length > 0 && (
               <div className="mb-8">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-4">Select Finish</span>
                 <div className="flex gap-4">
-                  {product.colors.map((color) => (
+                  {product?.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setActiveColor(color)}
@@ -167,9 +174,9 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
               <Button
                 className="flex-1 h-14 text-lg group bg-black text-white hover:bg-gray-800"
                 onClick={handleAddToCart}
-                disabled={isAdding || product.stock === 0}
+                disabled={isAdding || product?.stock === 0}
               >
-                {isAdding ? "Adding..." : product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                {isAdding ? "Adding..." : product?.stock === 0 ? "Out of Stock" : "Add to Cart"}
                 <ShoppingBag
                   size={20}
                   className="ml-2 group-hover:-translate-y-1 transition-transform"
@@ -191,7 +198,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
               variant="link"
               onClick={() => {
                 // Hard Navigation to bypass modal
-                window.location.href = `/product/${product.slug}`;
+                window.location.href = `/product/${product?.slug}`;
               }}
               className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black flex items-center justify-center gap-1 mx-auto mt-2"
             >

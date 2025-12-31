@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/AppImage";
 import { use, useContext, useState } from "react";
 
 import { Heart, PenTool, ShieldCheck, Star, Truck } from "lucide-react";
@@ -13,46 +13,42 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 // import { PRODUCTS } from "@/constants";
 import { LayoutContext } from "@/context/LayoutContext";
 import { useShop } from "@/context/ShopContext";
+import { Cart } from "@/feature/cart";
 import { Product } from "@/feature/product";
+import { useWishMutations, useWishQueries } from "@/feature/wish/client";
+import { authClient } from "@/lib/auth-client";
 
 export default function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const { toggleCart } = useContext(LayoutContext);
   // const { addToast } = useToast();
   const [activeColor, setActiveColor] = useState("#D9D9D9");
-  const { addToCart, toggleWishlist, isInWishlist, cart } = useShop();
+
+  const { addItem, isAdding } = Cart.hooks.useActions();
+  const { mutate: toggleWish } = useWishMutations.useToggle();
+  const { data: session } = authClient.useSession();
 
   const { data: product, isLoading, isError, error } = Product.hooks.useDetail(slug);
 
-  // const product = PRODUCT.find((p) => p.id === id) || product[0];
-
-  if (isLoading) return <LoadingSkeleton type="detail" />;
-
-  if (!product || isError || error) {
-    return <div>{error?.message}</div>;
-  }
-
-  const isWishlisted = isInWishlist(product.id);
-
-  const handleWishlist = () => {
-    toggleWishlist(product);
-    isWishlisted ? toast.info("Removed from wishlist") : toast.success("Added to wishlist");
-    // toast(isWishlisted ? "Removed from wishlist" : "Added to wishlist", isWishlisted ? "info" : "success");
-  };
+  const isWishlisted = useWishQueries.useIsWishlisted(product?.id || null);
 
   const handleAddToCart = () => {
-    const existingItem = cart.find((item) => item.id === product.id);
-    addToCart(product, { color: activeColor });
-    toggleCart();
+    if (!session) return toast.error("Please login to add to cart");
 
-    if (existingItem) {
-      toast.info(`Quantity updated for ${product.name}`);
-    } else {
-      toast.success(`Added ${product.name} to cart`);
-    }
+    addItem({
+      productId: product?.id,
+      quantity: 1,
+      color: activeColor,
+    });
   };
 
+  const handleWishlist = () => {
+    if (!session) return toast.error("Please login to save items");
+    toggleWish({ productId: product?.id });
+  };
   // const relatedProducts = product.id.match((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+  if (isLoading) return <LoadingSkeleton type="detail" />;
 
   return (
     <div className="p-4 md:px-8 max-w-400 mx-auto pb-12 animate-fade-in">
@@ -66,6 +62,7 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
           {product.images.map((image) => (
             <Image
               src={image.url}
+              lo
               key={image.id}
               width={100}
               height={100}

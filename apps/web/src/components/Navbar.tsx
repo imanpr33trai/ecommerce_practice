@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/AppImage";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -85,9 +85,9 @@ const Navbar: React.FC = () => {
   const { data: suggestions, isLoading: isSuggestionsLoading } = Product.hooks.useSuggestions(deboucedQuery);
 
   const isActive = (path: string) => location === path;
-  if (!wishCount) {
-    return <div>wishlist is undefined</div>;
-  }
+  // if (!wishCount) {
+  //   return <div>wishlist is undefined</div>;
+  // }
 
   // Calculate count safely (default to 0 if loading/error/guest)
   const cartItemCount = cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;

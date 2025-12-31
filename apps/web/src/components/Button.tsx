@@ -32,6 +32,7 @@ const Button: React.FC<ButtonProps> = ({ children, variant = "primary", size = "
       {...props}
     >
       {children}
+
     </button>
   );
 };

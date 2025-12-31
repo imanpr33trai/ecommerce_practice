@@ -26,6 +26,8 @@
     "typescript": "^5"
   },
   "scripts": {"build": "prisma generate && tsc",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",

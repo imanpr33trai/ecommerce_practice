@@ -30,11 +30,12 @@ export const useWishQueries = {
    * Hook: Check if item is in wishlist
    * Usage: Product Cards (Heart Icon)
    */
-  useIsWishlisted: (productId: string) => {
+  useIsWishlisted: (productId: string | null) => {
     const { data: session } = authClient.useSession();
     // if(session){
     //   return
     // }
+    const enabled = Boolean(session && productId);
     const {
       data: ids,
       error,
@@ -42,20 +43,21 @@ export const useWishQueries = {
     } = useQuery(
       trpc.wish.getIds.queryOptions(undefined, {
         staleTime: 1000 * 60 * 10, // 10 minutes
-        enabled: !!session,
+        enabled,
       }),
     );
+    if (!enabled || !ids || !productId) return false;
+    // if (isLoading) {
+    //   console.log("useIsWishlisted is isLoading...");
+    //   return;
+    // }
 
-    if (isLoading) {
-      console.log("useIsWishlisted is isLoading...");
-      return;
-    }
+    // if (error) {
+    //   console.log(`useIsWishlisted ${error.message}`);
+    //   return;
+    // }
 
-    if (error) {
-      console.log(`useIsWishlisted ${error.message}`);
-      return;
-    }
-    return !!ids?.includes(productId);
+    return ids.includes(productId);
   },
 };
 
