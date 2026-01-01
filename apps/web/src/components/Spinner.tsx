@@ -1,40 +1,44 @@
-import { cn } from '@/lib/utils';
-import {
-  LoaderCircleIcon,
-  LoaderIcon,
-  LoaderPinwheelIcon,
-  type LucideProps,
-} from 'lucide-react';
+import { LoaderCircleIcon, LoaderIcon, LoaderPinwheelIcon, type LucideProps } from "lucide-react";
 
-type SpinnerVariantProps = Omit<SpinnerProps, 'variant'>;
+import { cn } from "@/lib/utils";
+
+type SpinnerVariantProps = Omit<SpinnerProps, "variant">;
 
 const Default = ({ className, ...props }: SpinnerVariantProps) => (
-  <LoaderIcon className={cn('animate-spin', className)} {...props} />
+  <LoaderIcon
+    className={cn("animate-spin", className)}
+    {...props}
+  />
 );
 
 const Circle = ({ className, ...props }: SpinnerVariantProps) => (
-  <LoaderCircleIcon className={cn('animate-spin', className)} {...props} />
+  <LoaderCircleIcon
+    className={cn("animate-spin", className)}
+    {...props}
+  />
 );
 
 const Pinwheel = ({ className, ...props }: SpinnerVariantProps) => (
-  <LoaderPinwheelIcon className={cn('animate-spin', className)} {...props} />
+  <LoaderPinwheelIcon
+    className={cn("animate-spin", className)}
+    {...props}
+  />
 );
 
-const CircleFilled = ({
-  className,
-  size = 24,
-  ...props
-}: SpinnerVariantProps) => (
-  <div className="relative" style={{ width: size, height: size }}>
+const CircleFilled = ({ className, size = 24, ...props }: SpinnerVariantProps) => (
+  <div
+    className="relative"
+    style={{ width: size, height: size }}
+  >
     <div className="absolute inset-0 rotate-180">
       <LoaderCircleIcon
-        className={cn('animate-spin', className, 'text-foreground opacity-20')}
+        className={cn("animate-spin", className, "text-foreground opacity-20")}
         size={size}
         {...props}
       />
     </div>
     <LoaderCircleIcon
-      className={cn('relative animate-spin', className)}
+      className={cn("relative animate-spin", className)}
       size={size}
       {...props}
     />
@@ -51,7 +55,12 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
       {...props}
     >
       <title>Loading...</title>
-      <circle cx="4" cy="12" r="2" fill="currentColor">
+      <circle
+        cx="4"
+        cy="12"
+        r="2"
+        fill="currentColor"
+      >
         <animate
           id="ellipsis1"
           begin="0;ellipsis3.end+0.25s"
@@ -62,7 +71,12 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
           keySplines=".33,.66,.66,1;.33,0,.66,.33"
         />
       </circle>
-      <circle cx="12" cy="12" r="2" fill="currentColor">
+      <circle
+        cx="12"
+        cy="12"
+        r="2"
+        fill="currentColor"
+      >
         <animate
           begin="ellipsis1.begin+0.1s"
           attributeName="cy"
@@ -72,7 +86,12 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
           keySplines=".33,.66,.66,1;.33,0,.66,.33"
         />
       </circle>
-      <circle cx="20" cy="12" r="2" fill="currentColor">
+      <circle
+        cx="20"
+        cy="12"
+        r="2"
+        fill="currentColor"
+      >
         <animate
           id="ellipsis3"
           begin="ellipsis1.begin+0.2s"
@@ -97,8 +116,16 @@ const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
     {...props}
   >
     <title>Loading...</title>
-    <g fill="none" fillRule="evenodd" strokeWidth="2">
-      <circle cx="22" cy="22" r="1">
+    <g
+      fill="none"
+      fillRule="evenodd"
+      strokeWidth="2"
+    >
+      <circle
+        cx="22"
+        cy="22"
+        r="1"
+      >
         <animate
           attributeName="r"
           begin="0s"
@@ -120,7 +147,11 @@ const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
           repeatCount="indefinite"
         />
       </circle>
-      <circle cx="22" cy="22" r="1">
+      <circle
+        cx="22"
+        cy="22"
+        r="1"
+      >
         <animate
           attributeName="r"
           begin="-0.9s"
@@ -223,8 +254,8 @@ const Infinite = ({ size = 24, ...props }: SpinnerVariantProps) => (
       d="M24.3 30C11.4 30 5 43.3 5 50s6.4 20 19.3 20c19.3 0 32.1-40 51.4-40 C88.6 30 95 43.3 95 50s-6.4 20-19.3 20C56.4 70 43.6 30 24.3 30z"
       strokeLinecap="round"
       style={{
-        transform: 'scale(0.8)',
-        transformOrigin: '50px 50px',
+        transform: "scale(0.8)",
+        transformOrigin: "50px 50px",
       }}
     >
       <animate
@@ -240,31 +271,31 @@ const Infinite = ({ size = 24, ...props }: SpinnerVariantProps) => (
 
 export type SpinnerProps = LucideProps & {
   variant?:
-    | 'default'
-    | 'circle'
-    | 'pinwheel'
-    | 'circle-filled'
-    | 'ellipsis'
-    | 'ring'
-    | 'bars'
-    | 'infinite';
+    | "default"
+    | "circle"
+    | "pinwheel"
+    | "circle-filled"
+    | "ellipsis"
+    | "ring"
+    | "bars"
+    | "infinite";
 };
 
 export const Spinner = ({ variant, ...props }: SpinnerProps) => {
   switch (variant) {
-    case 'circle':
+    case "circle":
       return <Circle {...props} />;
-    case 'pinwheel':
+    case "pinwheel":
       return <Pinwheel {...props} />;
-    case 'circle-filled':
+    case "circle-filled":
       return <CircleFilled {...props} />;
-    case 'ellipsis':
+    case "ellipsis":
       return <Ellipsis {...props} />;
-    case 'ring':
+    case "ring":
       return <Ring {...props} />;
-    case 'bars':
+    case "bars":
       return <Bars {...props} />;
-    case 'infinite':
+    case "infinite":
       return <Infinite {...props} />;
     default:
       return <Default {...props} />;

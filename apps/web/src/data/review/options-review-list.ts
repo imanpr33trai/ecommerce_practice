@@ -1,4 +1,4 @@
-import { keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { trpc } from "@/trpc/client";
 
@@ -9,4 +9,8 @@ export const reviewListOptions = (filters: ReviewFilters) => {
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
+};
+
+export const useReviewListQuery = (filters: ReviewFilters) => {
+  return useQuery(reviewListOptions(filters));
 };

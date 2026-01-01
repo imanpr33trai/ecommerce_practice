@@ -7,6 +7,29 @@ import { protectedProcedure, publicProcedure, router } from "../..";
 import { CreateReviewSchema, ReviewListSchema, reviewSelect } from "./review.type";
 
 export const reviewRouter = router({
+  /**
+   * List Reviews By User (My Reviews Tab)
+   */
+  listByUser: protectedProcedure.query(async ({ ctx }) => {
+    return prisma.review.findMany({
+      where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            images: {
+              where: { isPrimary: true },
+              take: 1,
+              select: { url: true, altText: true, id: true },
+            },
+          },
+        },
+      },
+    });
+  }),
   listByProduct: publicProcedure.input(ReviewListSchema).query(async ({ input }) => {
     const { limit, page, productId, sort } = input;
 
@@ -14,8 +37,12 @@ export const reviewRouter = router({
 
     let orderBy: Prisma.ReviewOrderByWithRelationInput = { createdAt: "desc" };
 
-    if (sort === "highest") orderBy = { rating: "desc" };
-    if (sort === "lowest") orderBy = { rating: "asc" };
+    if (sort === "highest") {
+      orderBy = { rating: "desc" };
+    }
+    if (sort === "lowest") {
+      orderBy = { rating: "asc" };
+    }
 
     const [total, reviews] = await prisma.$transaction([
       prisma.review.count({ where }),
@@ -39,29 +66,34 @@ export const reviewRouter = router({
    * Get Review Summary (Stats)
    * Returns: Average rating, total count, and distribution (e.g. 5 stars: 10, 4 stars: 2)
    */,
-  getSummary: publicProcedure.input(z.object({ productId: z.string() })).query(async ({ input }) => {
-    const aggregations = await prisma.review.groupBy({
-      by: ["rating"],
-      where: { productId: input.productId },
-      _count: { rating: true },
-    });
+  getSummary: publicProcedure
+    .input(z.object({ productId: z.string() }))
+    .query(async ({ input }) => {
+      const aggregations = await prisma.review.groupBy({
+        by: ["rating"],
+        where: { productId: input.productId },
+        _count: { rating: true },
+      });
 
-    const totalReviews = aggregations.reduce((acc, curr) => acc + curr._count.rating, 0);
-    const weightedSum = aggregations.reduce((acc, curr) => acc + curr.rating * curr._count.rating, 0);
-    const average = totalReviews > 0 ? weightedSum / totalReviews : 0;
+      const totalReviews = aggregations.reduce((acc, curr) => acc + curr._count.rating, 0);
+      const weightedSum = aggregations.reduce(
+        (acc, curr) => acc + curr.rating * curr._count.rating,
+        0,
+      );
+      const average = totalReviews > 0 ? weightedSum / totalReviews : 0;
 
-    // Transform into a cleaner object: { 5: 10, 4: 2, ... }
-    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } as Record<number, number>;
-    aggregations.forEach((g) => {
-      distribution[g.rating] = g._count.rating;
-    });
+      // Transform into a cleaner object: { 5: 10, 4: 2, ... }
+      const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } as Record<number, number>;
+      aggregations.forEach((g) => {
+        distribution[g.rating] = g._count.rating;
+      });
 
-    return {
-      average,
-      total: totalReviews,
-      distribution,
-    };
-  }),
+      return {
+        average,
+        total: totalReviews,
+        distribution,
+      };
+    }),
 
   /**
    * Create Review (Protected)
@@ -98,15 +130,17 @@ export const reviewRouter = router({
    * Delete Review (Protected)
    * Only the author can delete.
    */
-  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-    const review = await prisma.review.findUnique({ where: { id: input.id } });
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const review = await prisma.review.findUnique({ where: { id: input.id } });
 
-    if (!review || review.userId !== ctx.session.user.id) {
-      throw new TRPCError({ code: "FORBIDDEN" });
-    }
+      if (!review || review.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
 
-    return prisma.review.delete({
-      where: { id: input.id },
-    });
-  }),
+      return prisma.review.delete({
+        where: { id: input.id },
+      });
+    }),
 });

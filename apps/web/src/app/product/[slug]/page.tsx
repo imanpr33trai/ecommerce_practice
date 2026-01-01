@@ -1,11 +1,12 @@
 "use client";
 
-import Image from "@/components/AppImage";
 import { use, useContext, useState } from "react";
 
+import { TRPCClientError } from "@trpc/client";
 import { Heart, PenTool, ShieldCheck, Star, Truck } from "lucide-react";
 import { toast } from "sonner";
 
+import Image from "@/components/AppImage";
 import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Button from "@/components/Button";
@@ -13,42 +14,50 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 // import { PRODUCTS } from "@/constants";
 import { LayoutContext } from "@/context/LayoutContext";
 import { useShop } from "@/context/ShopContext";
+import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { Cart } from "@/feature/cart";
 import { Product } from "@/feature/product";
-import { useWishMutations, useWishQueries } from "@/feature/wish/client";
 import { authClient } from "@/lib/auth-client";
 
 export default function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const { toggleCart } = useContext(LayoutContext);
+
   // const { addToast } = useToast();
   const [activeColor, setActiveColor] = useState("#D9D9D9");
 
   const { addItem, isAdding } = Cart.hooks.useActions();
-  const { mutate: toggleWish } = useWishMutations.useToggle();
+  const { mutate: toggleWish } = useWishToggleMutation();
   const { data: session } = authClient.useSession();
 
   const { data: product, isLoading, isError, error } = Product.hooks.useDetail(slug);
 
-  const isWishlisted = useWishQueries.useIsWishlisted(product?.id || null);
+  const isWishlisted = useWishListedQuery(product?.id);
+  if (isLoading) {
+    return <LoadingSkeleton type="detail" />;
+  }
+  if (!product) {
+    throw new TRPCClientError("product is undefined");
+  }
 
   const handleAddToCart = () => {
-    if (!session) return toast.error("Please login to add to cart");
+    if (!session) {
+      return toast.error("Please login to add to cart");
+    }
 
     addItem({
-      productId: product?.id,
+      productId: product.id,
       quantity: 1,
       color: activeColor,
     });
   };
 
   const handleWishlist = () => {
-    if (!session) return toast.error("Please login to save items");
+    if (!session) {
+      return toast.error("Please login to save items");
+    }
     toggleWish({ productId: product?.id });
   };
   // const relatedProducts = product.id.match((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
-
-  if (isLoading) return <LoadingSkeleton type="detail" />;
 
   return (
     <div className="p-4 md:px-8 max-w-400 mx-auto pb-12 animate-fade-in">
@@ -62,7 +71,6 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
           {product.images.map((image) => (
             <Image
               src={image.url}
-              lo
               key={image.id}
               width={100}
               height={100}
@@ -88,7 +96,9 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
         <div className="lg:col-span-4 flex flex-col gap-4 ">
           <BentoCard className="p-6 bg-white flex flex-col justify-center gap-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 uppercase tracking-widest">{product.category?.name}</span>
+              <span className="text-sm text-gray-500 uppercase tracking-widest">
+                {product.category?.name}
+              </span>
               <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
                 <Star
                   size={14}
@@ -99,7 +109,11 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-5xl font-light tracking-tighter">${product.price}</span>
-              {product.isOnSale && <span className="text-xl text-gray-400 line-through">${Math.round(product.price * 1.5)}</span>}
+              {product.isOnSale && (
+                <span className="text-xl text-gray-400 line-through">
+                  ${Math.round(product.price * 1.5)}
+                </span>
+              )}
             </div>
             <p className="text-gray-600 mt-2 leading-relaxed">{product.description}</p>
           </BentoCard>
@@ -164,13 +178,18 @@ export default function ProductDetail({ params }: { params: Promise<{ slug: stri
         <div className="space-y-6 px-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-200">
             <PenTool size={14} />
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-600">The Design Story</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-600">
+              The Design Story
+            </span>
           </div>
           <h2 className="text-4xl font-light leading-tight">
             Crafted with intention. <br /> Built for longevity.
           </h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            The {product.name} isn't just a piece of furniture; it's a statement of minimalist philosophy. Designed in our Stockholm studio, every curve serves a purpose. We sourced the finest materials to ensure that it doesn't just look good on day one, but develops a rich patina over years of use.
+            The {product.name} isn't just a piece of furniture; it's a statement of minimalist
+            philosophy. Designed in our Stockholm studio, every curve serves a purpose. We sourced
+            the finest materials to ensure that it doesn't just look good on day one, but develops a
+            rich patina over years of use.
           </p>
           <div className="grid grid-cols-2 gap-4 pt-4">
             <div>

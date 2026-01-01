@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import {
@@ -22,8 +22,8 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 import ProductCard from "@/components/ProductCard";
 import { REVIEWS, TEAM } from "@/constants";
 import { useShop } from "@/context/ShopContext";
+import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { Product, type ProductSingle } from "@/feature/product";
-import { Wish } from "@/feature/wish";
 
 interface ProductSliderProps {
   title: string;
@@ -69,7 +69,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
           <h2 className="text-3xl font-light">{title}</h2>
           <p className="text-gray-500 text-sm mt-1">{subtitle}</p>
         </div>
-        <Link href={categoryLink}>
+        <Link href={{ pathname: categoryLink }}>
           <Button
             variant="outline"
             size="sm"
@@ -116,15 +116,32 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
 
 export default function LandingClient() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [scrollPos, setScrollPos] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+
+    const handleScroll = () => {
+      setScrollPos(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const { recentlyViewed } = useShop();
 
-  const { data, isLoading } = Product.hooks.useLandingData();
-  const { mutate: toggleWish } = Wish.hooks.useToggle();
+  const { data, isLoading: isLandingLoading } = Product.hooks.useLandingData();
+  const { mutate: toggleWish } = useWishToggleMutation();
 
   const featuredProduct = data ? data[currentSlide % data.length] || data[0] : null;
 
-  const isWishlisted = Wish.hooks.useIsWishlisted(featuredProduct?.id || null);
+  const isWishlisted = useWishListedQuery(featuredProduct?.id);
 
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -135,7 +152,7 @@ export default function LandingClient() {
     }
   };
 
-  if (isLoading) {
+  if (isLandingLoading || isLoading) {
     return <LoadingSkeleton type="home" />;
   }
 
@@ -146,17 +163,22 @@ export default function LandingClient() {
 
   const nextSlide = () => setCurrentSlide((p) => (p + 1) % data.length);
   const prevSlide = () => setCurrentSlide((p) => (p - 1 + data.length) % data.length);
-
+  // Subtle parallax offsets
+  const parallaxText = scrollPos * 0.15;
+  const parallaxImage = scrollPos * 0.05;
   return (
-    <div className="p-4 md:px-8 pb-8 space-y-16 max-w-400 mx-auto animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-150">
+    <div className="p-4 md:px-8 pb-8 space-y-16 max-w-[1600px] mx-auto animate-fade-in">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-[600px]">
         <BentoCard className="lg:col-span-8 relative bg-[#F2F2F0] flex flex-col justify-center overflow-hidden group">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:text-[12vw] text-[20vw] font-bold text-white uppercase tracking-tighter leading-none select-none">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vw] font-bold text-white uppercase tracking-tighter leading-none select-none transition-transform duration-150 ease-out"
+            style={{ transform: `translate(-50%, calc(-50% + ${parallaxText}px))` }}
+          >
             Nestify
           </div>
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-around h-full p-8 md:p-12 gap-8">
-            <div className="md:flex-1 space-y-6 max-w-md">
+            <div className="flex-1 space-y-6 max-w-md">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-md border border-white/50">
                 <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                 <span className="text-xs font-bold uppercase tracking-wider text-gray-600">
@@ -182,38 +204,43 @@ export default function LandingClient() {
 
               <div className="flex gap-3 pt-4">
                 <Link
-                  href={`/product/${featuredProduct.slug}`}
+                  href={`/product/${featuredProduct.id}`}
                   className="flex-1"
                 >
-                  <Button className="w-full px-8! h-12">View Product</Button>
+                  <Button className="w-full !px-8 h-12">View Product</Button>
                 </Link>
-                <button
-                  className="absolute z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all duration-1000 ease-premium hover:scale-110 hover:bg-white active:scale-95 "
+                <Button
+                  variant="icon"
+                  className="bg-white hover:bg-white/80 h-12 w-12 transition-transform active:scale-90"
                   onClick={handleWishlist}
-                  type="button"
                 >
                   <Heart
-                    className={`transition-colors duration-300  ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-500"}`}
                     size={20}
+                    className={`transition-colors duration-300 ${isWishlisted ? "fill-red-500 text-red-500" : "text-black"}`}
                   />
-                </button>
+                </Button>
               </div>
             </div>
 
-            <div className="flex-1 relative w-full max-w-[400px] aspect-auto overflow-hidden">
+            <div
+              className="flex-1 relative w-full max-w-[400px] aspect-square transition-transform duration-150 ease-out"
+              style={{ transform: `translateY(${parallaxImage}px)` }}
+            >
               <div className="absolute inset-0 bg-white/40 rounded-full blur-3xl transform scale-75"></div>
-
-              <Image
-                src={featuredProduct.images.at(0)?.url || featuredProduct.name}
-                alt={featuredProduct.name}
-                width={100}
-                height={200}
-                className="relative w-full  h-full object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-105"
-              />
+              {featuredProduct.images.map((image) => (
+                <Image
+                  src={image.url}
+                  width={100}
+                  height={200}
+                  key={image.id}
+                  alt={image.altText || featuredProduct.name}
+                  className="relative w-full h-full object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+              ))}
             </div>
           </div>
 
-          <div className="absolute bottom-6 right-6 flex z-30 gap-2">
+          <div className="absolute bottom-6 right-6 flex gap-2">
             <Button
               variant="secondary"
               size="icon"
@@ -325,8 +352,6 @@ export default function LandingClient() {
         <div className="flex flex-col gap-4">
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
             <Image
-              width={100}
-              height={200}
               alt="Lighting"
               src="https://images.unsplash.com/photo-1507473888900-52e1ad14db3d?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
@@ -345,8 +370,6 @@ export default function LandingClient() {
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
             <Image
               alt="Chairs"
-              width={100}
-              height={200}
               src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
@@ -432,8 +455,6 @@ export default function LandingClient() {
                   alt={member.name}
                   key={member.id}
                   src={member.image}
-                  width={100}
-                  height={200}
                   className="w-10 h-10 rounded-full border-2 border-[#C6BAA8] object-cover"
                 />
               ))}

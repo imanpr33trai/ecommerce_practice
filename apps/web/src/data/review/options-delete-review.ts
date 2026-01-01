@@ -1,11 +1,11 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { trpc } from "@/trpc/client";
 
 import { reviewKeys } from "./keys";
 
-export function useDeleteReview() {
+export function reviewDeleteOptions() {
   const utils = useQueryClient();
 
   return trpc.review.delete.mutationOptions({
@@ -21,3 +21,7 @@ export function useDeleteReview() {
     },
   });
 }
+
+export const useReviewDeleteMutation = () => {
+  return useMutation(reviewDeleteOptions());
+};

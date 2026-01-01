@@ -1,33 +1,33 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 import { Heart } from "lucide-react";
 
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
-import { Wish } from "@/feature/wish";
+import { useWishListQuery } from "@/data/wish";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 
 export default function WishlistPage() {
-  const { data: wishlist, isLoading, isError, error } = Wish.hooks.useWishList();
-  const {data:session,isPending} = authClient.useSession()
-  const router = useRouter()
+  const { data: wishlist, isLoading, isError, error } = useWishListQuery();
+  const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
   useEffect(() => {
-      if (!session) {
-        router.replace("/sign-up");
-      }
-    }, [session, router]);
-
-    if (isPending) {
-      return null; // or spinner
-    }
-
     if (!session) {
-      return null; // prevent render while redirecting
+      router.replace("/sign-up");
     }
+  }, [session, router]);
+
+  if (isPending) {
+    return null; // or spinner
+  }
+
+  if (!session) {
+    return null; // prevent render while redirecting
+  }
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -64,7 +64,9 @@ export default function WishlistPage() {
             />
           </div>
           <h2 className="text-2xl font-bold mb-4">Your wishlist is empty</h2>
-          <p className="text-gray-500 mb-8 max-w-md">Browse our collection and find something you love.</p>
+          <p className="text-gray-500 mb-8 max-w-md">
+            Browse our collection and find something you love.
+          </p>
           <Link href="/product">
             <Button size="lg">Start Shopping</Button>
           </Link>

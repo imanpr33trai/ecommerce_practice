@@ -1,10 +1,10 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { trpc } from "@/trpc/client";
 
 import { reviewKeys } from "./keys";
-export function createReviewOptions() {
+export function reviewCreateOptions() {
   const utils = useQueryClient();
 
   return trpc.review.create.mutationOptions({
@@ -25,3 +25,7 @@ export function createReviewOptions() {
     },
   });
 }
+
+export const useReviewCreateMutation = () => {
+  return useMutation(reviewCreateOptions());
+};

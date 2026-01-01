@@ -1,17 +1,28 @@
 "use client";
 
-import Image from "@/components/AppImage";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import { Input } from "@comp/input";
-import { Clock, X as CloseIcon, Heart, Loader2, LogIn, Menu, Search, ShoppingBag, UserIcon, X } from "lucide-react";
+import {
+  Clock,
+  X as CloseIcon,
+  Heart,
+  Loader2,
+  LogIn,
+  Menu,
+  Search,
+  ShoppingBag,
+  UserIcon,
+  X,
+} from "lucide-react";
 
+import Image from "@/components/AppImage";
+import { useWishListCountQuery } from "@/data/wish";
 import { Cart } from "@/feature/cart";
 import { Product } from "@/feature/product";
-import { Wish } from "@/feature/wish";
 import { useDebounce } from "@/hooks/useDebounce";
 import { authClient } from "@/lib/auth-client";
 
@@ -38,7 +49,9 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const history = localStorage.getItem("nestify_search_history");
-      if (history) setSearchHistory(JSON.parse(history));
+      if (history) {
+        setSearchHistory(JSON.parse(history));
+      }
     }
   }, []);
 
@@ -66,7 +79,9 @@ const Navbar: React.FC = () => {
   };
 
   const submitSearch = (term: string) => {
-    if (!term.trim()) return;
+    if (!term.trim()) {
+      return;
+    }
     addToSearchHistory(term);
     router.push(`/search?q=${encodeURIComponent(term)}`);
     setIsFocused(false);
@@ -79,10 +94,11 @@ const Navbar: React.FC = () => {
 
   // --- DATA FETCHING (Non-Blocking) ---
   const { data: isAuthenticated, isPending: isAuthPending } = authClient.useSession();
-  const wishCount = Wish.hooks.useWishListCount();
+  const wishCount = useWishListCountQuery();
   // Only fetch cart if user is logged in
   const { data: cart } = Cart.hooks.useCart();
-  const { data: suggestions, isLoading: isSuggestionsLoading } = Product.hooks.useSuggestions(deboucedQuery);
+  const { data: suggestions, isLoading: isSuggestionsLoading } =
+    Product.hooks.useSuggestions(deboucedQuery);
 
   const isActive = (path: string) => location === path;
   // if (!wishCount) {
@@ -144,7 +160,9 @@ const Navbar: React.FC = () => {
                 {/* SCENARIO A: User is typing -> Show Live Suggestions */}
                 {searchQuery.length > 0 ? (
                   <div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-4 py-2 bg-gray-50/50">Suggestions</div>
+                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-4 py-2 bg-gray-50/50">
+                      Suggestions
+                    </div>
 
                     {suggestions && suggestions.length > 0
                       ? suggestions.map((product) => (
@@ -166,13 +184,21 @@ const Navbar: React.FC = () => {
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate text-gray-900 group-hover:text-black">{product.name}</p>
+                              <p className="text-sm font-medium truncate text-gray-900 group-hover:text-black">
+                                {product.name}
+                              </p>
                               <p className="text-xs text-gray-500">{product.category?.name}</p>
                             </div>
-                            <span className="text-xs font-bold text-gray-400 group-hover:text-black transition-colors">${product.price}</span>
+                            <span className="text-xs font-bold text-gray-400 group-hover:text-black transition-colors">
+                              ${product.price}
+                            </span>
                           </Link>
                         ))
-                      : !isSuggestionsLoading && <div className="p-4 text-center text-sm text-gray-500">No products found.</div>}
+                      : !isSuggestionsLoading && (
+                          <div className="p-4 text-center text-sm text-gray-500">
+                            No products found.
+                          </div>
+                        )}
 
                     {/* "View All" Link */}
                     {suggestions && suggestions.length > 0 && (
@@ -188,7 +214,9 @@ const Navbar: React.FC = () => {
                   /* SCENARIO B: Input Empty -> Show History */
                   searchHistory.length > 0 && (
                     <div>
-                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-4 py-2 bg-gray-50/50">Recent Searches</div>
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-4 py-2 bg-gray-50/50">
+                        Recent Searches
+                      </div>
                       {searchHistory.map((term, idx) => (
                         <div
                           key={idx}
@@ -255,7 +283,11 @@ const Navbar: React.FC = () => {
                   size={20}
                   className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
                 />
-                {wishCount > 0 && <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-black rounded-full text-white text-[10px] grid place-items-center border border-white">{wishCount}</span>}
+                {wishCount > 0 && (
+                  <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-black rounded-full text-white text-[10px] grid place-items-center border border-white">
+                    {wishCount}
+                  </span>
+                )}
               </Button>
             </Link>
 
@@ -265,7 +297,11 @@ const Navbar: React.FC = () => {
               onClick={toggleCart}
             >
               <ShoppingBag size={20} />
-              {cartItemCount > 0 && <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] grid place-items-center border border-white animate-fade-in">{cartItemCount}</span>}
+              {cartItemCount > 0 && (
+                <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] grid place-items-center border border-white animate-fade-in">
+                  {cartItemCount}
+                </span>
+              )}
             </Button>
 
             <Button
@@ -320,7 +356,11 @@ const Navbar: React.FC = () => {
             className="p-4 bg-white rounded-2xl font-medium flex justify-between"
           >
             Wishlist
-            {wishCount > 0 && <span className="bg-black text-white px-2 rounded-full text-xs py-1">{wishCount}</span>}
+            {wishCount > 0 && (
+              <span className="bg-black text-white px-2 rounded-full text-xs py-1">
+                {wishCount}
+              </span>
+            )}
           </Link>
 
           {isAuthenticated?.session ? (

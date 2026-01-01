@@ -1,4 +1,3 @@
-import Img from "@/components/AppImage";
 import Link from "next/link";
 import { useContext, useRef, useState } from "react";
 import type React from "react";
@@ -6,9 +5,9 @@ import type React from "react";
 import { ArrowLeftRight, Heart, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
 
+import Img from "@/components/AppImage";
+import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { Cart } from "@/feature/cart";
-import { Wish } from "@/feature/wish";
-import { useWishQueries } from "@/feature/wish/client";
 import type { ProductSingle } from "@/feature/product";
 
 import { LayoutContext } from "../context/LayoutContext";
@@ -27,10 +26,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const { addToRecentlyViewed, setQuickViewProduct, compareList, addToCompare } = useShop();
 
   const { addItem, isAdding } = Cart.hooks.useActions();
-  const { mutate: toggleWish } = Wish.hooks.useToggle();
+  const { mutate: toggleWish } = useWishToggleMutation();
 
   // Only check wishlist status if logged in, otherwise false
-  const isWishlisted = useWishQueries.useIsWishlisted(product.id);
+  const isWishlisted = useWishListedQuery(product.id);
 
   // Local UI State
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "#D9D9D9");
@@ -148,7 +147,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   if (product.isOnSale) {
     badges.push({
       // Calculate discount percentage dynamically if available, else hardcode
-      text: product.discountPrice ? `-${Math.round((1 - Number(product.discountPrice) / Number(product.price)) * 100)}%` : "SALE",
+      text: product.discountPrice
+        ? `-${Math.round((1 - Number(product.discountPrice) / Number(product.price)) * 100)}%`
+        : "SALE",
       color: "bg-red-500 text-white",
       id: 2,
     });
@@ -198,7 +199,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   // }
   return (
     <>
-      <div className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`} />
+      <div
+        className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`}
+      />
 
       <div
         className={`relative h-110 w-full transition-all duration-300 ${zIndexClass} ${className}`}
@@ -255,7 +258,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 />
               </button>
 
-              <div className={`-translate-x-1/2 absolute bottom-4 left-1/2 z-20 flex gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}>
+              <div
+                className={`-translate-x-1/2 absolute bottom-4 left-1/2 z-20 flex gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
+              >
                 {/*<Button
                   className="h-10 w-10 rounded-full"
                   onClick={handleQuickView}
@@ -281,15 +286,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
               className={`absolute overflow-hidden bg-white transition-all duration-1000 ease-premium ${isExpanded ? "top-0 h-full w-[46%]" : "top-70 h-40 w-full"}`}
               style={contentStyle}
             >
-              <div className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}>
+              <div
+                className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}
+              >
                 <div className="relative z-10">
                   <div className="mb-2 flex items-start justify-between">
                     <div className="min-w-0 flex-1 pr-2">
-                      <p className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}>{product.category?.name}</p>
-                      <h3 className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}>{product.name}</h3>
+                      <p
+                        className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}
+                      >
+                        {product.category?.name}
+                      </p>
+                      <h3
+                        className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}
+                      >
+                        {product.name}
+                      </h3>
                     </div>
                     <div className="shrink-0 text-right">
-                      <span className="block font-bold text-gray-900 text-lg transition-all duration-300">${product.price}</span>
+                      <span className="block font-bold text-gray-900 text-lg transition-all duration-300">
+                        ${product.price}
+                      </span>
                       <div className="mt-1 ml-auto flex w-fit items-center gap-1 rounded-md bg-yellow-50 px-2 py-1 font-bold text-[10px] text-yellow-600">
                         <Star
                           fill="currentColor"
@@ -314,7 +331,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                   selectedColor={selectedColor}
                 />
 
-                <div className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}>
+                <div
+                  className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}
+                >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-black shadow-sm hover:bg-gray-200">
                     <ShoppingBag size={20} />
                   </div>

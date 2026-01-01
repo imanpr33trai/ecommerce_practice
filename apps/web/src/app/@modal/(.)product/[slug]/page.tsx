@@ -1,19 +1,19 @@
 "use client";
 
-import Image from "@/components/AppImage";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
 import { Button as ShadcnButton } from "@comp/button";
 import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ArrowRight, Heart, ShieldCheck, ShoppingBag, Star, Truck, X } from "lucide-react";
+import { ArrowRight, Heart, ShoppingBag, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
+import Image from "@/components/AppImage";
 import Button from "@/components/Button";
 import { useShop } from "@/context/ShopContext";
+import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { Cart } from "@/feature/cart";
 import { Product } from "@/feature/product";
-import { useWishMutations, useWishQueries } from "@/feature/wish/client";
 import { authClient } from "@/lib/auth-client";
 
 // Next.js 15+ Params are Promises
@@ -25,7 +25,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   // --- HOOKS ---
   const { data: product, isLoading } = Product.hooks.useDetail(slug);
   const { addItem, isAdding } = Cart.hooks.useActions();
-  const { mutate: toggleWish } = useWishMutations.useToggle();
+  const { mutate: toggleWish } = useWishToggleMutation();
   const { data: session } = authClient.useSession();
 
   // Safe access to wishlist status (requires product id)
@@ -58,8 +58,12 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   // --- HANDLERS ---
 
   const handleAddToCart = () => {
-    if (!session) return toast.error("Please login to add to cart");
-    if (!product) return;
+    if (!session) {
+      return toast.error("Please login to add to cart");
+    }
+    if (!product) {
+      return;
+    }
 
     addItem({
       productId: product.id,
@@ -69,16 +73,24 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   };
 
   const handleWishlist = () => {
-    if (!session) return toast.error("Please login to save items");
-    if (!product) return;
+    if (!session) {
+      return toast.error("Please login to save items");
+    }
+    if (!product) {
+      return;
+    }
     toggleWish({ productId: product.id });
   };
 
   // --- RENDER ---
 
-  const isWishlisted = useWishQueries.useIsWishlisted(product?.id ?? null);
-  if (isLoading) return null; // Or a transparent spinner
-  if (!product) return <Skeleton />;
+  const isWishlisted = useWishListedQuery(product?.id);
+  if (isLoading) {
+    return null; // Or a transparent spinner
+  }
+  if (!product) {
+    return <Skeleton />;
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
@@ -98,6 +110,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
       >
         <button
           onClick={onDismiss}
+          type="button"
           className="absolute top-3 right-3 z-20 p-2 bg-white/80 backdrop-blur-md rounded-full hover:bg-black hover:text-white transition-all duration-300"
         >
           <X size={24} />
@@ -114,8 +127,16 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
             />
           )}
           <div className="absolute bottom-8 left-8 flex gap-3">
-            {product.isNew && <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">New Arrival</span>}
-            {product.isOnSale && <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">Sale</span>}
+            {product.isNew && (
+              <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">
+                New Arrival
+              </span>
+            )}
+            {product.isOnSale && (
+              <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">
+                Sale
+              </span>
+            )}
           </div>
         </div>
 
@@ -123,13 +144,17 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
         <div className="w-full md:w-[40%] flex flex-col h-full bg-white overflow-y-auto no-scrollbar p-8 md:p-10">
           <div className="mb-auto">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">{product.category?.name}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                {product.category?.name}
+              </span>
               <div className="flex items-center gap-1 text-yellow-500 bg-yellow-50 px-2 py-1 rounded-lg">
                 <Star
                   size={14}
                   fill="currentColor"
                 />
-                <span className="text-sm font-bold text-black">{product.rating?.toFixed(1) || "New"}</span>
+                <span className="text-sm font-bold text-black">
+                  {product.rating?.toFixed(1) || "New"}
+                </span>
               </div>
             </div>
 
@@ -137,19 +162,28 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
             <div className="flex items-baseline gap-3 mb-8">
               <span className="text-3xl font-medium">${Number(product.price).toFixed(2)}</span>
-              {product.discountPrice && <span className="text-lg text-gray-400 line-through">${Number(product.discountPrice).toFixed(2)}</span>}
+              {product.discountPrice && (
+                <span className="text-lg text-gray-400 line-through">
+                  ${Number(product.discountPrice).toFixed(2)}
+                </span>
+              )}
             </div>
 
-            <p className="text-gray-600 leading-relaxed mb-8 text-lg">{product.description || "No description available."}</p>
+            <p className="text-gray-600 leading-relaxed mb-8 text-lg">
+              {product.description || "No description available."}
+            </p>
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-4">Select Finish</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-4">
+                  Select Finish
+                </span>
                 <div className="flex gap-4">
                   {product.colors.map((color) => (
                     <button
                       key={color}
+                      type="button"
                       onClick={() => setActiveColor(color)}
                       className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ${activeColor === color ? "border-black scale-110" : "border-gray-200 hover:border-gray-400"}`}
                       style={{ backgroundColor: color.toLowerCase() }}
@@ -178,6 +212,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
               <button
                 onClick={handleWishlist}
+                type="button"
                 className={`w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center transition-all ${isWishlisted ? "bg-red-50 border-red-200" : "hover:bg-gray-50"}`}
               >
                 <Heart
