@@ -1,8 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 import confetti from "canvas-confetti";
-import { ArrowRight, Check, Download, Package } from "lucide-react";
+import { Check, Package } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -65,7 +67,7 @@ export default function OrderSuccessPage() {
             <Link href="/product">
               <Button className="w-full sm:w-auto px-8">Continue Shopping</Button>
             </Link>
-            <Link href={{pathname:"/account"}}>
+            <Link href={{ pathname: "/account" }}>
               <Button
                 variant="outline"
                 className="w-full sm:w-auto gap-2"

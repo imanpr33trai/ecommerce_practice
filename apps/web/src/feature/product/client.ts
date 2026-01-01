@@ -1,5 +1,10 @@
-import { INITIAL_PRODUCT_FILTERS, ProductFilterSchema } from "@ecomerceNextjs/api/routers/product/product.type";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  INITIAL_PRODUCT_FILTERS,
+  ProductFilterSchema,
+} from "@ecomerceNextjs/api/routers/product/product.type";
+import { keepPreviousData, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { TRPCClientError } from "@trpc/client";
+import { toast } from "sonner";
 
 import { trpc } from "@/trpc/client";
 
@@ -77,8 +82,22 @@ export const useProductQueries = {
    * Note: We use individual useQuery calls to ensure stable hook counts.
    */
   useLandingData: () => {
-    return useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 20 }));
+    return useSuspenseQuery(
+      trpc.product.getLandingProducts.queryOptions(
+        { limit: 20 },
+        {
+          // 1. Logic Bloat Fix: Ensure data isn't null/undefined by providing a fallback in the selector
+          select: (data) => data ?? [],
+
+          // 2. Performance Bloat Fix: Prevent unnecessary background refetches
+          staleTime: 1000 * 60 * 10,
+        },
+      ),
+    );
   },
+  // useLandingData: () => {
+  //   return useSuspenseQuery(trpc.product.getLandingProducts.queryOptions({ limit: 20 }));
+  // },
 
   // Helper to get fresh default filters
   getInitialFilters: () => ProductFilterSchema.parse({}),

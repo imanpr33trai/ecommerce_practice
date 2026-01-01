@@ -1,9 +1,9 @@
+// web/src/trpc/server.tsx
 import "server-only";
 
 import { headers } from "next/headers";
 import { cache } from "react";
 
-// Check imports match your package names exactly
 import { appRouter } from "@ecomerceNextjs/api/routers/index";
 import { auth } from "@ecomerceNextjs/auth";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -15,37 +15,33 @@ import { createQueryClient } from "./query-client";
 
 export const getQueryClient = cache(createQueryClient);
 
-// Create server context that matches your API's context structure
+/**
+ * 1. Define the context creator.
+ * This is used for direct router calls to ensure the server component
+ * has the same session/header info as your Hono backend.
+ */
 async function createServerContext() {
-  // Extract headers to pass to Better Auth
-  const heads = await headers();
-
   const session = await auth.api.getSession({
-    headers: heads,
+    headers: await headers(),
   });
 
   return {
     session,
-    // Add other context items if your API needs them (e.g., db)
+    headers: await headers(), // Include headers if your router needs them
   };
 }
 
-// FIX: Helper to get the correct URL for Server-to-Server communication
+// For server-side calls that go through HTTP
 function getUrl() {
-  // 1. Production (Vercel)
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}/trpc`;
   }
-  // 2. Custom Environment Variable
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return `${process.env.NEXT_PUBLIC_API_URL}/trpc`;
-  }
-  // 3. Local Development Fallback
-  // MUST point to Port 3001 (Hono) not 3000 (Next.js)
-  return "http://localhost:3001/trpc";
+  return process.env.NEXT_PUBLIC_API_URL
+    ? `${process.env.NEXT_PUBLIC_API_URL}/trpc`
+    : "http://localhost:3000/trpc";
 }
 
-// HTTP client for server-side tRPC calls (Prefetching)
+// HTTP client for server-side tRPC calls
 const serverClient = createTRPCClient<typeof appRouter>({
   links: [
     httpLink({
@@ -53,45 +49,72 @@ const serverClient = createTRPCClient<typeof appRouter>({
       url: getUrl(),
       headers: async () => {
         const h = await headers();
+
+        // Get all cookies and forward them
         const cookie = h.get("cookie") || "";
 
         return {
           cookie,
-          "x-trpc-source": "rsc", // Useful for debugging
-          // Forwarding these helps Auth logic work correctly
+          // Forward all relevant headers
           "x-forwarded-for": h.get("x-forwarded-for") || "",
           "x-forwarded-proto": h.get("x-forwarded-proto") || "",
           "x-forwarded-host": h.get("x-forwarded-host") || "",
         };
       },
+      // Important: Include credentials for authentication
+      fetch: async (url, options) => {
+        return fetch(url, {
+          ...options,
+          credentials: "include", // Include cookies
+        });
+      },
     }),
   ],
 });
 
-// Proxy for prefetching (uses the HTTP client above)
+// Use the HTTP client for server-side operations
+// 1. Define your direct proxy (THIS IS WHAT YOU SHOULD USE)
 export const trpc = createTRPCOptionsProxy({
-  client: serverClient,
+  router: appRouter,
+  ctx: createServerContext, // Direct context creation, no HTTP needed
   queryClient: getQueryClient,
 });
+// export const trpc = createTRPCOptionsProxy({
+//   client: serverClient,
+//   queryClient: getQueryClient,
+// });
 
-// Direct Caller (Optional: For fetching data without Hydration)
+// Create caller with context (for direct server-side calls)
+// This is the RECOMMENDED way for server components
 export const getCaller = cache(async () => {
   const context = await createServerContext();
+
+  // Debug: log session info
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      "Server Caller - Session:",
+      context.session ? "✅ Authenticated" : "❌ Not authenticated",
+    );
+  }
+
   return appRouter.createCaller(context);
 });
 
-// Component to Hydrate State to Client
 export function HydrateClient(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
   return <HydrationBoundary state={dehydrate(queryClient)}>{props.children}</HydrationBoundary>;
 }
 
-// Helper to prefetch queries easily
-export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(queryOptions: T) {
+// Generic prefetch helper using query client
+export async function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(queryOptions: T) {
   const queryClient = getQueryClient();
-  if (queryOptions.queryKey[1]?.type === "infinite") {
-    void queryClient.prefetchInfiniteQuery(queryOptions as any);
-  } else {
-    void queryClient.prefetchQuery(queryOptions);
+  try {
+    if (queryOptions.queryKey[1]?.type === "infinite") {
+      await queryClient.prefetchInfiniteQuery(queryOptions as any);
+    } else {
+      await queryClient.prefetchQuery(queryOptions);
+    }
+  } catch (e) {
+    console.error("Prefetch failed ", e);
   }
 }

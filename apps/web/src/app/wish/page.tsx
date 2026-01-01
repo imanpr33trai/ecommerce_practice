@@ -1,17 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Heart } from "lucide-react";
 
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
 import { Wish } from "@/feature/wish";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function WishlistPage() {
   const { data: wishlist, isLoading, isError, error } = Wish.hooks.useWishList();
+  const {data:session,isPending} = authClient.useSession()
+  const router = useRouter()
+  useEffect(() => {
+      if (!session) {
+        router.replace("/sign-up");
+      }
+    }, [session, router]);
 
+    if (isPending) {
+      return null; // or spinner
+    }
+
+    if (!session) {
+      return null; // prevent render while redirecting
+    }
   if (isLoading) {
     return <div>Loading...</div>;
   }

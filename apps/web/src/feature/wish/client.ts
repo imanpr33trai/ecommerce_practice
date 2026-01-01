@@ -1,9 +1,16 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner"; // Assuming sonner, replace with your toast lib
 import { util } from "zod/v4/core";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/trpc/client";
+
+export const useIsWishlisted = (productId: string) => {
+  return trpc.wish.getIds.queryOptions(undefined, {
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    enabled: !!productId,
+  });
+};
 
 export const useWishQueries = {
   /**
@@ -11,16 +18,21 @@ export const useWishQueries = {
    * Usage: Wishlist Page
    */
   useWishList: () => {
+    const { data: session } = authClient.useSession();
     return useQuery(
       trpc.wish.getAll.queryOptions(undefined, {
         staleTime: 1000 * 60 * 5, // 5 minutes
+        enabled: !!session,
       }),
     );
   },
   useWishListCount: () => {
-    const { data: ids } = useQuery(
+    const { data: session } = authClient.useSession();
+
+    const { data: ids } = useSuspenseQuery(
       trpc.wish.getIds.queryOptions(undefined, {
         staleTime: 1000 * 60 * 10,
+        enabled: !!session,
       }),
     );
     return ids?.length ?? 0;
@@ -46,7 +58,9 @@ export const useWishQueries = {
         enabled,
       }),
     );
-    if (!enabled || !ids || !productId) return false;
+    if (!enabled || !ids || !productId) {
+      return false;
+    }
     // if (isLoading) {
     //   console.log("useIsWishlisted is isLoading...");
     //   return;
@@ -106,7 +120,9 @@ export const useWishMutations = {
 
         // 3. SETTLED
         onSettled: () => {
-          utils.invalidateQueries({ queryKey: [trpc.wish.getAll.queryKey(), trpc.wish.getIds.queryKey()] });
+          utils.invalidateQueries({
+            queryKey: [trpc.wish.getAll.queryKey(), trpc.wish.getIds.queryKey()],
+          });
           // utils.wish.getIds.invalidate();
           // utils.wish.getAll.invalidate(); // Refresh the list page too
         },
@@ -129,7 +145,9 @@ export const useWishMutations = {
       trpc.wish.clear.mutationOptions({
         onSuccess: () => {
           toast.success("Wishlist cleared");
-          utils.invalidateQueries({ queryKey: [trpc.wish.getIds.queryKey(), trpc.wish.getAll.queryKey()] });
+          utils.invalidateQueries({
+            queryKey: [trpc.wish.getIds.queryKey(), trpc.wish.getAll.queryKey()],
+          });
         },
       }),
     );

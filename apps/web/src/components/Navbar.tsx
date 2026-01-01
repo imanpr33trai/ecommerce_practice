@@ -232,7 +232,7 @@ const Navbar: React.FC = () => {
             ) : (
               <Link href="/log-in">
                 <Button
-                  variant="secondary"
+                  variant="icon"
                   size="sm"
                   className="max-h-[46] min-h-[46] md:flex relative group hidden sm:flex"
                 >

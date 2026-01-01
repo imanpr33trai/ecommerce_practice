@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": [
     // "./packages/config/biome/core/biome.jsonc",
-    // "./packages/config/biome/react/biome.jsonc",
+    "./packages/config/biome/react/biome.jsonc"
     // "./packages/config/biome/next/biome.jsonc"
   ],
   "vcs": {
@@ -15,27 +15,29 @@
     "includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!.source"]
   },
   "formatter": {
-    "lineWidth": 320,
+    "lineWidth": 100,
     "attributePosition": "multiline",
     "indentStyle": "space",
+    "enabled": true,
+
     "useEditorconfig": true
   },
-  // "linter": {
-  // 	"rules": {
-  // 		"style": {
-  // 			"noProcessEnv": "error",
-  // 			"useBlockStatements": {
-  // 				"level": "error",
-  // 				"fix": "safe"
-  // 			},
-  // 			"useUnifiedTypeSignatures": "off"
-  // 		},
+  "linter": {
+    "rules": {
+      "style": {
+        "noProcessEnv": "error",
+        "useBlockStatements": {
+          "level": "error",
+          "fix": "safe"
+        },
+        "useUnifiedTypeSignatures": "off"
+      },
 
-  // 		"suspicious": {
-  // 			"noConsole": "warn"
-  // 		}
-  // 	}
-  // },
+      "suspicious": {
+        "noConsole": "warn"
+      }
+    }
+  },
   "assist": {
     "actions": {
       "source": {
@@ -130,47 +132,47 @@
         "src/app/**/default.ts",
         "next.config.ts",
         "postcss.config.mjs"
-      ]
-      // 	"linter": {
-      // 		"rules": {
-      // 			"performance": {
-      // 				"noBarrelFile": "off"
-      // 			},
-      // 			"style": {
-      // 				"noDefaultExport": "off"
-      // 			}
-      // 		}
-      // 	}
-      // },
-      // {
-      // 	"includes": ["config/**/*.ts"],
-      // 	"linter": {
-      // 		"rules": {
-      // 			"suspicious": {
-      // 				"noConsole": "off"
-      // 			}
-      // 		}
-      // 	}
-      // },
-      // {
-      // 	"includes": ["**/server/**/*.ts", "**/server/**/*.tsx"],
-      // 	"linter": {
-      // 		"rules": {
-      // 			"suspicious": {
-      // 				"noConsole": "error"
-      // 			}
-      // 		}
-      // 	}
-      // },
-      // {
-      // 	"includes": ["src/env/**/*.ts"],
-      // 	"linter": {
-      // 		"rules": {
-      // 			"style": {
-      // 				"noProcessEnv": "off"
-      // 			}
-      // 		}
-      // 	}
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          },
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["config/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/server/**/*.ts", "**/server/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/env/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noProcessEnv": "off"
+          }
+        }
+      }
     }
   ]
 }

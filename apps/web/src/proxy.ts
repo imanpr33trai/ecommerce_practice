@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 // Define where your Hono server lives
 // In production, this should be your actual backend domain
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
