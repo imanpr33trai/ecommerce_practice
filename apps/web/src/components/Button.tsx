@@ -6,8 +6,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, variant = "primary", size = "md", active = false, className = "", ...props }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-full transition-all duration-300 font-medium";
+const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = "primary",
+  size = "md",
+  active = false,
+  className = "",
+  ...props
+}) => {
+  const baseStyles =
+    "inline-flex items-center justify-center rounded-full transition-all duration-300 font-medium";
 
   const variants = {
     primary: "bg-nest-btn text-white hover:bg-neutral-800",
@@ -16,7 +24,9 @@ const Button: React.FC<ButtonProps> = ({ children, variant = "primary", size = "
     outline: "border border-gray-300 text-nest-text hover:bg-gray-50",
   };
 
-  const activeStyles = active ? "bg-nest-btn text-white shadow-md ring-2 ring-offset-2 ring-gray-200" : "";
+  const activeStyles = active
+    ? "bg-nest-btn text-white shadow-md ring-2 ring-offset-2 ring-gray-200"
+    : "";
   const activeIconStyles = active && variant === "icon" ? "!bg-nest-btn !text-white" : "";
 
   const sizes = {

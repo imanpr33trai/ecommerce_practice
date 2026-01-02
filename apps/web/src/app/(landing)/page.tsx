@@ -274,7 +274,8 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-100">
         <BentoCard className="md:col-span-2 relative group overflow-hidden bg-[#E8E8E6]">
           <Image
-            alt="Modern sofas"
+            alt="Modern sofas"  width={100}
+            height={200}
             src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1200"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
@@ -295,7 +296,8 @@ export default function HomePage() {
         <div className="flex flex-col gap-4">
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
             <Image
-              alt="Lighting"
+              alt="Lighting"  width={100}
+              height={200}
               src="https://images.unsplash.com/photo-1507473888900-52e1ad14db3d?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
@@ -310,7 +312,8 @@ export default function HomePage() {
           </BentoCard>
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
             <Image
-              alt="Chairs"
+              alt="Chairs"  width={100}
+              height={200}
               src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
@@ -361,7 +364,8 @@ export default function HomePage() {
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed">"{review.text}"</p>
                 <div className="flex items-center gap-3">
                   <Image
-                    alt="review"
+                    alt="review"  width={100}
+                    height={200}
                     src={review.avatar}
                     className="w-8 h-8 rounded-full object-cover"
                   />
@@ -388,7 +392,8 @@ export default function HomePage() {
               {TEAM.map((member) => (
                 <Image
                   alt={member.name}
-                  key={member.id}
+                  key={member.id}  width={100}
+                  height={200}
                   src={member.image}
                   className="w-10 h-10 rounded-full border-2 border-[#C6BAA8] object-cover"
                 />

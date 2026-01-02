@@ -9,6 +9,7 @@ import type React from "react";
 import { Input } from "@comp/input";
 import { Clock, X as CloseIcon, Heart, Loader2, LogIn, Menu, Search, ShoppingBag, UserIcon, X } from "lucide-react";
 
+import { useWishListCountQuery } from "@/data/wish";
 import { Cart } from "@/feature/cart";
 import { Product } from "@/feature/product";
 import { Wish } from "@/feature/wish";
@@ -78,16 +79,13 @@ const Navbar: React.FC = () => {
   };
 
   // --- DATA FETCHING (Non-Blocking) ---
-  const { data: isAuthenticated, isPending: isAuthPending } = authClient.useSession();
-  const wishCount = Wish.hooks.useWishListCount();
+  const { data: isAuthenticated } = authClient.useSession();
+  const { data: wishCount, isLoading: isWishListCountLoading, error: errorWishListCount } = useWishListCountQuery();
   // Only fetch cart if user is logged in
   const { data: cart } = Cart.hooks.useCart();
   const { data: suggestions, isLoading: isSuggestionsLoading } = Product.hooks.useSuggestions(deboucedQuery);
 
   const isActive = (path: string) => location === path;
-  if (!wishCount) {
-    return <div>wishlist is undefined</div>;
-  }
 
   // Calculate count safely (default to 0 if loading/error/guest)
   const cartItemCount = cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;

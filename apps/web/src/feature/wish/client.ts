@@ -1,9 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner"; // Assuming sonner, replace with your toast lib
 import { util } from "zod/v4/core";
 
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/trpc/client";
+
+import { useSessionQuery } from "../user/session-query";
 
 export const useWishQueries = {
   /**
@@ -18,9 +20,11 @@ export const useWishQueries = {
     );
   },
   useWishListCount: () => {
+    const { data: session } = authClient.useSession();
     const { data: ids } = useQuery(
       trpc.wish.getIds.queryOptions(undefined, {
         staleTime: 1000 * 60 * 10,
+        enabled: !!session,
       }),
     );
     return ids?.length ?? 0;
@@ -30,32 +34,39 @@ export const useWishQueries = {
    * Hook: Check if item is in wishlist
    * Usage: Product Cards (Heart Icon)
    */
-  useIsWishlisted: (productId: string) => {
-    const { data: session } = authClient.useSession();
+  useIsWishlisted: (productId: string | undefined) => {
+    // const { data: session } = authClient.useSession();
+    const { data: session } = useSessionQuery();
     // if(session){
     //   return
     // }
-    const {
-      data: ids,
-      error,
-      isLoading,
-    } = useQuery(
-      trpc.wish.getIds.queryOptions(undefined, {
-        staleTime: 1000 * 60 * 10, // 10 minutes
-        enabled: !!session,
-      }),
+    const { data: ids, isLoading } = useQuery(
+      trpc.wish.getIds.queryOptions(
+        // 1. Use skipToken instead of enabled: false
+        // This prevents the query from even existing in the cache until logged in
+        undefined,
+        {
+          staleTime: 1000 * 60 * 10,
+          enabled: !!session && !!productId,
+          refetchOnWindowFocus: false,
+        },
+      ),
     );
 
-    if (isLoading) {
-      console.log("useIsWishlisted is isLoading...");
-      return;
-    }
+    // 2. Logic Bloat Fix: Handle all "false" cases in one line
+    // If loading, no session, no product, or ID not in list -> return false
+    if (isLoading || !ids || !productId) return false;
 
-    if (error) {
-      console.log(`useIsWishlisted ${error.message}`);
-      return;
-    }
-    return !!ids?.includes(productId);
+    // if (isLoading) {
+    //   console.log("useIsWishlisted is isLoading...");
+    //   return;
+    // }
+
+    // if (error) {
+    //   console.log(`useIsWishlisted ${error.message}`);
+    //   return;
+    // }
+    return ids.includes(productId);
   },
 };
 

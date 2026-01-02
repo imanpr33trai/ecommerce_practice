@@ -12,19 +12,23 @@ import { createTRPCOptionsProxy, type TRPCQueryOptions } from "@trpc/tanstack-re
 import SuperJSON from "superjson";
 
 import { createQueryClient } from "./query-client";
+import { createContext } from "@ecomerceNextjs/api/context";
 
 export const getQueryClient = cache(createQueryClient);
 
-// Create server context that matches your API's context structure
-async function createServerContext() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+/**
+ * 1. Improved Server Context Creator
+ * This uses the Next.js 'headers()' and passes them to our universal
+ * createContext helper to ensure session & header logic is identical to Hono.
+ */
+export const createServerContext = cache(async () => {
+  const h = await headers();
 
-  return {
-    session,
-  };
-}
+  return createContext({
+    // We create a mock Request object for the helper
+    req: new Request("https://localhost", { headers: h }),
+  });
+});
 
 // For server-side calls that go through HTTP
 function getUrl() {

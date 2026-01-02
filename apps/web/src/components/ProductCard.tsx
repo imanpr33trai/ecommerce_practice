@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useContext, useRef, useState } from "react";
 import type React from "react";
 
 import { ArrowLeftRight, Heart, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
 
+import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { Cart } from "@/feature/cart";
 import { Wish } from "@/feature/wish";
 import { useWishQueries } from "@/feature/wish/client";
+import { authClient } from "@/lib/auth-client";
 import type { ProductSingle } from "@/feature/product";
 
 import { LayoutContext } from "../context/LayoutContext";
@@ -23,14 +26,14 @@ type ProductCardProps = {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) => {
   const { toggleCart } = useContext(LayoutContext);
-
+  const { data: session } = authClient.useSession();
   const { addToRecentlyViewed, setQuickViewProduct, compareList, addToCompare } = useShop();
 
   const { addItem, isAdding } = Cart.hooks.useActions();
-  const { mutate: toggleWish } = Wish.hooks.useToggle();
+  const { mutate: toggleWish } = useWishToggleMutation();
 
   // Only check wishlist status if logged in, otherwise false
-  const isWishlisted = useWishQueries.useIsWishlisted(product.id);
+  const isWishlisted = useWishListedQuery(product.id);
 
   // Local UI State
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "#D9D9D9");
@@ -38,7 +41,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const [alignment, setAlignment] = useState<"right" | "left">("right");
   const [isCollapsing, setIsCollapsing] = useState(false);
 
-  const cardRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
+
+  const cardRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInCompare = compareList.some((p) => p.id === product.id);
 
@@ -73,16 +78,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
+    if (!session) {
+      toast.error("Please sign in to use wishlist");
+      router.push("/sign-up");
+      return;
+    }
     // Optimistic mutation (Toast handled in the hook)
-    toggleWish({ productId: product.id });
+    toggleWish({
+      productId: product.id,
+    });
   };
 
   // --- DB ACTION: Add to Cart ---
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
+    if (!session) {
+      toast.error("Please sign in to use cart");
+      router.push("/sign-up");
+      return;
+    }
     // Call the mutation
     addItem(
       {
@@ -110,7 +125,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
     e.preventDefault();
     e.stopPropagation();
     if (isInCompare) {
-      toast.info("Info", { description: `${product.name} is already in compare` });
+      toast.info("Info", {
+        description: `${product.name} is already in compare`,
+      });
     } else {
       addToCompare(product);
     }
@@ -143,18 +160,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 
   const badges = [];
   if (product.isNew) {
-    badges.push({ text: "NEW", color: "bg-black text-white", id: 1 });
+    badges.push({
+      text: "NEW",
+      color: "bg-black text-white",
+      id: 1,
+    });
   }
   if (product.isOnSale) {
     badges.push({
       // Calculate discount percentage dynamically if available, else hardcode
-      text: product.discountPrice ? `-${Math.round((1 - Number(product.discountPrice) / Number(product.price)) * 100)}%` : "SALE",
+      text: product.discountPrice
+        ? `-${Math.round((1 - Number(product.discountPrice) / Number(product.price)) * 100)}%`
+        : "SALE",
       color: "bg-red-500 text-white",
       id: 2,
     });
   }
   if ((product.rating || 0) >= 4.9) {
-    badges.push({ text: "TOP RATED", color: "bg-blue-600 text-white", id: 3 });
+    badges.push({
+      text: "TOP RATED",
+      color: "bg-blue-600 text-white",
+      id: 3,
+    });
   }
 
   // const displayColors = product.colors && product.colors.length > 0 ? product.colors : ["#D9D9D9", "#3A3A3A", "#8C7A6B"];
@@ -171,10 +198,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   };
   const contentStyle: React.CSSProperties = (() => {
     if (isExpanded) {
-      return isLeftAlign ? { right: "54%" } : { left: "54%" };
+      return isLeftAlign
+        ? {
+            right: "54%",
+          }
+        : {
+            left: "54%",
+          };
     }
 
-    return isLeftAlign ? { left: "0", right: "auto" } : { right: "0", left: "auto" };
+    return isLeftAlign
+      ? {
+          left: "0",
+          right: "auto",
+        }
+      : {
+          right: "0",
+          left: "auto",
+        };
   })();
 
   const wishlistButtonStyle = {
@@ -198,14 +239,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   // }
   return (
     <>
-      <div className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`} />
+      <div
+        className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`}
+      />
 
-      <button
+      <div
         className={`relative h-110 w-full transition-all duration-300 ${zIndexClass} ${className}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         ref={cardRef}
-        type="button"
       >
         <div
           className={`absolute top-0 origin-top overflow-hidden rounded-4xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-1000 ease-premium will-change-transform ${isHovering ? "scale-[1.02] shadow-xl ring-black/10" : ""}
@@ -256,7 +298,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 />
               </button>
 
-              <div className={`-translate-x-1/2 absolute bottom-4 left-1/2 z-20 flex gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}>
+              <div
+                className={`-translate-x-1/2 absolute bottom-4 left-1/2 z-20 flex gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
+              >
                 {/*<Button
                   className="h-10 w-10 rounded-full"
                   onClick={handleQuickView}
@@ -282,15 +326,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
               className={`absolute overflow-hidden bg-white transition-all duration-1000 ease-premium ${isExpanded ? "top-0 h-full w-[46%]" : "top-70 h-40 w-full"}`}
               style={contentStyle}
             >
-              <div className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}>
+              <div
+                className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}
+              >
                 <div className="relative z-10">
                   <div className="mb-2 flex items-start justify-between">
                     <div className="min-w-0 flex-1 pr-2">
-                      <p className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}>{product.category?.name}</p>
-                      <h3 className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}>{product.name}</h3>
+                      <p
+                        className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}
+                      >
+                        {product.category?.name}
+                      </p>
+                      <h3
+                        className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}
+                      >
+                        {product.name}
+                      </h3>
                     </div>
                     <div className="shrink-0 text-right">
-                      <span className="block font-bold text-gray-900 text-lg transition-all duration-300">${product.price}</span>
+                      <span className="block font-bold text-gray-900 text-lg transition-all duration-300">
+                        ${product.price}
+                      </span>
                       <div className="mt-1 ml-auto flex w-fit items-center gap-1 rounded-md bg-yellow-50 px-2 py-1 font-bold text-[10px] text-yellow-600">
                         <Star
                           fill="currentColor"
@@ -315,7 +371,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                   selectedColor={selectedColor}
                 />
 
-                <div className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}>
+                <div
+                  className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}
+                >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-black shadow-sm hover:bg-gray-200">
                     <ShoppingBag size={20} />
                   </div>
@@ -324,7 +382,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             </div>
           </Link>
         </div>
-      </button>
+      </div>
     </>
   );
 };
