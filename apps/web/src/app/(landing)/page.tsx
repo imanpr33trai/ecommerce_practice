@@ -2,10 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
-import { ArrowLeft, ArrowRight, ArrowUpRight, Heart, RefreshCcw, ShieldCheck, Star, Truck } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  Heart,
+  RefreshCcw,
+  ShieldCheck,
+  Star,
+  Truck,
+} from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -24,7 +33,12 @@ interface ProductSliderProps {
   categoryLink: string;
 }
 
-const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products, categoryLink }) => {
+const ProductSlider: React.FC<ProductSliderProps> = ({
+  title,
+  subtitle,
+  products,
+  categoryLink,
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
 
@@ -35,7 +49,8 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
       const scrollAmount = (cardWidth + gap) * 1;
 
       const currentScroll = scrollRef.current.scrollLeft;
-      const targetScroll = direction === "left" ? currentScroll - scrollAmount : currentScroll + scrollAmount;
+      const targetScroll =
+        direction === "left" ? currentScroll - scrollAmount : currentScroll + scrollAmount;
 
       scrollRef.current.scrollTo({
         left: targetScroll,
@@ -102,19 +117,36 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title, subtitle, products
 
 export default function HomePage() {
   // --- 1. ALL HOOKS CALLED UNCONDITIONALLY AT TOP ---
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [isHeroWishlisted, setIsHeroWishlisted] = useState(false);
+  const [scrollPos, setScrollPos] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const { recentlyViewed } = useShop();
 
   // Call each hook individually - NEVER conditionally
-  const { data, isLoading } = Product.hooks.useLandingData();
-  // const exclusiveDealsQ = Product.hooks.exclusiveDeals();
-  // const greatValueQ = Product.hooks.greatValue();
-  // const allProductsQ = Product.hooks.allProducts();
+  const { data, isLoading: isLandingLoading } = Product.hooks.useLandingData();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+
+    const handleScroll = () => {
+      setScrollPos(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   // --- 2. DATA EXTRACTION (after hooks) ---
   // Handle loading states
-  if (isLoading) return <LoadingSkeleton type="home" />;
+  if (isLoading || isLandingLoading) {
+    return <LoadingSkeleton type="home" />;
+  }
 
   if (!data) {
     return <h1>products is undefined or null</h1>;
@@ -130,23 +162,33 @@ export default function HomePage() {
   const nextSlide = () => setCurrentSlide((p) => (p + 1) % data.length);
   const prevSlide = () => setCurrentSlide((p) => (p - 1 + data.length) % data.length);
 
-  // const livingRoomProducts = data.filter((p) => ["Sofa", "Chair", "Bed"].includes(p.category?.name || "not"));
-  // const workspaceProducts = data.filter((p) => ["Table", "Lamps", "Dressers"].includes(p.category?.name || "not"));
+  // Subtle parallax offsets
+  const parallaxText = scrollPos * 0.15;
+  const parallaxImage = scrollPos * 0.05;
 
   return (
-    <div className="p-4 md:px-8 pb-8 space-y-16 max-w-400 mx-auto animate-fade-in">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-150">
+    <div className="p-4 md:px-8 pb-8 space-y-16 max-w-[1600px] mx-auto animate-fade-in">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-auto lg:h-[600px]">
         <BentoCard className="lg:col-span-8 relative bg-[#F2F2F0] flex flex-col justify-center overflow-hidden group">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vw] font-bold text-white uppercase tracking-tighter leading-none select-none">Nestify</div>
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vw] font-bold text-white uppercase tracking-tighter leading-none select-none transition-transform duration-150 ease-out"
+            style={{ transform: `translate(-50%, calc(-50% + ${parallaxText}px))` }}
+          >
+            Nestify
+          </div>
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-around h-full p-8 md:p-12 gap-8">
             <div className="flex-1 space-y-6 max-w-md">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-md border border-white/50">
                 <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-600">New Arrival</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-600">
+                  New Arrival
+                </span>
               </div>
 
-              <h1 className="text-4xl md:text-6xl font-light tracking-tight leading-[1.1]">{featuredProduct.name}</h1>
+              <h1 className="text-4xl md:text-6xl font-light tracking-tight leading-[1.1]">
+                {featuredProduct.name}
+              </h1>
 
               <div className="flex items-center gap-4">
                 <span className="text-2xl font-medium">${featuredProduct.price}</span>
@@ -162,7 +204,7 @@ export default function HomePage() {
 
               <div className="flex gap-3 pt-4">
                 <Link
-                  href={`/product/${featuredProduct.id}`}
+                  href={`/product/${featuredProduct.slug}`}
                   className="flex-1"
                 >
                   <Button className="w-full px-8! h-12">View Product</Button>
@@ -180,13 +222,16 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex-1 relative w-full max-w-100 aspect-square">
+            <div
+              className="flex-1 relative w-full max-w-[400px] aspect-square transition-transform duration-150 ease-out"
+              style={{ transform: `translateY(${parallaxImage}px)` }}
+            >
               <div className="absolute inset-0 bg-white/40 rounded-full blur-3xl transform scale-75"></div>
               <Image
-                src={featuredProduct.images.at(0)?.url || featuredProduct.name}
-                alt={featuredProduct.name}
                 width={100}
                 height={200}
+                src={featuredProduct.images.at(0)?.url || featuredProduct.name}
+                alt={featuredProduct.name}
                 className="relative w-full h-full object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-105"
               />
             </div>
@@ -212,7 +257,9 @@ export default function HomePage() {
 
         <BentoCard className="lg:col-span-4 bg-black text-white p-8 flex flex-col justify-between relative overflow-hidden group">
           <div className="relative z-10">
-            <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Limited Offer</span>
+            <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">
+              Limited Offer
+            </span>
             <h2 className="text-4xl font-light mt-4 mb-2">
               Summer <br />
               Sale
@@ -241,7 +288,12 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           { icon: Truck, id: 1, title: "Free Shipping", desc: "On all orders over $200" },
-          { icon: ShieldCheck, id: 2, title: "Secure Payment", desc: "100% secure payment methods" },
+          {
+            icon: ShieldCheck,
+            id: 2,
+            title: "Secure Payment",
+            desc: "100% secure payment methods",
+          },
           { icon: RefreshCcw, id: 3, title: "30 Days Return", desc: "If goods have problems" },
         ].map((item) => (
           <BentoCard
@@ -274,7 +326,8 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-100">
         <BentoCard className="md:col-span-2 relative group overflow-hidden bg-[#E8E8E6]">
           <Image
-            alt="Modern sofas"  width={100}
+            alt="Modern sofas"
+            width={100}
             height={200}
             src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=1200"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -296,12 +349,15 @@ export default function HomePage() {
         <div className="flex flex-col gap-4">
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
             <Image
-              alt="Lighting"  width={100}
+              alt="Lighting"
+              width={100}
               height={200}
               src="https://images.unsplash.com/photo-1507473888900-52e1ad14db3d?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">Lighting</div>
+            <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+              Lighting
+            </div>
             <Link
               href={{
                 pathname: "/product",
@@ -312,12 +368,15 @@ export default function HomePage() {
           </BentoCard>
           <BentoCard className="flex-1 relative group overflow-hidden bg-white">
             <Image
-              alt="Chairs"  width={100}
+              alt="Chairs"
+              width={100}
               height={200}
               src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=600"
               className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">Chairs</div>
+            <div className="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+              Chairs
+            </div>
             <Link
               href={{
                 pathname: "/product",
@@ -364,7 +423,8 @@ export default function HomePage() {
                 <p className="text-sm text-gray-600 mb-4 leading-relaxed">"{review.text}"</p>
                 <div className="flex items-center gap-3">
                   <Image
-                    alt="review"  width={100}
+                    alt="review"
+                    width={100}
                     height={200}
                     src={review.avatar}
                     className="w-8 h-8 rounded-full object-cover"
@@ -380,7 +440,9 @@ export default function HomePage() {
         </BentoCard>
         <BentoCard className="md:col-span-4 p-8 bg-[#C6BAA8] text-black flex flex-col justify-between group cursor-pointer relative overflow-hidden">
           <div className="relative z-10">
-            <span className="border border-black/20 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider">Careers</span>
+            <span className="border border-black/20 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider">
+              Careers
+            </span>
             <h3 className="text-3xl font-medium mt-4 leading-tight">
               Join the <br />
               craft.
@@ -392,7 +454,8 @@ export default function HomePage() {
               {TEAM.map((member) => (
                 <Image
                   alt={member.name}
-                  key={member.id}  width={100}
+                  key={member.id}
+                  width={100}
                   height={200}
                   src={member.image}
                   className="w-10 h-10 rounded-full border-2 border-[#C6BAA8] object-cover"

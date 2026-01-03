@@ -20,6 +20,7 @@ export const ReviewListSchema = z.object({
  */
 export const reviewSelect = {
   id: true,
+  userId: true,
   rating: true,
   comment: true,
   createdAt: true,

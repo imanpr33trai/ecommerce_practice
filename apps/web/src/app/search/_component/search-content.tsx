@@ -62,7 +62,10 @@ export function SearchContent() {
             />
           </div>
           <h2 className="text-2xl font-bold mb-2">No results found</h2>
-          <p className="text-gray-500 mb-8 max-w-md">We couldn't find any products matching "{query}". Try different keywords or browse our catalog.</p>
+          <p className="text-gray-500 mb-8 max-w-md">
+            We couldn't find any products matching "{query}". Try different keywords or browse our
+            catalog.
+          </p>
           <Link href="/product">
             <Button
               size="lg"

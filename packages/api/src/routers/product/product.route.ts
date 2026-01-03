@@ -101,7 +101,10 @@ export const productRouter = router({
       return products.map((p) => {
         const price = Number(p.price);
         const discountPrice = p.discountPrice ? Number(p.discountPrice) : null;
-        const avgRating = p.reviews.length > 0 ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length : 0;
+        const avgRating =
+          p.reviews.length > 0
+            ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
+            : 0;
         // Calculate Discount Percentage for badges (e.g., "-20%")
         let discountPercentage = 0;
         if (discountPrice) {
@@ -124,7 +127,7 @@ export const productRouter = router({
           colors: p.colors || null,
           discountPercentage: discountPercentage > 0 ? discountPercentage : null,
           category: p.category,
-          images: p.images, // Safe fallback
+          images: p.images || [], // Safe fallback
           material: p.material || [],
           reviewCount: p._count.reviews,
         };
@@ -139,7 +142,20 @@ export const productRouter = router({
       ...INITIAL_PRODUCT_FILTERS,
       ...input,
     };
-    const { categories, colors, inStock, limit, materials, maxPrice, minPrice, onSale, page, rating, search, sort } = filters;
+    const {
+      categories,
+      colors,
+      inStock,
+      limit,
+      materials,
+      maxPrice,
+      minPrice,
+      onSale,
+      page,
+      rating,
+      search,
+      sort,
+    } = filters;
     // --- 1. BUILD DYNAMIC WHERE CLAUSE ---
     const where: Prisma.ProductWhereInput = {
       isActive: true,
@@ -151,7 +167,12 @@ export const productRouter = router({
       },
 
       // Search (Name or Description)
-      OR: search ? [{ name: { contains: search, mode: "insensitive" } }, { description: { contains: search, mode: "insensitive" } }] : undefined,
+      OR: search
+        ? [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ]
+        : undefined,
 
       // Categories (Relation Filter)
       // Checks if product.category.name is in the array
@@ -210,7 +231,11 @@ export const productRouter = router({
           colors: true,
           material: true,
           category: { select: { name: true, slug: true } },
-          images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true, id: true } },
+          images: {
+            where: { isPrimary: true },
+            take: 1,
+            select: { url: true, altText: true, id: true },
+          },
           reviews: { select: { rating: true } },
         },
       }),
@@ -218,7 +243,8 @@ export const productRouter = router({
 
     // --- 4. TRANSFORM DATA ---
     const transformedProducts = rawItems.map((p) => {
-      const avgRating = p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0;
+      const avgRating =
+        p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0;
 
       return {
         ...p,
@@ -235,7 +261,9 @@ export const productRouter = router({
     });
 
     // Optional: Post-filter by strict rating if database sort wasn't enough
-    const finalItems = rating ? transformedProducts.filter((i) => i.rating >= rating) : transformedProducts;
+    const finalItems = rating
+      ? transformedProducts.filter((i) => i.rating >= rating)
+      : transformedProducts;
 
     return {
       items: finalItems,
@@ -341,7 +369,8 @@ export const productRouter = router({
 
       const isNew = (Date.now() - new Date(product.createdAt).getTime()) / (1000 * 3600 * 24) < 30;
 
-      const isOnSale = product.discountPrice !== null && Number(product.discountPrice) < Number(product.price);
+      const isOnSale =
+        product.discountPrice !== null && Number(product.discountPrice) < Number(product.price);
 
       return {
         id: product.id,
@@ -365,27 +394,32 @@ export const productRouter = router({
    * Real-time Search Suggestions
    * Lightweight query for the Navbar dropdown
    */,
-  getSuggestions: publicProcedure.input(z.object({ query: z.string().min(1) })).query(async ({ input }) => {
-    const products = await prisma.product.findMany({
-      where: {
-        isActive: true,
-        OR: [{ name: { contains: input.query, mode: "insensitive" } }, { category: { name: { contains: input.query, mode: "insensitive" } } }],
-      },
-      take: 5, // Limit to 5 results for the dropdown
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        price: true,
-        category: { select: { name: true } },
-        images: { where: { isPrimary: true }, take: 1, select: { url: true } },
-      },
-    });
+  getSuggestions: publicProcedure
+    .input(z.object({ query: z.string().min(1) }))
+    .query(async ({ input }) => {
+      const products = await prisma.product.findMany({
+        where: {
+          isActive: true,
+          OR: [
+            { name: { contains: input.query, mode: "insensitive" } },
+            { category: { name: { contains: input.query, mode: "insensitive" } } },
+          ],
+        },
+        take: 5, // Limit to 5 results for the dropdown
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          price: true,
+          category: { select: { name: true } },
+          images: { where: { isPrimary: true }, take: 1, select: { url: true } },
+        },
+      });
 
-    return products.map((p) => ({
-      ...p,
-      price: Number(p.price),
-      image: p.images[0]?.url || "/placeholder.jpg",
-    }));
-  }),
+      return products.map((p) => ({
+        ...p,
+        price: Number(p.price),
+        image: p.images[0]?.url || "/placeholder.jpg",
+      }));
+    }),
 });

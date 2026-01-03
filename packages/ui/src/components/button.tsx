@@ -98,7 +98,7 @@ const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPro
       const { href, ...rest } = props;
       return (
         <Link
-          href={loading ? "#" : href}
+          href={{ pathname: loading ? "#" : href }}
           className={finalClassName}
           aria-disabled={loading}
           onClick={loading ? (e) => e.preventDefault() : rest.onClick}

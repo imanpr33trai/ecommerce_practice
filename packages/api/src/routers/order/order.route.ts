@@ -28,7 +28,11 @@ export const orderRouter = router({
                 slug: true,
                 price: true,
                 discountPrice: true,
-                images: { where: { isPrimary: true }, take: 1, select: { url: true, id: true, altText: true } },
+                images: {
+                  where: { isPrimary: true },
+                  take: 1,
+                  select: { url: true, id: true, altText: true },
+                },
               },
             },
           },
@@ -87,7 +91,11 @@ export const orderRouter = router({
                 slug: true,
                 price: true,
                 discountPrice: true,
-                images: { where: { isPrimary: true }, take: 1, select: { url: true, id: true, altText: true } },
+                images: {
+                  where: { isPrimary: true },
+                  take: 1,
+                  select: { url: true, id: true, altText: true },
+                },
               },
             },
           },
@@ -125,30 +133,36 @@ export const orderRouter = router({
     };
   }),
   /**
-   * Create Order from Current Cart
-   * This is the heart of the checkout process.
-   * Features: Transactional, Stock Check, Cart Clearing.
+   * Create Order (Checkout)
+   * Now requires an Address ID
    */
   createFromCart: protectedProcedure
     .input(
       z.object({
-        paymentProvider: z.string().min(1, "Payment provider is required"),
-        // You might add address IDs, shipping options here later
+        paymentProvider: z.string().default("stripe"),
+        addressId: z.string().min(1, "Shipping address is required"),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
-      const { paymentProvider } = input;
+      const { paymentProvider, addressId } = input;
 
       return prisma.$transaction(async (tx) => {
-        // 1. Fetch User's Cart
+        // 1. Verify Address belongs to user
+        const address = await tx.address.findUnique({
+          where: { id: addressId },
+        });
+
+        if (!address || address.userId !== userId) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid shipping address" });
+        }
+
+        // 2. Fetch Cart
         const cart = await tx.cart.findUnique({
           where: { userId },
           include: {
             items: {
-              include: {
-                product: { select: { id: true, name: true, stock: true, price: true, discountPrice: true } },
-              },
+              include: { product: true },
             },
           },
         });
@@ -160,64 +174,58 @@ export const orderRouter = router({
         let totalAmount = 0;
         const orderItemsData = [];
 
-        // 2. Validate Stock and Calculate Total
+        // 3. Stock Check & Total Calculation
         for (const cartItem of cart.items) {
-          const product = cartItem.product;
-          const price = Number(product.discountPrice ?? product.price);
-
-          if (cartItem.quantity > product.stock) {
+          if (cartItem.quantity > cartItem.product.stock) {
             throw new TRPCError({
               code: "CONFLICT",
-              message: `Not enough stock for ${product.name}. Available: ${product.stock}, Requested: ${cartItem.quantity}`,
+              message: `Not enough stock for ${cartItem.product.name}`,
             });
           }
 
+          const price = Number(cartItem.product.discountPrice ?? cartItem.product.price);
           totalAmount += price * cartItem.quantity;
 
           orderItemsData.push({
-            productId: product.id,
+            productId: cartItem.productId,
             quantity: cartItem.quantity,
+            // You might want to snapshot price here too in a real app
           });
 
-          // 3. Decrement Product Stock
+          // Decrement Stock
           await tx.product.update({
-            where: { id: product.id },
+            where: { id: cartItem.productId },
             data: { stock: { decrement: cartItem.quantity } },
           });
         }
 
-        // 4. Create the Order
+        // 4. Create Order
+        // Note: Ideally your Order schema has a 'shippingAddressId' field.
+        // If not, you might store a snapshot. Assuming you have the relation:
         const order = await tx.order.create({
           data: {
             userId,
             totalAmount,
-            status: OrderStatus.PENDING, // Always PENDING initially
+            status: OrderStatus.PENDING,
             paymentStatus: PaymentStatus.PENDING,
-            items: {
-              create: orderItemsData,
-            },
+            // shippingAddressId: addressId, // Uncomment if you added this field to Schema
+            items: { create: orderItemsData },
             payment: {
               create: {
                 amount: totalAmount,
                 provider: paymentProvider,
                 status: PaymentStatus.PENDING,
-                // transactionId: '...', // This would come from external payment gateway
               },
             },
           },
-          select: { id: true, totalAmount: true, status: true, paymentStatus: true }, // Return basic order info
         });
 
-        // 5. Clear the User's Cart
+        // 5. Clear Cart
         await tx.cartItem.deleteMany({
           where: { cartId: cart.id },
         });
 
-        // 6. Return the newly created order
-        return {
-          ...order,
-          totalAmount: Number(order.totalAmount),
-        };
+        return order;
       });
     }) /**
    * Admin: Update Order Status

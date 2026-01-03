@@ -39,7 +39,9 @@ export default function CartPage() {
           />
         </div>
         <h1 className="text-3xl font-light mb-2">Your Cart is Empty</h1>
-        <p className="text-gray-500 mb-8 max-w-md">Looks like you haven't added anything to your cart yet.</p>
+        <p className="text-gray-500 mb-8 max-w-md">
+          Looks like you haven't added anything to your cart yet.
+        </p>
         <Link href="/product">
           <Button size="lg">Start Shopping</Button>
         </Link>
@@ -86,7 +88,9 @@ export default function CartPage() {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-3 bg-gray-100 rounded-full px-2 py-1">
                     <button
-                      onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })}
+                      onClick={() =>
+                        updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })
+                      }
                       type="button"
                       className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center text-xs hover:bg-gray-50"
                     >
@@ -94,7 +98,9 @@ export default function CartPage() {
                     </button>
                     <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })}
+                      onClick={() =>
+                        updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })
+                      }
                       type="button"
                       className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center text-xs hover:bg-gray-50"
                     >
@@ -160,7 +166,9 @@ export default function CartPage() {
               </Button>
             </Link>
 
-            <p className="text-xs text-center text-gray-400 mt-4">Secure checkout provided by Nestify.</p>
+            <p className="text-xs text-center text-gray-400 mt-4">
+              Secure checkout provided by Nestify.
+            </p>
           </BentoCard>
         </div>
       </div>

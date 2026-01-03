@@ -1,13 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { trpc } from "@/trpc/client";
 
 import { reviewKeys } from "./keys";
 
-export function reviewDeleteOptions() {
-  const utils = useQueryClient();
-
+export function reviewDeleteOptions(utils: QueryClient) {
   return trpc.review.delete.mutationOptions({
     onSuccess: (_, variables) => {
       toast.success("Review deleted");
@@ -23,5 +21,6 @@ export function reviewDeleteOptions() {
 }
 
 export const useReviewDeleteMutation = () => {
-  return useMutation(reviewDeleteOptions());
+  const queryClient = useQueryClient();
+  return useMutation(reviewDeleteOptions(queryClient));
 };

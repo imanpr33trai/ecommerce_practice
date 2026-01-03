@@ -50,7 +50,9 @@ export function ProductContent() {
 
   // --- 4. HANDLERS ---
   const handleFilterEnter = () => {
-    if (filterTimeoutRef.current) clearTimeout(filterTimeoutRef.current);
+    if (filterTimeoutRef.current) {
+      clearTimeout(filterTimeoutRef.current);
+    }
     setShowFilters(true);
   };
 
@@ -62,11 +64,18 @@ export function ProductContent() {
 
   // Helper variables for UI
   const categoryParam = searchParams.get("category") || "All";
-  const displayTitle = filters.categories.length === 1 ? filters.categories[0] : categoryParam === "All" ? "Shop" : categoryParam;
+  const displayTitle =
+    filters.categories.length === 1
+      ? filters.categories[0]
+      : categoryParam === "All"
+        ? "Shop"
+        : categoryParam;
 
   // --- 5. CONDITIONAL RENDERS ---
 
-  if (isLoading) return <LoadingSkeleton type="products" />;
+  if (isLoading) {
+    return <LoadingSkeleton type="products" />;
+  }
 
   if (isError || !PRODUCTS) {
     console.error("Product Load Error:", error);
@@ -83,20 +92,24 @@ export function ProductContent() {
 
   // --- 5. SUCCESS RENDER ---
   return (
-    <div className="p-4 md:px-8 max-w-400 mx-auto animate-fade-in relative min-h-screen">
-      {/* Header */}
-      <div className="flex justify-between items-end mb-8 relative z-20">
+    <div className="p-4 md:px-8 max-w-[1600px] mx-auto animate-fade-in relative">
+      <div className="flex justify-between items-end mb-8 relative z-[200]">
         <div>
-          <h1 className="text-5xl font-light mb-2">{displayTitle} Collection</h1>
+          <h1 className="text-5xl font-light mb-2">
+            {filters.categories.length === 1
+              ? filters.categories[0]
+              : categoryParam === "All"
+                ? "Shop"
+                : categoryParam}{" "}
+            Collection
+          </h1>
           <p className="text-gray-500">Curated specifically for modern living.</p>
         </div>
-
-        {/* Actions */}
         <div className="flex gap-2 relative">
           {compareList.length > 0 && (
             <Button
               onClick={() => setCompareOpen(true)}
-              className="rounded-full px-4! bg-black text-white animate-fade-in"
+              className="rounded-full !px-4 bg-black text-white animate-fade-in"
             >
               <ArrowLeftRight
                 size={16}
@@ -113,7 +126,7 @@ export function ProductContent() {
           >
             <Button
               variant="outline"
-              className={`rounded-full px-4! transition-colors ${showFilters ? "bg-black text-white border-black" : ""}`}
+              className={`rounded-full !px-4 transition-all duration-300 ${showFilters ? "bg-black text-white border-black" : ""}`}
             >
               <Filter
                 size={16}
@@ -122,7 +135,13 @@ export function ProductContent() {
               Filters
             </Button>
 
-            <div className={`absolute top-full right-0 mt-2 z-1040 origin-top-right transition-all duration-300 ease-out transform ${showFilters ? "opacity-100 scale-100 translate-y-0 pointer-events-auto visible" : "opacity-0 scale-95 -translate-y-2 pointer-events-none invisible"}`}>
+            <div
+              className={`absolute top-full right-0 mt-2 z-[150] origin-top-right transition-all duration-300 ease-premium transform ${
+                showFilters
+                  ? "opacity-100 scale-100 translate-y-0 pointer-events-auto visible"
+                  : "opacity-0 scale-95 -translate-y-2 pointer-events-none invisible"
+              }`}
+            >
               <ModalFilter
                 filters={filters}
                 setFilters={setFilters}
@@ -132,7 +151,6 @@ export function ProductContent() {
         </div>
       </div>
 
-      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {PRODUCTS.items.map((product) => (
           <ProductCard
@@ -141,10 +159,10 @@ export function ProductContent() {
           />
         ))}
 
-        {/* Promo Card */}
-        <BentoCard className="bg-black text-white p-8 flex flex-col justify-center items-center text-center col-span-1 lg:col-span-1 row-span-1 border border-gray-800">
+        <BentoCard className="bg-black text-white p-8 flex flex-col justify-center items-center text-center col-span-1 lg:col-span-1 row-span-1 border border-gray-800 h-[440px]">
           <h3 className="text-3xl font-light mb-4">
-            Summer <br /> Clearance
+            Summer <br />
+            Clearance
           </h3>
           <p className="text-gray-400 text-sm mb-6">Up to 60% off on selected items.</p>
           <Button className="bg-white text-black hover:bg-gray-200">View Sale</Button>
