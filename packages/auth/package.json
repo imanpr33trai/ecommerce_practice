@@ -10,10 +10,13 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check ."
   },
   "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*"
+    "@ecomerceNextjs/config": "workspace:*",
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -25,3 +28,4 @@
     "@ecomerceNextjs/db": "workspace:*"
   }
 }
+

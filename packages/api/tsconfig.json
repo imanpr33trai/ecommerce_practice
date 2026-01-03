@@ -8,6 +8,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "composite": true,
+    "rootDir": "src",
     "noEmit": false
   },
   "include": ["src/**/*"],

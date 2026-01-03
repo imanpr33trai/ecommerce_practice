@@ -16,3 +16,4 @@
   "include": ["prisma/**/*", "src/**/*"],
   "exclude": ["dist", "node_modules", "prisma/migrations"]
 }
+

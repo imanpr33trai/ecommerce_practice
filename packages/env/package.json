@@ -3,10 +3,14 @@
   "name": "@ecomerceNextjs/env",
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check ."
   },
   "version": "1.0.0",
   "devDependencies": {
-    "zod": "^4.2.1"
+    "zod": "^4.2.1",
+    "typescript": "^5.0.0"
   }
 }
+

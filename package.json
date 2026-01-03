@@ -1,8 +1,7 @@
 {
   "dependencies": {
     "@dotenvx/dotenvx": "^1.51.2",
-    "@radix-ui/react-avatar": "^1.1.11",
-    "@radix-ui/react-slot": "^1.2.4",
+
     "dotenv": "^17.2.2",
     "next-themes": "^0.4.6",
     "pg": "^8.16.3",
@@ -23,8 +22,31 @@
     "start": "bun run start:server & bun run start:web",
     "start:web": "cd apps/web && bun run start",
     "start:server": "cd apps/server && bun run start",
-    "check": "biome check --write .",
-    "check-types": "turbo check-types",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "check": "turbo lint type-check",
+    "format": "biome format --write .",
+    "lint:web": "turbo lint --filter=web",
+    "lint:server": "turbo lint --filter=server",
+    "type-check:web": "turbo type-check --filter=web",
+    "type-check:server": "turbo type-check --filter=server",
+    "type-check:api": "turbo type-check --filter=@ecomerceNextjs/api",
+    "type-check:auth": "turbo type-check --filter=@ecomerceNextjs/auth",
+    "type-check:db": "turbo type-check --filter=@ecomerceNextjs/db",
+    "type-check:env": "turbo type-check --filter=@ecomerceNextjs/env",
+    "type-check:ui": "turbo type-check --filter=@workspace/ui",
+    "lint:api": "turbo lint --filter=@ecomerceNextjs/api",
+    "lint:auth": "turbo lint --filter=@ecomerceNextjs/auth",
+    "lint:db": "turbo lint --filter=@ecomerceNextjs/db",
+    "lint:env": "turbo lint --filter=@ecomerceNextjs/env",
+    "lint:ui": "turbo lint --filter=@workspace/ui",
+    "check:web": "turbo lint type-check --filter=web",
+    "check:server": "turbo lint type-check --filter=server",
+    "check:api": "turbo lint type-check --filter=@ecomerceNextjs/api",
+    "check:auth": "turbo lint type-check --filter=@ecomerceNextjs/auth",
+    "check:db": "turbo lint type-check --filter=@ecomerceNextjs/db",
+    "check:env": "turbo lint type-check --filter=@ecomerceNextjs/env",
+    "check:ui": "turbo lint type-check --filter=@workspace/ui",
     "db:down": "turbo -F @ecomerceNextjs/db db:down",
     "db:generate": "turbo -F @ecomerceNextjs/db db:generate",
     "db:migrate": "turbo -F @ecomerceNextjs/db db:migrate",
@@ -39,6 +61,8 @@
     "dev:native": "turbo -F native dev",
     "dev:server": "turbo -F server dev",
     "dev:web": "turbo -F web dev",
+    "docker:build": "docker compose build",
+    "docker:run": "docker compose up",
     "ui:add": "bunx shadcn@latest add"
   },
   "type": "module",
@@ -47,3 +71,4 @@
     "packages/*"
   ]
 }
+

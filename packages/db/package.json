@@ -10,7 +10,8 @@
     "@ecomerceNextjs/config": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
     "@types/pg": "^8.11.11",
-    "prisma": "^7.2.0"
+    "prisma": "^7.2.0",
+    "typescript": "^5.0.0"
   },
   "exports": {
     ".": {
@@ -24,7 +25,10 @@
   "peerDependencies": {
     "typescript": "^5"
   },
-  "scripts": {"build": "prisma generate && tsc",
+  "scripts": {
+    "build": "prisma generate && tsc",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
