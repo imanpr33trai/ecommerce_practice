@@ -10,11 +10,16 @@ import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Button from "@/components/Button";
-import { Cart } from "@/feature/cart";
+import {
+  useCartItemRemoveMutation,
+  useCartListItemsQuery,
+  useCartUpdateItemQuantityMutation,
+} from "@/data/cart";
 
 export default function CartPage() {
-  const { data: cart, isLoading: isCartLoading, error: cartError } = Cart.hooks.useCart();
-  const { updateQuantity, removeItem } = Cart.hooks.useActions();
+  const { data: cart, isLoading: isCartLoading, error: cartError } = useCartListItemsQuery();
+  const { mutate: removeItem } = useCartItemRemoveMutation();
+  const { mutate: updateQuantity } = useCartUpdateItemQuantityMutation();
   if (isCartLoading) {
     return <div>cart page is isLoading</div>;
   }

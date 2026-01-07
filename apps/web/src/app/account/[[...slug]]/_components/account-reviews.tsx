@@ -75,7 +75,7 @@ export function AccountReviews() {
                         Posted on {review.createdAt.toDateString()}
                       </span>
                       <Link
-                        href={`/product/${review.productId}`}
+                        href={`/product/${review.product.slug}`}
                         className="text-xs font-bold text-black flex items-center gap-1 hover:underline"
                       >
                         View Product <ExternalLink size={12} />

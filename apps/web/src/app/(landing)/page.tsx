@@ -22,7 +22,7 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 import ProductCard from "@/components/ProductCard";
 import { REVIEWS, TEAM } from "@/constants";
 import { useShop } from "@/context/ShopContext";
-import { Product, type ProductSingle } from "@/feature/product";
+import { type ProductSingle, useProductLandingQuery } from "@/data/product";
 
 // import type { Product } from "../types";
 
@@ -126,7 +126,7 @@ export default function HomePage() {
   const { recentlyViewed } = useShop();
 
   // Call each hook individually - NEVER conditionally
-  const { data, isLoading: isLandingLoading } = Product.hooks.useLandingData();
+  const { data, isLoading: isLandingLoading } = useProductLandingQuery();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);

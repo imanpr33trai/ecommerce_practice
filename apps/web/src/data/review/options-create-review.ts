@@ -7,14 +7,12 @@ import { reviewKeys } from "./keys";
 export function reviewCreateOptions(utils: QueryClient) {
   return trpc.review.create.mutationOptions({
     onSuccess: (_, variables) => {
-      toast.success("Review posted successfully!");
-
       utils.invalidateQueries({
-        queryKey: [
-          reviewKeys.byProduct(variables.productId),
-          reviewKeys.summary(variables.productId),
-        ],
+        queryKey: trpc.review.listByProduct.queryKey(),
       });
+      utils.invalidateQueries({ queryKey: trpc.review.getSummary.queryKey() });
+
+      toast.success("Review posted successfully!");
       // Invalidate the List so the new review appears
     },
     onError: (err) => {

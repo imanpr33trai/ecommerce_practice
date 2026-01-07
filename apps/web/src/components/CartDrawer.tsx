@@ -6,7 +6,11 @@ import type React from "react";
 
 import { ArrowRight, LogIn, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 
-import { Cart } from "@/feature/cart";
+import {
+  useCartItemRemoveMutation,
+  useCartListItemsQuery,
+  useCartUpdateItemQuantityMutation,
+} from "@/data/cart";
 import { authClient } from "@/lib/auth-client";
 
 import Button from "./Button";
@@ -20,10 +24,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   // const {  removeItem } = useShop();
   const { data: session, isPending: isAuthPending } = authClient.useSession();
 
-  const { updateQuantity, removeItem } = Cart.hooks.useActions();
+  const { mutate: removeItem } = useCartItemRemoveMutation();
+  const { mutate: updateQuantity } = useCartUpdateItemQuantityMutation();
 
   // 1. CONDITIONAL FETCH: Only fetch cart if logged in
-  const { data: cart, isLoading: isCartLoading, error: cartError } = Cart.hooks.useCart();
+  const { data: cart, isLoading: isCartLoading, error: cartError } = useCartListItemsQuery();
 
   // If drawer is closed, don't render anything (Performance)
   // if (!isOpen) return null;
@@ -42,7 +47,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             className="text-gray-300"
           />
           <h2 className="text-2xl font-bold">Your Cart is Hidden</h2>
-          <p className="text-gray-500">Please sign in to view your shopping cart and save your items.</p>
+          <p className="text-gray-500">
+            Please sign in to view your shopping cart and save your items.
+          </p>
           <Link
             href="/log-in"
             onClick={onClose}
@@ -72,7 +79,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
         className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         onClick={onClose}
       />
-      <div className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-[70] transform transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+      <div
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-[70] transform transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
@@ -133,7 +142,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-gray-200 rounded-full">
                         <button
-                          onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })}
+                          onClick={() =>
+                            updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })
+                          }
                           type="button"
                           className="w-6 h-6 flex items-center justify-center hover:bg-gray-50 rounded-l-full transition-colors"
                         >
@@ -141,7 +152,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                         </button>
                         <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })}
+                          onClick={() =>
+                            updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })
+                          }
                           type="button"
                           className="w-6 h-6 flex items-center justify-center hover:bg-gray-50 rounded-r-full transition-colors"
                         >
@@ -183,7 +196,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                   </Button>
                 </Link>
                 <Link
-                  href={{pathname:"/checkout"}}
+                  href={{ pathname: "/checkout" }}
                   onClick={onClose}
                   className="flex-[2]"
                 >

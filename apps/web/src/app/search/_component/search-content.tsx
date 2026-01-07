@@ -7,7 +7,7 @@ import { Loader2, Search } from "lucide-react";
 
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard"; // Your complex card
-import { Product } from "@/feature/product";
+import { useProductListQuery } from "@/data/product";
 
 export function SearchContent() {
   const searchParams = useSearchParams();
@@ -18,7 +18,7 @@ export function SearchContent() {
     data: searchResults,
     isLoading,
     isError,
-  } = Product.hooks.useList({
+  } = useProductListQuery({
     search: query,
     limit: 20,
   });

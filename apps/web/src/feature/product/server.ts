@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { trpc } from "@/trpc/server";
 
-import type { ProductFilters } from "./types";
+import type { ProductFilters } from "../../data/product/types";
 
 export const productOptions = {
   /**
@@ -23,8 +23,11 @@ export const productOptions = {
    * Prefetch specific landing page sections
    */
   landing: {
-    newDeals: () => useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isNew: true })),
-    exclusive: () => useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isExclusive: true })),
-    greatValue: () => useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 8, isGreatValue: true })),
+    newDeals: () =>
+      useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isNew: true })),
+    exclusive: () =>
+      useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 4, isExclusive: true })),
+    greatValue: () =>
+      useQuery(trpc.product.getLandingProducts.queryOptions({ limit: 8, isGreatValue: true })),
   },
 };

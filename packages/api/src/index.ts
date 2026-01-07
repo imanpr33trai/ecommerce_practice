@@ -15,8 +15,7 @@ export const router = t.router;
 
 export const publicProcedure = t.procedure;
 
-
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const protectedProcedure = publicProcedure.use(async ({ ctx, next }) => {
   // 1. Type Guard: Use early return for cleaner logic
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({

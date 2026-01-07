@@ -8,7 +8,7 @@ import { Skeleton } from "@comp/skeleton";
 import { Check, RefreshCw, Star } from "lucide-react";
 
 import { useShop } from "@/context/ShopContext";
-import { Product, type ProductFilters } from "@/feature/product";
+import { type ProductFilters, useProductFilterQuery } from "@/data/product";
 
 import Button from "./Button";
 
@@ -20,7 +20,7 @@ interface ModalFilterProps {
 const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
   // Fetch dynamic options (Facets)
   const { resetFilters } = useShop();
-  const { data: options, isLoading } = Product.hooks.useFilterOptions();
+  const { data: options, isLoading } = useProductFilterQuery();
 
   // --- Handlers (Now using props) ---
 
@@ -91,7 +91,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
     <div className="w-[90vw] md:w-[850px] bg-white text-nest-text rounded-[2rem] shadow-2xl border border-gray-100 p-8 flex flex-col gap-6 ring-1 ring-black/5">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="space-y-6">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2">Sort By</h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2">
+            Sort By
+          </h3>
           <div className="space-y-3">
             {["newest", "price_asc", "price_desc", "rating"].map((opt) => (
               <label
@@ -99,7 +101,13 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
                 className="flex items-center gap-3 cursor-pointer group"
                 onClick={() => handleSortChange(opt)}
               >
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${filters.sort === opt ? "border-black bg-black" : "border-gray-300 group-hover:border-gray-400"}`}>{filters.sort === opt && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}</div>
+                <div
+                  className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${filters.sort === opt ? "border-black bg-black" : "border-gray-300 group-hover:border-gray-400"}`}
+                >
+                  {filters.sort === opt && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                  )}
+                </div>
                 <span className="font-medium capitalize text-sm">{opt.replace("_", " ")}</span>
               </label>
             ))}
@@ -108,10 +116,14 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">Price Range</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">
+              Price Range
+            </h3>
             <div className="flex flex-col gap-3">
               <div className="bg-gray-50 rounded-xl px-3 py-2 border border-transparent focus-within:border-black/10 transition-colors">
-                <span className="text-[10px] text-gray-400 font-bold uppercase block mb-1">Min Price</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase block mb-1">
+                  Min Price
+                </span>
                 <div className="flex items-center">
                   <span className="text-sm font-bold mr-1">$</span>
                   <input
@@ -123,7 +135,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
                 </div>
               </div>
               <div className="bg-gray-50 rounded-xl px-3 py-2 border border-transparent focus-within:border-black/10 transition-colors">
-                <span className="text-[10px] text-gray-400 font-bold uppercase block mb-1">Max Price</span>
+                <span className="text-[10px] text-gray-400 font-bold uppercase block mb-1">
+                  Max Price
+                </span>
                 <div className="flex items-center">
                   <span className="text-sm font-bold mr-1">$</span>
                   <input
@@ -138,13 +152,17 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">Availability</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">
+              Availability
+            </h3>
             <div className="space-y-3">
               <label
                 className="flex items-center gap-3 cursor-pointer group"
                 onClick={handleStockChange}
               >
-                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.inStock ? "bg-black border-black text-white" : "border-gray-300 group-hover:border-gray-400"}`}>
+                <div
+                  className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.inStock ? "bg-black border-black text-white" : "border-gray-300 group-hover:border-gray-400"}`}
+                >
                   {filters.inStock && (
                     <Check
                       size={10}
@@ -158,7 +176,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
                 className="flex items-center gap-3 cursor-pointer group"
                 onClick={handleSaleChange}
               >
-                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.onSale ? "bg-black border-black text-white" : "border-gray-300 group-hover:border-gray-400"}`}>
+                <div
+                  className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.onSale ? "bg-black border-black text-white" : "border-gray-300 group-hover:border-gray-400"}`}
+                >
                   {filters.onSale && (
                     <Check
                       size={10}
@@ -174,7 +194,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">Categories</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">
+              Categories
+            </h3>
             <div className="space-y-3">
               {categories
                 .filter((c) => c.name !== "All")
@@ -185,7 +207,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
                     className="flex items-center gap-3 cursor-pointer group"
                     onClick={() => handleArrayToggle("categories", cat.name)}
                   >
-                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.categories.includes(cat.name) ? "bg-black border-black text-white" : "border-gray-300 group-hover:border-gray-400"}`}>
+                    <div
+                      className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${filters.categories.includes(cat.name) ? "bg-black border-black text-white" : "border-gray-300 group-hover:border-gray-400"}`}
+                    >
                       {filters.categories.includes(cat.name) && (
                         <Check
                           size={10}
@@ -200,7 +224,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">Materials</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">
+              Materials
+            </h3>
             <div className="flex flex-wrap gap-2">
               {materials.map((mat) => (
                 <button
@@ -218,7 +244,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">Colors</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">
+              Colors
+            </h3>
             <div className="flex flex-wrap gap-3">
               {colors.map((color) => (
                 <button
@@ -241,7 +269,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">Rating</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100 pb-2 mb-4">
+              Rating
+            </h3>
             <div className="space-y-3">
               {[4, 3, 2, 1].map((r) => (
                 <label
@@ -249,7 +279,13 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
                   className="flex items-center gap-3 cursor-pointer group"
                   onClick={() => handleRatingChange(r)}
                 >
-                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${filters.rating === r ? "border-black bg-black" : "border-gray-300 group-hover:border-gray-400"}`}>{filters.rating === r && <div className="w-1.5 h-1.5 rounded-full bg-white"></div>}</div>
+                  <div
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${filters.rating === r ? "border-black bg-black" : "border-gray-300 group-hover:border-gray-400"}`}
+                  >
+                    {filters.rating === r && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                    )}
+                  </div>
                   <div className="flex items-center gap-1">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
@@ -261,7 +297,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500 font-medium group-hover:text-black transition-colors">& Up</span>
+                    <span className="text-sm text-gray-500 font-medium group-hover:text-black transition-colors">
+                      & Up
+                    </span>
                   </div>
                 </label>
               ))}

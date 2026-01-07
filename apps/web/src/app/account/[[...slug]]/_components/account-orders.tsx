@@ -1,15 +1,19 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Package } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
-import { Order } from "@/feature/order";
+import { useOrderListQuery } from "@/data/order";
 import { formatCurrency } from "@/lib/format-currency";
 
 export function AccountOrders() {
-  const { data: orders, isLoading: ordersLoading } = Order.hooks.useList();
+  const router = useRouter();
+
+  const { data: orders, isLoading: ordersLoading } = useOrderListQuery();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -30,7 +34,15 @@ export function AccountOrders() {
               </div>
               <div className="flex-1 w-full text-center md:text-left">
                 <div className="flex justify-between items-center mb-1">
-                  <h4 className="font-bold text-lg">Order #{order.id.slice(-6)}</h4>
+                  {/*<h4 className="font-bold text-lg">Order #{order.id.slice(-6)}</h4>*/}
+                  {order.items.map((item) => (
+                    <h4
+                      className="font-bold text-lg"
+                      key={item.id}
+                    >
+                      Order #{item.product.name}
+                    </h4>
+                  ))}
                   <span
                     className={`text-xs font-bold px-2 py-1 rounded-full ${order.status === "DELIVERED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                   >
@@ -46,7 +58,12 @@ export function AccountOrders() {
                   <span>{order.items.length} Items</span>
                 </div>
               </div>
-              <Button variant="secondary">View Details</Button>
+              <Button
+                variant="secondary"
+                onClick={() => router.push("/product")}
+              >
+                View Details
+              </Button>
             </BentoCard>
           ))}
         </div>

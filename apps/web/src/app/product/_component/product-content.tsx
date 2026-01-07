@@ -11,7 +11,7 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 import ModalFilter from "@/components/ModalFilter";
 import ProductCard from "@/components/ProductCard";
 import { useShop } from "@/context/ShopContext";
-import { INITIAL_FILTERS, Product, type ProductFilters } from "@/feature/product";
+import { INITIAL_FILTERS, type ProductFilters, useProductListQuery } from "@/data/product";
 
 export function ProductContent() {
   const [showFilters, setShowFilters] = useState(false);
@@ -46,7 +46,7 @@ export function ProductContent() {
     isError,
     error,
     isLoading,
-  } = Product.hooks.useList(filters);
+  } = useProductListQuery(filters);
 
   // --- 4. HANDLERS ---
   const handleFilterEnter = () => {

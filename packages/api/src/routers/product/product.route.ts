@@ -365,8 +365,8 @@ export const productRouter = router({
       // --- Transformation Logic ---
 
       const totalRating = product.reviews.reduce((acc, curr) => acc + curr.rating, 0);
-      const averageRating = product.reviews.length > 0 ? totalRating / product.reviews.length : 0;
-
+      const averageRating =
+        product.reviews.length > 0 ? Number((totalRating / product.reviews.length).toFixed(1)) : 0;
       const isNew = (Date.now() - new Date(product.createdAt).getTime()) / (1000 * 3600 * 24) < 30;
 
       const isOnSale =

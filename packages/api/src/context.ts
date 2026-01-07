@@ -1,57 +1,42 @@
-// types.ts or server.ts
-import { auth } from "@ecomerceNextjs/auth";
+import { auth, type Session } from "@ecomerceNextjs/auth"; // Your Better Auth instance
+import type { Context as HonoContext } from "hono";
+
+// 1. Simplify type inference using Better Auth's built-in $Infer
 
 export type HonoEnv = {
   Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null;
+    user: Session["user"];
+    session: Session["session"];
   };
 };
 
 export type CreateContextOptions = {
-  req: Request;
-  // Pre-fetched session from Hono middleware
-  session?: typeof auth.$Infer.Session | null;
+  session: Session | null;
+  headers: Headers;
+  hono?: HonoContext<any>; // Optional for Next.js compatibility
 };
 
-export async function createContext({ req, session: prefetchedSession }: CreateContextOptions) {
-  // Use prefetched session if available, otherwise fetch it manually
-  // (Manual fetch is used when called from Next.js Server Components)
-  const session = prefetchedSession !== undefined
-    ? prefetchedSession
-    : await auth.api.getSession({ headers: req.headers });
+export async function createContext(
+  // Accepts either Hono Context OR a standard Request
+  args: HonoContext<any> | { req: Request },
+): Promise<CreateContextOptions> {
+  // 1. Identify if we are in Hono or a raw Request (Next.js)
+  const isHono = "get" in args;
+  const requestHeaders = isHono ? args.req.raw.headers : args.req.headers;
+
+  // 2. Resolve Session
+  // If Hono: check its internal variables first. If Next.js: fetch from Better Auth.
+  const session =
+    isHono && args.get("session")
+      ? { user: args.get("user"), session: args.get("session") }
+      : await auth.api.getSession({ headers: requestHeaders });
 
   return {
     session,
-    headers: req.headers,
+    headers: requestHeaders,
+    hono: isHono ? args : undefined,
   };
 }
 
+// Ensure this matches the tRPC requirement of Record<string, unknown>
 export type Context = Awaited<ReturnType<typeof createContext>>;
-
-
-
-
-// import { auth } from "@ecomerceNextjs/auth";
-// import type { Context as HonoContext } from "hono";
-
-// export type CreateContextOptions = {
-//   context: HonoContext;
-// };
-
-// /**
-//  * Inner function for `createContext` where we create the context.
-//  * This is useful for testing when we don't want to mock Next.js' request/response
-//  */
-
-// export async function createContext({ context }: CreateContextOptions) {
-//   const session = await auth.api.getSession({
-//     headers: context.req.raw.headers,
-//   });
-
-//   return {
-//     session,
-//   };
-// }
-
-// export type Context = Awaited<ReturnType<typeof createContext>>;

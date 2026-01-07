@@ -12,7 +12,10 @@ export function reviewDeleteOptions(utils: QueryClient) {
 
       // We invalidate all review lists because we might not know the exact productId context here easily
       // Optimized: You could pass productId to the mutation context if strict performance is needed
-      utils.invalidateQueries({ queryKey: [reviewKeys.lists(), reviewKeys.summary(variables.id)] });
+      utils.invalidateQueries({
+        queryKey: trpc.review.listByProduct.queryKey(),
+      });
+      utils.invalidateQueries({ queryKey: trpc.review.getSummary.queryKey() });
     },
     onError: (err) => {
       toast.error(err.message || "Failed to delete review");

@@ -2,7 +2,7 @@ import type React from "react";
 
 import { ArrowLeftRight, ArrowRight, Check, Eye } from "lucide-react";
 
-import type { ProductSingle } from "@/feature/product";
+import type { ProductSingle } from "@/data/product";
 
 import Button from "./Button";
 

@@ -103,16 +103,16 @@ export const reviewRouter = router({
     const userId = ctx.session.user.id;
 
     // 1. Check for existing review
-    const existing = await prisma.review.findFirst({
-      where: { userId, productId: input.productId },
-    });
+    // const existing = await prisma.review.findFirst({
+    //   where: { userId, productId: input.productId },
+    // });
 
-    if (existing) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: "You have already reviewed this product.",
-      });
-    }
+    // if (existing) {
+    //   throw new TRPCError({
+    //     code: "CONFLICT",
+    //     message: "You have already reviewed this product.",
+    //   });
+    // }
 
     // 2. (Optional) Check if user actually purchased the item?
     // const hasPurchased = ... (complex query on Orders)

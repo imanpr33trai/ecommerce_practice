@@ -7,12 +7,12 @@ import { Bell, Heart, Package } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
+import { useOrderListQuery } from "@/data/order";
 import { Account } from "@/feature/account";
-import { Order } from "@/feature/order";
 
 export function AccountOverview() {
   const { data: profile } = Account.hooks.useProfile();
-  const { data: orders, isLoading: ordersLoading } = Order.hooks.useList();
+  const { data: orders, isLoading: ordersLoading } = useOrderListQuery();
 
   // 1. Safely grab the first order if it exists
   const recentOrder = orders?.[0];

@@ -6,7 +6,7 @@ import type React from "react";
 import { toast } from "sonner"; // Assuming shadcn toast path
 
 // Import strict types from your feature slice
-import { INITIAL_FILTERS, type ProductFilters, type ProductSingle } from "@/feature/product/types";
+import { INITIAL_FILTERS, type ProductFilters, type ProductSingle } from "@/data/product/types";
 
 // --- 1. Types ---
 
@@ -93,7 +93,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // const {addToast}  = useToast();
 
   // State Management
-  const [recentlyViewed, setRecentlyViewed] = useLocalStorage<ProductSingle[]>("nestify_recent", []);
+  const [recentlyViewed, setRecentlyViewed] = useLocalStorage<ProductSingle[]>(
+    "nestify_recent",
+    [],
+  );
   const [compareList, setCompareList] = useLocalStorage<ProductSingle[]>("nestify_compare", []);
   const [isCompareOpen, setCompareOpen] = useState(false);
 
@@ -152,7 +155,12 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     (product: ProductSingle, options?: { color?: string; size?: string }) => {
       setCart((prev) => {
         // Find exact match (Same ID, Same Color, Same Size)
-        const existingIndex = prev.findIndex((item) => item.id === product.id && item.selectedColor === options?.color && item.selectedSize === options?.size);
+        const existingIndex = prev.findIndex(
+          (item) =>
+            item.id === product.id &&
+            item.selectedColor === options?.color &&
+            item.selectedSize === options?.size,
+        );
 
         if (existingIndex > -1) {
           const newCart = [...prev];
@@ -205,7 +213,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Computed Cart Values
   const cartCount = useMemo(() => cart.reduce((acc, item) => acc + item.quantity, 0), [cart]);
-  const cartTotal = useMemo(() => cart.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0), [cart]);
+  const cartTotal = useMemo(
+    () => cart.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0),
+    [cart],
+  );
 
   // Wishlist Logic
   const toggleWishlist = useCallback(
@@ -221,16 +232,22 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [setWishlist],
   );
 
-  const isInWishlist = useCallback((productId: string) => wishlist.some((p) => p.id === productId), [wishlist]);
+  const isInWishlist = useCallback(
+    (productId: string) => wishlist.some((p) => p.id === productId),
+    [wishlist],
+  );
 
   // Filter Logic
   const resetFilters = useCallback(() => {
     setFilters(INITIAL_FILTERS);
   }, []);
 
-  const updateFilter = useCallback(<K extends keyof ProductFilters>(key: K, value: ProductFilters[K]) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const updateFilter = useCallback(
+    <K extends keyof ProductFilters>(key: K, value: ProductFilters[K]) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   // --- 4. Value Memoization ---
   // Crucial: Prevents consumers from re-rendering unless data actually changes
@@ -260,7 +277,28 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toggleWishlist,
       isInWishlist,
     }),
-    [recentlyViewed, addToRecentlyViewed, compareList, addToCompare, removeFromCompare, isCompareOpen, quickViewProduct, filters, resetFilters, updateFilter, cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount, wishlist, toggleWishlist, isInWishlist],
+    [
+      recentlyViewed,
+      addToRecentlyViewed,
+      compareList,
+      addToCompare,
+      removeFromCompare,
+      isCompareOpen,
+      quickViewProduct,
+      filters,
+      resetFilters,
+      updateFilter,
+      cart,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      cartTotal,
+      cartCount,
+      wishlist,
+      toggleWishlist,
+      isInWishlist,
+    ],
   );
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;

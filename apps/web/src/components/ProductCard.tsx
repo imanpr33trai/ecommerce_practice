@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useRef, useState } from "react";
@@ -7,12 +6,10 @@ import type React from "react";
 import { ArrowLeftRight, Eye, Heart, ShoppingBag, Star } from "lucide-react";
 import { toast } from "sonner";
 
+import { useCartAddItemMutation } from "@/data/cart";
 import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
-import { Cart } from "@/feature/cart";
-import { Wish } from "@/feature/wish";
-import { useWishQueries } from "@/feature/wish/client";
 import { authClient } from "@/lib/auth-client";
-import type { ProductSingle } from "@/feature/product";
+import type { ProductSingle } from "@/data/product";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
@@ -30,7 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const { data: session } = authClient.useSession();
   const { addToRecentlyViewed, setQuickViewProduct, compareList, addToCompare } = useShop();
 
-  const { addItem, isAdding } = Cart.hooks.useActions();
+  const { mutate: addItem, isPending: isAdding } = useCartAddItemMutation();
   const { mutate: toggleWish } = useWishToggleMutation();
 
   // Only check wishlist status if logged in, otherwise false
@@ -229,21 +226,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   return (
     <>
       <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium pointer-events-none ${isExpanded ? "opacity-100 z-[100]" : "opacity-0 z-[-1]"}`}
+        className={`fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium pointer-events-none ${isExpanded ? "opacity-100 z-100" : "opacity-0 z-[-1]"}`}
       />
 
       <div
         ref={cardRef}
-        className={`relative h-[440px] w-full transition-all duration-300 ${zIndexClass} ${className}`}
+        className={`relative h-110 w-full transition-all duration-300 ${zIndexClass} ${className}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         <div
           className={`
-                absolute top-0 bg-white rounded-[2rem] shadow-sm overflow-hidden ring-1 ring-black/5
+                absolute top-0 bg-white rounded-4xl shadow-sm overflow-hidden ring-1 ring-black/5
                 transition-all duration-1000 ease-premium origin-top will-change-transform
                 ${isHovering ? "shadow-xl scale-[1.02] ring-black/10" : ""}
-                ${isExpanded ? "w-[185%] h-[440px] shadow-2xl ring-black/0" : "w-full h-full"}
+                ${isExpanded ? "w-[185%] h-110 shadow-2xl ring-black/0" : "w-full h-full"}
               `}
           style={containerStyle}
         >
@@ -253,7 +250,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             className="block w-full h-full relative group"
           >
             <div
-              className={`absolute top-0 bg-[#F9F9F9] overflow-hidden transition-all duration-1000 ease-premium ${isExpanded ? "w-[54%] h-full" : "w-full h-[280px]"}`}
+              className={`absolute top-0 bg-[#F9F9F9] overflow-hidden transition-all duration-1000 ease-premium ${isExpanded ? "w-[54%] h-full" : "w-full h-70"}`}
               style={imageStyle}
             >
               {product.images.map((image) => (
@@ -303,7 +300,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 <Button
                   variant="icon"
                   size="icon"
-                  className={`rounded-full w-10 h-10 ${isInCompare ? "!bg-black !text-white" : ""}`}
+                  className={`rounded-full w-10 h-10 ${isInCompare ? "bg-black! text-white!" : ""}`}
                   onClick={handleCompare}
                   title="Compare"
                 >
@@ -313,7 +310,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             </div>
 
             <div
-              className={`absolute bg-white transition-all duration-1000 ease-premium overflow-hidden ${isExpanded ? "top-0 w-[46%] h-full" : "top-[280px] w-full h-[160px]"}`}
+              className={`absolute bg-white transition-all duration-1000 ease-premium overflow-hidden ${isExpanded ? "top-0 w-[46%] h-full" : "top-70 w-full h-40"}`}
               style={contentStyle}
             >
               <div

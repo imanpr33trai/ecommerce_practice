@@ -1,8 +1,10 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { auth } from "@ecomerceNextjs/auth"; // Server-side auth check
 
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
 import { AccountContent } from "./_components/account-content"; // Client Logic moved here
@@ -34,10 +36,12 @@ export default async function AccountPage({ params }: PageProps) {
 
   return (
     <HydrateClient>
-      <AccountContent
-        activeTab={activeTab}
-        user={session.user}
-      />
+      <Suspense fallback={<LoadingSkeleton type="account" />}>
+        <AccountContent
+          activeTab={activeTab}
+          user={session.user}
+        />
+      </Suspense>
     </HydrateClient>
   );
 }

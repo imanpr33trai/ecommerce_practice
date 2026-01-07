@@ -1,17 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type React from "react";
-import Image from "next/image";
+
 import { ArrowRight, CheckCircle, CreditCard, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Button from "@/components/Button";
+import { useCartListItemsQuery } from "@/data/cart";
 import { Account } from "@/feature/account";
-import { Cart } from "@/feature/cart";
 import { useCheckout } from "@/feature/checkout/client";
 import { formatCurrency } from "@/lib/format-currency";
 
@@ -37,7 +38,7 @@ export default function CheckoutPage() {
   });
 
   // --- HOOKS ---
-  const { data: cartData, isLoading: isCartLoading } = Cart.hooks.useCart();
+  const { data: cartData, isLoading: isCartLoading } = useCartListItemsQuery();
   const { data: addresses } = Account.hooks.useAddresses();
 
   // We need mutateAsync to await the address creation before placing order

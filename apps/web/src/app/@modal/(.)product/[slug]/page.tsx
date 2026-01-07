@@ -11,8 +11,8 @@ import { toast } from "sonner";
 
 import Button from "@/components/Button";
 import { useShop } from "@/context/ShopContext";
-import { Cart } from "@/feature/cart";
-import { Product } from "@/feature/product";
+import { useCartAddItemMutation } from "@/data/cart";
+import { useProudctDetailQuery } from "@/data/product";
 import { useWishMutations, useWishQueries } from "@/feature/wish/client";
 import { authClient } from "@/lib/auth-client";
 
@@ -23,8 +23,8 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   const { quickViewProduct, setQuickViewProduct } = useShop();
 
   // --- HOOKS ---
-  const { data: product, isLoading } = Product.hooks.useDetail(slug);
-  const { addItem, isAdding } = Cart.hooks.useActions();
+  const { data: product, isLoading } = useProudctDetailQuery(slug);
+  const { mutate: addItem, isPending: isAdding } = useCartAddItemMutation();
   const { mutate: toggleWish } = useWishMutations.useToggle();
   const { data: session } = authClient.useSession();
 
@@ -58,8 +58,12 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   // --- HANDLERS ---
 
   const handleAddToCart = () => {
-    if (!session) return toast.error("Please login to add to cart");
-    if (!product) return;
+    if (!session) {
+      return toast.error("Please login to add to cart");
+    }
+    if (!product) {
+      return;
+    }
 
     addItem({
       productId: product.id,
@@ -69,15 +73,23 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   };
 
   const handleWishlist = () => {
-    if (!session) return toast.error("Please login to save items");
-    if (!product) return;
+    if (!session) {
+      return toast.error("Please login to save items");
+    }
+    if (!product) {
+      return;
+    }
     toggleWish({ productId: product.id });
   };
 
   // --- RENDER ---
 
-  if (isLoading) return null; // Or a transparent spinner
-  if (!product) return null;
+  if (isLoading) {
+    return null; // Or a transparent spinner
+  }
+  if (!product) {
+    return null;
+  }
   // const isWishlisted = useWishQueries.useIsWishlisted(product.id);
   const isWishlisted = true;
 
@@ -115,8 +127,16 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
             />
           )}
           <div className="absolute bottom-8 left-8 flex gap-3">
-            {product.isNew && <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">New Arrival</span>}
-            {product.isOnSale && <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">Sale</span>}
+            {product.isNew && (
+              <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">
+                New Arrival
+              </span>
+            )}
+            {product.isOnSale && (
+              <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">
+                Sale
+              </span>
+            )}
           </div>
         </div>
 
@@ -124,13 +144,17 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
         <div className="w-full md:w-[40%] flex flex-col h-full bg-white overflow-y-auto no-scrollbar p-8 md:p-10">
           <div className="mb-auto">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">{product.category?.name}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                {product.category?.name}
+              </span>
               <div className="flex items-center gap-1 text-yellow-500 bg-yellow-50 px-2 py-1 rounded-lg">
                 <Star
                   size={14}
                   fill="currentColor"
                 />
-                <span className="text-sm font-bold text-black">{product.rating?.toFixed(1) || "New"}</span>
+                <span className="text-sm font-bold text-black">
+                  {product.rating?.toFixed(1) || "New"}
+                </span>
               </div>
             </div>
 
@@ -138,15 +162,23 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
             <div className="flex items-baseline gap-3 mb-8">
               <span className="text-3xl font-medium">${Number(product.price).toFixed(2)}</span>
-              {product.discountPrice && <span className="text-lg text-gray-400 line-through">${Number(product.discountPrice).toFixed(2)}</span>}
+              {product.discountPrice && (
+                <span className="text-lg text-gray-400 line-through">
+                  ${Number(product.discountPrice).toFixed(2)}
+                </span>
+              )}
             </div>
 
-            <p className="text-gray-600 leading-relaxed mb-8 text-lg">{product.description || "No description available."}</p>
+            <p className="text-gray-600 leading-relaxed mb-8 text-lg">
+              {product.description || "No description available."}
+            </p>
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-4">Select Finish</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-4">
+                  Select Finish
+                </span>
                 <div className="flex gap-4">
                   {product.colors.map((color) => (
                     <button
