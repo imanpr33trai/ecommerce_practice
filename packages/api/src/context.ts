@@ -23,13 +23,18 @@ export async function createContext(
   // 1. Identify if we are in Hono or a raw Request (Next.js)
   const isHono = "get" in args;
   const requestHeaders = isHono ? args.req.raw.headers : args.req.headers;
-
+  // DEBUG: Check if 'cookie' is present in the headers
+  if (!isHono && process.env.NODE_ENV === "development") {
+    console.log("Next.js Headers - Cookie present:", !!requestHeaders.get("cookie"));
+  }
   // 2. Resolve Session
   // If Hono: check its internal variables first. If Next.js: fetch from Better Auth.
   const session =
     isHono && args.get("session")
       ? { user: args.get("user"), session: args.get("session") }
       : await auth.api.getSession({ headers: requestHeaders });
+
+  console.log("session is not ", session);
 
   return {
     session,

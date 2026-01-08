@@ -12,7 +12,7 @@ import ProductReviews from "./ProductReviews";
 export default async function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  prefetch(trpc.product.getBySlug.queryOptions({ slug }));
+  await prefetch(trpc.product.getBySlug.queryOptions({ slug }));
 
   return (
     <Suspense fallback={<LoadingSkeleton type="detail" />}>

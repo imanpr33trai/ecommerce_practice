@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { trpc } from "@/trpc/client";
 
@@ -13,5 +13,5 @@ export function reviewSummaryOptions(productId: string) {
 }
 
 export const useReviewSummaryQuery = (productId: string) => {
-  return useQuery(reviewSummaryOptions(productId));
+  return useSuspenseQuery(reviewSummaryOptions(productId));
 };

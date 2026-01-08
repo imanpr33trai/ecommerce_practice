@@ -101,10 +101,11 @@ export const productRouter = router({
       return products.map((p) => {
         const price = Number(p.price);
         const discountPrice = p.discountPrice ? Number(p.discountPrice) : null;
-        const avgRating =
-          p.reviews.length > 0
-            ? p.reviews.reduce((sum, r) => sum + r.rating, 0) / p.reviews.length
-            : 0;
+        const totalRating = p.reviews.reduce((acc, curr) => acc + curr.rating, 0);
+
+        const averageRating =
+          p.reviews.length > 0 ? Number((totalRating / p.reviews.length).toFixed(1)) : 0;
+
         // Calculate Discount Percentage for badges (e.g., "-20%")
         let discountPercentage = 0;
         if (discountPrice) {
@@ -119,7 +120,7 @@ export const productRouter = router({
           createdAt: p.createdAt,
           stock: p.stock,
           reviews: p.reviews,
-          rating: avgRating,
+          rating: averageRating,
           description: p.description || "",
           discountPrice,
           isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
@@ -243,6 +244,11 @@ export const productRouter = router({
 
     // --- 4. TRANSFORM DATA ---
     const transformedProducts = rawItems.map((p) => {
+      const totalRating = p.reviews.reduce((acc, curr) => acc + curr.rating, 0);
+
+      const averageRating =
+        p.reviews.length > 0 ? Number((totalRating / p.reviews.length).toFixed(1)) : 0;
+
       const avgRating =
         p.reviews.length > 0 ? p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length : 0;
 
@@ -250,7 +256,7 @@ export const productRouter = router({
         ...p,
         price: Number(p.price),
         discountPrice: p.discountPrice ? Number(p.discountPrice) : null,
-        rating: avgRating,
+        rating: averageRating,
         isNew: (Date.now() - new Date(p.createdAt).getTime()) / (1000 * 3600 * 24) < 30,
         isOnSale: !!p.discountPrice,
 
@@ -367,6 +373,7 @@ export const productRouter = router({
       const totalRating = product.reviews.reduce((acc, curr) => acc + curr.rating, 0);
       const averageRating =
         product.reviews.length > 0 ? Number((totalRating / product.reviews.length).toFixed(1)) : 0;
+
       const isNew = (Date.now() - new Date(product.createdAt).getTime()) / (1000 * 3600 * 24) < 30;
 
       const isOnSale =

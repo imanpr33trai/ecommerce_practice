@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel } from "@comp/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@comp/select";
 import { Skeleton } from "@comp/skeleton";
 import {
   ChevronLeft,
@@ -219,30 +227,44 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
 
       {/* RIGHT COLUMN: Review List */}
       <div className="lg:col-span-8">
-        {/* Controls Header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-bold text-xl">
-            Reviews{" "}
-            <span className="text-gray-400 text-sm font-normal ml-2">
-              ({productReviews.pagination.total || 0})
+            Reviews
+            <span className="text-muted-foreground text-sm font-normal ml-2">
+              ({productReviews.pagination.total ?? 0})
             </span>
           </h3>
 
-          <div className="relative group">
-            <Select value={sort}>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="newest">Newest</SelectItem>
-                  <SelectItem value="highest">Highest Rating</SelectItem>
-                  <SelectItem value="lowest">Lowest Rating</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Filter
-              size={14}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-            />
-          </div>
+          <Select
+            value={sort}
+            onValueChange={(value) => {
+              // Type assertion fix
+              setSort(value as "newest" | "highest" | "lowest");
+              // Always reset page to 1 when changing sort order
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              {/*
+                SelectValue automatically renders the label of the active item.
+                If you want a static icon, put it inside the trigger but
+                before the SelectValue.
+              */}
+              <SelectValue placeholder="Sort by..." />
+            </SelectTrigger>
+
+            {/*
+              1. Remove 'w-45' from SelectContent; Shadcn automatically
+                 matches the width of the Trigger.
+              2. Ensure you are importing SelectItem from your UI folder
+                 to get the correct padding (pl-8).
+            */}
+            <SelectContent>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="highest">Highest Rating</SelectItem>
+              <SelectItem value="lowest">Lowest Rating</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-6">

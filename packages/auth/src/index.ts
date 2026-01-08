@@ -6,9 +6,10 @@ export const auth = betterAuth<BetterAuthOptions>({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  baseURL: "http://localhost:3000",
   trustedOrigins: [
     "http://localhost:3001", // Next.js dev
-    "http://localhost:3000", // API server
+    // API server
     // Add production URLs
   ],
   emailAndPassword: {

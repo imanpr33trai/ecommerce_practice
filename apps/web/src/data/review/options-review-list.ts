@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 
 import { trpc } from "@/trpc/client";
 
@@ -12,5 +12,5 @@ export const reviewListOptions = (filters: ReviewFilters) => {
 };
 
 export const useReviewListQuery = (filters: ReviewFilters) => {
-  return useQuery(reviewListOptions(filters));
+  return useSuspenseQuery(reviewListOptions(filters));
 };
