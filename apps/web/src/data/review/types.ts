@@ -1,7 +1,10 @@
 import { z } from "zod";
+import type { InferRequestType, InferResponseType } from "hono";
 
-import type { RouterInputs, RouterOutputs } from "@/trpc/client"; // Adjust to your API client path
+import { client } from "@/lib/hono-client";
 
+const $getReviewProductListReq = client.api.review[":productId"].$get;
+const $getReviewProductListRes = client.api.review[":productId"].$get;
 // Validation Schema
 export const ReviewListSchema = z.object({
   productId: z.string(),
@@ -10,6 +13,9 @@ export const ReviewListSchema = z.object({
 });
 
 export type ReviewFilters = z.infer<typeof ReviewListSchema>;
+
+export type GetReviewProductListRequest = InferRequestType<typeof $getReviewProductListReq>;
+export type GetReviewProductListResponse = InferResponseType<typeof $getReviewProductListRes>;
 
 // Return Types
 export type ReviewItem = RouterOutputs["review"]["listByProduct"]["items"][number];

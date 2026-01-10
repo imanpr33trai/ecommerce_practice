@@ -1,4 +1,6 @@
-import { AddressType } from "@ecomerceNextjs/db"; // Ensure Enums are exported from DB package
+// Assuming AddressType is exported from your DB package
+// If not, use z.enum(["SHIPPING", "BILLING"]) based on your schema
+import { AddressType } from "@ecomerceNextjs/db";
 import { z } from "zod";
 
 export const AddressSchema = z.object({
@@ -16,6 +18,8 @@ export const AddressSchema = z.object({
   isDefault: z.boolean().default(false),
 });
 
-export const UpdateAddressSchema = AddressSchema.partial().extend({
-  id: z.string(),
-});
+// For updates, fields are optional
+export const UpdateAddressSchema = AddressSchema.partial();
+
+export type CreateAddressInput = z.infer<typeof AddressSchema>;
+export type UpdateAddressInput = z.infer<typeof UpdateAddressSchema>;

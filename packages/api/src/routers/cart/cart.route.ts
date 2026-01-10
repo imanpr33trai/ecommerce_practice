@@ -1,250 +1,109 @@
-import prisma from "@ecomerceNextjs/db";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 
-import { protectedProcedure, router } from "../../index";
+import { authMiddleware } from "../../middlewares/auth.middleware";
+import { cartQueries } from "./cart.query";
+import { AddItemSchema, UpdateQuantitySchema } from "./cart.type";
+import type { HonoEnv } from "../../context"; // Adjust to your context path
 
-// --- 1. Validators & Selectors ---
+export const cart = new Hono<HonoEnv>()
 
-/**
- * Selector for Cart Items.
- * Fetches product details needed for the Cart Drawer/Page.
- */
-
-export const cartRouter = router({
   /**
-   * Get Cart
-   * Returns: Items, Subtotal, and Item Count
+   * Middleware: Ensure User is Logged In
+   * We check if 'user' was set in context by the global auth middleware
    */
-  get: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "user is not found",
-      });
+
+  .use("*", async (c, next) => {
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ success: false, error: "Unauthorized" }, 401);
     }
-    const userId = ctx.session.user.id;
+    await next();
+  })
 
-    // 1. Fetch Carts
-    const cart = await prisma.cart.findUnique({
-      where: { userId },
-      include: {
-        items: {
-          orderBy: { createdAt: "asc" },
-          include: {
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                images: { where: { isPrimary: true }, take: 1 },
-                slug: true,
-                discountPrice: true,
-                stock: true,
-                category: {
-                  select: {
-                    name: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+  /**
+   * GET /
+   * Fetch the current user's cart
+   */
+  .get("/", async (c) => {
+    const user = c.get("user");
+    const cart = await cartQueries.getCart(user.id);
 
+    // If no cart exists yet, return empty structure instead of null for easier frontend handling
     if (!cart) {
-      return null;
-    }
-
-    // 2. Compute Totals (Server Side Source of Truth)
-    let subtotal = 0;
-    let totalItems = 0;
-
-    const items = cart.items.map((item) => {
-      const price = Number(item.product.discountPrice ?? item.product.price);
-      const lineTotal = price * item.quantity;
-      item.color, (subtotal += lineTotal);
-      totalItems += item.quantity;
-
-      return {
-        ...item,
-        // Helper: Is the quantity in cart > available stock?
-        isOutOfStock: item.quantity > item.product.stock,
-
-        product: {
-          ...item.product,
-          price: Number(item.product.price),
-          discountPrice: item.product.discountPrice ? Number(item.product.discountPrice) : null,
-        },
-      };
-    });
-
-    return {
-      id: cart.id,
-      items,
-      subtotal,
-      totalItems,
-    };
-  }),
-
-  /**
-   * Add Item (Smart Upsert)
-   * Handles: Creation, Incrementing, Stock Checks
-   */
-  addItem: protectedProcedure
-    .input(
-      z.object({
-        productId: z.string(),
-        quantity: z.number().min(1).default(1),
-        color: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
-      const { productId, quantity, color } = input;
-
-      // A. Validate Product & Stock
-      const product = await prisma.product.findUnique({
-        where: { id: productId },
-        select: { id: true, stock: true, isActive: true, name: true, colors: true },
-      });
-
-      if (!product?.isActive || !product) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Product not available",
-        });
-      }
-
-      if (color && (!product.colors || !product.colors.includes(color))) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `Color ${color} is not available for this Product`,
-        });
-      }
-
-      // B. Find or Create Cart
-      let cart = await prisma.cart.findUnique({ where: { userId } });
-      if (!cart) {
-        cart = await prisma.cart.create({ data: { userId } });
-      }
-
-      // C. Check Existing Item in Cart
-      const existingItem = await prisma.cartItem.findUnique({
-        where: {
-          cartId_productId_color: {
-            cartId: cart.id,
-            productId,
-            color,
-          },
-        },
-      });
-
-      // Calculate projected quantity
-      const currentQty = existingItem ? existingItem.quantity : 0;
-      const newQty = currentQty + quantity;
-
-      if (newQty > product.stock) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `Only ${product.stock} units of ${product.name} are available.`,
-        });
-      }
-
-      // D. Upsert (Update or Create)
-      return prisma.cartItem.upsert({
-        where: {
-          cartId_productId_color: { cartId: cart.id, productId, color },
-        },
-        update: {
-          quantity: { increment: quantity },
-        },
-        create: {
-          cartId: cart.id,
-          productId,
-          quantity,
-          color,
-        },
-      });
-    }),
-
-  /**
-   * Update Quantity (Strict Set)
-   * Used by: Cart Sheet (+ / - buttons)
-   */
-  updateQuantity: protectedProcedure
-    .input(
-      z.object({
-        itemId: z.string(), // We use cartItemId here for precision
-        quantity: z.number().min(1),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const { itemId, quantity } = input;
-
-      // 1. Fetch Item + Product Stock
-      const item = await prisma.cartItem.findUnique({
-        where: { id: itemId },
-        include: { product: { select: { stock: true } } },
-      });
-
-      if (!item) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Item not found" });
-      }
-
-      // 2. Validate Stock
-      if (quantity > item.product.stock) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `Max stock available is ${item.product.stock}`,
-        });
-      }
-
-      // 3. Update
-      return prisma.cartItem.update({
-        where: { id: itemId },
-        data: { quantity },
-      });
-    }),
-
-  /**
-   * Remove Single Item
-   */
-  removeItem: protectedProcedure.input(z.object({ itemId: z.string() })).mutation(async ({ ctx, input }) => {
-    // Ensure user owns the cart item (Security)
-    const item = await prisma.cartItem.findUnique({
-      where: { id: input.itemId },
-      include: { cart: true },
-    });
-
-    if (!item || item.cart.userId !== ctx.session.user.id) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Cannot remove this item",
+      return c.json({
+        success: true,
+        data: { id: null, items: [], subtotal: 0, totalItems: 0 },
       });
     }
 
-    return prisma.cartItem.delete({
-      where: { id: input.itemId },
-    });
-  }),
+    return c.json({ success: true, data: cart });
+  })
 
   /**
-   * Clear Cart
+   * POST /
+   * Add item to cart
    */
-  clear: protectedProcedure.mutation(async ({ ctx }) => {
-    const cart = await prisma.cart.findUnique({
-      where: { userId: ctx.session.user.id },
-    });
-    if (!cart) {
-      return;
+  .post("/",authMiddleware, zValidator("json", AddItemSchema), async (c) => {
+    const user = c.get("user");
+    const input = c.req.valid("json");
+
+    try {
+      const result = await cartQueries.addItem(user.id, input);
+      return c.json({ success: true, data: result });
+    } catch (error: any) {
+      // Return 409 Conflict for Stock Issues, 404 for Product Not Found, etc.
+      const status = error.message.includes("stock") ? 409 : 400;
+      return c.json({ success: false, error: error.message }, status);
     }
+  })
 
-    await prisma.cartItem.deleteMany({
-      where: { cartId: cart.id },
-    });
+  /**
+   * PUT /:itemId
+   * Update item quantity
+   */
+  .put("/:productId",authMiddleware, zValidator("json", UpdateQuantitySchema), async (c) => {
+    const user = c.get("user");
+    const productId = c.req.param("productId");
+    const { quantity } = c.req.valid("json");
 
-    return { success: true };
-  }),
-});
+    try {
+      const result = await cartQueries.updateQuantity(user.id, productId, quantity);
+      return c.json({ success: true, data: result });
+    } catch (error: any) {
+      // Handle Stock Errors (409 Conflict) vs Not Found (404/403)
+      const status = error.message.includes("stock") ? 409 : 400;
+      return c.json({ success: false, error: error.message }, status);
+    }
+  })
+
+  /**
+   * DELETE /:itemId
+   * Remove a specific item
+   */
+  .delete("/:productId",authMiddleware, async (c) => {
+    const user = c.get("user");
+    const productId = c.req.param("productId");
+
+    try {
+      await cartQueries.removeItem(user.id, productId);
+      return c.json({ success: true, message: "Item removed" });
+    } catch (error: any) {
+      return c.json({ success: false, error: error.message }, 400);
+    }
+  })
+
+  /**
+   * DELETE /
+   * Clear the entire cart
+   */
+  .delete("/", async (c) => {
+    const user = c.get("user");
+
+    try {
+      await cartQueries.clearCart(user.id);
+      return c.json({ success: true, message: "Cart cleared" });
+    } catch (error: any) {
+      return c.json({ success: false, error: error.message }, 500);
+    }
+  });

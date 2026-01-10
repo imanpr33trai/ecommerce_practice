@@ -1,15 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { HTTPException } from "hono/http-exception";
 
-import { trpc } from "@/trpc/client";
+import { client } from "@/lib/hono-client";
+
+import { productKeys } from "./keys";
+
+const fetchFilters = async () => {
+  const res = await client.api.product.filters.$get();
+  if (!res.ok) {
+    throw new HTTPException(404, { message: "Fetching failed filters" });
+  }
+  return await res.json();
+};
 
 /**
  * Hook: useFilterOptions
  * Usage: The Sidebar (fetches available colors, materials from DB)
  */
 export const productFilterOptions = () => {
-  return trpc.product.getFilters.queryOptions(undefined, {
+  return queryOptions({
+    queryKey: productKeys.filters(),
+    queryFn: () => fetchFilters(),
     staleTime: 1000 * 60 * 10, // 10 minutes (rarely changes)
-    refetchOnWindowFocus: false,
   });
 };
 

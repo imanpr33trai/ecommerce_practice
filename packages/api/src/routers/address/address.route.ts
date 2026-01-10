@@ -1,125 +1,90 @@
-import prisma from "@ecomerceNextjs/db";
-import { TRPCError } from "@trpc/server";
-import z from "zod";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 
-import { protectedProcedure, router } from "../..";
+import { addressQueries } from "./address.query";
 import { AddressSchema, UpdateAddressSchema } from "./address.type";
+import type { HonoEnv } from "../../context"; // Adjust path
 
-export const addressRouter = router({
+export const address = new Hono<HonoEnv>()
+
   /**
-   * List all addresses for the user
-   * Sorts by Default first, then recently added
+   * Middleware: Auth Guard
    */
-  list: protectedProcedure.query(async ({ ctx }) => {
-    return prisma.address.findMany({
-      where: { userId: ctx.session.user.id },
-      orderBy: [
-        { isDefault: "desc" }, // Default address first
-        { createdAt: "desc" },
-      ],
-    });
-  }),
+  .use("*", async (c, next) => {
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ success: false, error: "Unauthorized" }, 401);
+    }
+    await next();
+  })
 
   /**
+   * GET /
+   * List Addresses
+   */
+  .get("/", async (c) => {
+    const user = c.get("user");
+    const addresses = await addressQueries.list(user.id);
+    return c.json({ success: true, data: addresses });
+  })
+
+  /**
+   * POST /
    * Create Address
-   * Logic: If it's the first address, force it to be Default.
-   * If isDefault is true, unset others.
    */
-  create: protectedProcedure.input(AddressSchema).mutation(async ({ ctx, input }) => {
-    const userId = ctx.session.user.id;
+  .post("/", zValidator("json", AddressSchema), async (c) => {
+    const user = c.get("user");
+    const input = c.req.valid("json");
 
-    // 1. Check if user has any addresses yet
-    const count = await prisma.address.count({ where: { userId } });
-    const isFirstAddress = count === 0;
-
-    // 2. Determine if this should be default
-    const shouldBeDefault = input.isDefault || isFirstAddress;
-
-    return prisma.$transaction(async (tx) => {
-      // If setting as default, unset previous default
-      if (shouldBeDefault) {
-        await tx.address.updateMany({
-          where: { userId, isDefault: true },
-          data: { isDefault: false },
-        });
-      }
-
-      return tx.address.create({
-        data: {
-          ...input,
-          isDefault: shouldBeDefault,
-          userId,
-        },
-      });
-    });
-  }),
+    const result = await addressQueries.create(user.id, input);
+    return c.json({ success: true, data: result });
+  })
 
   /**
+   * PUT /:id
    * Update Address
    */
-  update: protectedProcedure.input(UpdateAddressSchema).mutation(async ({ ctx, input }) => {
-    const userId = ctx.session.user.id;
-    const { id, ...data } = input;
+  .put("/:id", zValidator("json", UpdateAddressSchema), async (c) => {
+    const user = c.get("user");
+    const addressId = c.req.param("id");
+    const input = c.req.valid("json");
 
-    // Check ownership
-    const existing = await prisma.address.findUnique({ where: { id } });
-    if (!existing || existing.userId !== userId) {
-      throw new TRPCError({ code: "FORBIDDEN", message: "Address not found" });
+    try {
+      const result = await addressQueries.update(user.id, addressId, input);
+      return c.json({ success: true, data: result });
+    } catch (error: any) {
+      return c.json({ success: false, error: error.message }, 403);
     }
-
-    return prisma.$transaction(async (tx) => {
-      // Handle Default switching
-      if (data.isDefault) {
-        await tx.address.updateMany({
-          where: { userId, isDefault: true, id: { not: id } },
-          data: { isDefault: false },
-        });
-      }
-
-      return tx.address.update({
-        where: { id },
-        data,
-      });
-    });
-  }),
+  })
 
   /**
-   * Set an existing address as Default
+   * PUT /:id/default
+   * Set as Default
    */
-  setDefault: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-    const userId = ctx.session.user.id;
+  .put("/:id/default", async (c) => {
+    const user = c.get("user");
+    const addressId = c.req.param("id");
 
-    return prisma.$transaction(async (tx) => {
-      // 1. Unset old default
-      await tx.address.updateMany({
-        where: { userId, isDefault: true },
-        data: { isDefault: false },
-      });
-
-      // 2. Set new default
-      return tx.address.update({
-        where: { id: input.id },
-        data: { isDefault: true },
-      });
-    });
-  }),
+    try {
+      const result = await addressQueries.setDefault(user.id, addressId);
+      return c.json({ success: true, data: result });
+    } catch (error: any) {
+      return c.json({ success: false, error: error.message }, 403);
+    }
+  })
 
   /**
+   * DELETE /:id
    * Delete Address
    */
-  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-    const userId = ctx.session.user.id;
+  .delete("/:id", async (c) => {
+    const user = c.get("user");
+    const addressId = c.req.param("id");
 
-    const address = await prisma.address.findUnique({ where: { id: input.id } });
-    if (!address || address.userId !== userId) {
-      throw new TRPCError({ code: "FORBIDDEN" });
+    try {
+      await addressQueries.delete(user.id, addressId);
+      return c.json({ success: true, message: "Address deleted" });
+    } catch (error: any) {
+      return c.json({ success: false, error: error.message }, 403);
     }
-
-    // Prevent deleting the default address if others exist?
-    // (Optional rule, usually safer to allow delete but warn)
-
-    return prisma.address.delete({
-      where: { id: input.id },
-    });
-  }),
-});
+  });

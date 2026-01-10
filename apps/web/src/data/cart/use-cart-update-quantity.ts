@@ -1,59 +1,76 @@
-import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { trpc } from "@/trpc/client";
+import { client } from "@/lib/hono-client";
 
-export const cartUpdateItemQuantityOptions = (utils: QueryClient) => {
-  return trpc.cart.updateQuantity.mutationOptions({
-    onMutate: async ({ itemId, quantity }) => {
+import { cartKeys } from "./keys";
+import type { GetCartUserListResponse } from "./types";
+
+export const useCartUpdateItemQuantityMutation = () => {
+  const queryClient = useQueryClient();
+  const queryKey = cartKeys.userCart();
+
+  return useMutation({
+    mutationFn: async ({ quantity, productId }: { quantity: number; productId: string }) => {
+      const res = await client.api.cart[":productId"].$put({
+        json: { quantity },
+        param: { productId },
+      });
+
+      const result = await res.json();
+
+      if (!res.ok || result.success === false) {
+        if ("error" in result) {
+          throw new Error(result.error || "Failed to update quantity or Stock confilict");
+        }
+        if ("message" in result) {
+          throw new Error(result.message);
+        }
+        throw new Error("An Unknown error occured");
+      }
+      return await res.json();
+    },
+
+    onMutate: async ({ productId, quantity }) => {
       // A. Cancel outgoing refetches so they don't overwrite us
 
-      await utils.cancelQueries({ queryKey: trpc.cart.get.queryKey() });
+      await queryClient.cancelQueries({ queryKey });
 
       // B. Snapshot previous state
 
-      const previousCart = utils.getQueryData(trpc.cart.get.queryKey());
+      const previousCart = queryClient.getQueryData<GetCartUserListResponse>(queryKey);
 
       // C. Optimistically update
-      utils.setQueryData(trpc.cart.get.queryKey(), (oldCart) => {
-        if (!oldCart) {
-          return null;
-        }
 
-        // Calculate new totals roughly (Server is source of truth, but this is good for UI)
-        const targetItem = oldCart.items.find((i) => i.id === itemId);
-        const priceDiff = targetItem
-          ? (quantity - targetItem.quantity) * Number(targetItem.product.price)
-          : 0;
-
-        return {
-          ...oldCart,
-          subtotal: (oldCart.subtotal || 0) + priceDiff,
-          totalItems: (oldCart.totalItems || 0) + (quantity - (targetItem?.quantity || 0)),
-          items: oldCart.items.map((item) => (item.id === itemId ? { ...item, quantity } : item)),
-        };
-      });
-
-      // Return snapshot
+      if (previousCart && previousCart.data.id !== null) {
+        queryClient.setQueryData<GetCartUserListResponse>(queryKey, {
+          ...previousCart,
+          data: {
+            ...previousCart.data,
+            items: previousCart.data.items.map((item) =>
+              item.productId === productId ? { ...item, quantity } : item,
+            ),
+            totalItems: previousCart.data.items.reduce(
+              (acc, item) => (item.productId === productId ? acc + quantity : acc + item.quantity),
+              0,
+            ),
+          },
+        });
+      }
       return { previousCart };
     },
-    onSuccess: (data) => {
-      console.log(data);
-    },
+
     onError: (err, newVar, context) => {
       // Rollback on error (e.g., Not enough stock)
-      utils.setQueryData(trpc.cart.get.queryKey(), context?.previousCart);
+      if (context?.previousCart) {
+        queryClient.setQueryData(queryKey, context.previousCart);
+      }
       toast.error(err.message);
       console.log(err.message);
     },
     onSettled: () => {
       // Sync with server logic
-      utils.invalidateQueries({ queryKey: trpc.cart.get.queryKey() });
+      queryClient.invalidateQueries({ queryKey });
     },
   });
-};
-
-export const useCartUpdateItemQuantityMutation = () => {
-  const utils = useQueryClient();
-  return useMutation(cartUpdateItemQuantityOptions(utils));
 };

@@ -5,14 +5,12 @@
     "@ecomerceNextjs/db": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
     "@hono/node-server": "^1.19.7",
-    "@hono/standard-validator": "^0.2.1",
-    "@hono/trpc-server": "^0.4.0",
+    "@hono/zod-validator": "^0.7.6",
     "@trpc/server": "^11.8.0",
     "better-auth": "^1.4.0",
     "dotenv": "^17.2.2",
-    "hono": "^4.8.2",
-    "hono-openapi": "^1.1.2",
-    "zod": "^4.1.11"
+    "hono": "^4.11.3",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@ecomerceNextjs/config": "workspace:*",

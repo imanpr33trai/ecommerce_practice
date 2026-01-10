@@ -1,10 +1,10 @@
-import type { ProductFilters } from "./types";
+import type { GetProductListRequest } from "./types";
 
 export const productKeys = {
   all: ["product"] as const,
 
   // List with specific filters (e.g. { category: 'shoes', sort: 'price_asc' })
-  list: (filters: ProductFilters) => ["product", "list", filters] as const,
+  list: (filters: GetProductListRequest["query"]) => ["product", "list", filters] as const,
 
   // Single Product Detail
   detail: (slug: string) => ["product", "detail", slug] as const,
@@ -14,4 +14,6 @@ export const productKeys = {
 
   // Landing Page Sections
   landing: () => ["product", "landing"] as const,
+
+  suggestion: (search: string) => ["product", "suggestion", search] as const,
 };
