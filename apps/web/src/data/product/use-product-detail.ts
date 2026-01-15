@@ -1,21 +1,26 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { HTTPException } from "hono/http-exception";
 
 import { client } from "@/lib/hono-client";
 
 import { productKeys } from "./keys";
-import type { ProductDetailResponse } from "./types";
 
-const productDetailFn = async (slug: string): Promise<ProductDetailResponse> => {
+const productDetailFn = async (slug: string) => {
   const res = await client.api.product[":slug"].$get({ param: { slug } });
 
   if (!res.ok) {
-    throw new HTTPException(404, { message: "Fetch Failed" });
+    throw new Error("Fetch Failed");
   }
 
-  // const response = await res
+  // Call .json() once
+  const result = await res.json();
 
-  return await res.json();
+  if (!res.ok) {
+    throw new Error("Product not found");
+  }
+
+  // RETURN THE NESTED DATA
+  // This is what makes the hook return the product fields directly
+  return result.data;
 };
 
 /**

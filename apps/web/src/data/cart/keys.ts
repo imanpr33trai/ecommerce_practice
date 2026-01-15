@@ -3,5 +3,5 @@ export const cartKeys = {
   // The main key used for fetching the user's cart
   detail: () => ["cart", "detail"] as const,
 
-  userCart : ()=> ["cart","list",]
+  userCart: () => ["cart", "list"],
 };

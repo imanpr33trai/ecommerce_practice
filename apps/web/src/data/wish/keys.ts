@@ -1,5 +1,7 @@
 export const wishKeys = {
   all: ["wish"] as const,
-  lists: () => ["wish", "list"] as const,
-  ids: (id: string) => ["wish", "ids", id] as const,
+  count: () => ["wish", "count"] as const,
+  ids: () => ["wish", "ids"] as const,
+
+  user: () => ["wish", "user"] as const,
 };

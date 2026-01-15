@@ -8,18 +8,16 @@ import { fetchProducts } from "./use-product-list";
  * Usage: Navbar Search Dropdown
  */
 export const productSuggestionOptions = (query: string) => {
-  return queryOptions(
-    {
-      queryKey: productKeys.suggestion(query),
-      queryFn: () =>
-        fetchProducts({
-          search: query,
-          limit: "5",
-        }),
-      enabled: query.length > 0, // Only fetch if user typed something
-      staleTime: 1000 * 60, // Cache results for 1 min
-    },
-  );
+  return queryOptions({
+    queryKey: productKeys.suggestion(query),
+    queryFn: () =>
+      fetchProducts({
+        search: query,
+        limit: "5",
+      }),
+    enabled: query.length > 0, // Only fetch if user typed something
+    staleTime: 1000 * 60, // Cache results for 1 min
+  });
 };
 
 export const useProductSuggestionQuery = (query: string) => {

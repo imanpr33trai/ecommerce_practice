@@ -1,10 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
+import { wishKeys } from "@/data/wish/keys";
 import { authClient } from "@/lib/auth-client";
-import { trpc } from "@/trpc/client";
+import { client } from "@/lib/hono-client";
 
 export const wishCountOptions = (sessionExists: boolean) => {
-  return trpc.wish.getIds.queryOptions(undefined, {
+  return queryOptions({
+    queryFn: async () => {
+      const res = await client.api.wish.ids.$get();
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch the count");
+      }
+      return res.json();
+    },
+    queryKey: wishKeys.ids(),
     staleTime: 1000 * 60 * 10,
     // Use skipToken for better type safety in v11
     enabled: sessionExists,
@@ -17,13 +27,15 @@ export const useWishListCountQuery = () => {
   const { data: session } = authClient.useSession();
 
   // 1. Pass the session check to the options
-  const { data: ids, isLoading, error } = useQuery(wishCountOptions(!!session));
+  const { data, isLoading, error } = useQuery(wishCountOptions(!!session));
+
 
   // 2. The Final Fallback:
   // 'ids' will be undefined during: Loading, Error, or Disabled state.
   // Use Nullish Coalescing (??) to guarantee a return value.
+
   return {
-    data: ids?.length ?? 0,
+     data,
     isLoading,
     error,
   };

@@ -1,4 +1,4 @@
-import { keepPreviousData, queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { HTTPException } from "hono/http-exception";
 
 import {

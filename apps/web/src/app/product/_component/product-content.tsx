@@ -64,14 +64,14 @@ export function ProductContent() {
 
   // Helper variables for UI
   const categoryParam = searchParams.get("category") || "All";
-  const displayTitle =
-    filters.categories.length === 1
-      ? filters.categories[0]
-      : categoryParam === "All"
-        ? "Shop"
-        : categoryParam;
+  // const displayTitle =
+  //   filters.categories.length === 1
+  //     ? filters.categories[0]
+  //     : categoryParam === "All"
+  //       ? "Shop"
+  //       : categoryParam;
 
-  // --- 5. CONDITIONAL RENDERS ---
+  // // --- 5. CONDITIONAL RENDERS ---
 
   if (isLoading) {
     return <LoadingSkeleton type="products" />;
@@ -100,7 +100,7 @@ export function ProductContent() {
               ? filters.categories[0]
               : categoryParam === "All"
                 ? "Shop"
-                : categoryParam}{" "}
+                : categoryParam}
             Collection
           </h1>
           <p className="text-gray-500">Curated specifically for modern living.</p>
@@ -152,7 +152,7 @@ export function ProductContent() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {PRODUCTS.items.map((product) => (
+        {PRODUCTS.data.items.map((product) => (
           <ProductCard
             key={product.id}
             product={product}

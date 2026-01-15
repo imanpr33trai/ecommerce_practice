@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useCartAddItemMutation } from "@/data/cart";
 import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { authClient } from "@/lib/auth-client";
-import type { ProductSingle } from "@/data/product";
+import type { ProductSingleResponse } from "@/data/product";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
@@ -18,7 +18,7 @@ import ImageWithSkeleton from "./ImageWithSkeleton";
 import ModalProductCardExpanded from "./ModalProductCardExpanded";
 
 type ProductCardProps = {
-  product: ProductSingle;
+  product: ProductSingleResponse;
   className?: string;
 };
 
@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   const { mutate: toggleWish } = useWishToggleMutation();
 
   // Only check wishlist status if logged in, otherwise false
-  const isWishlisted = useWishListedQuery(product.id);
+  const isWishlisted = useWishListedQuery(!!session, product.id);
 
   // Local UI State
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || "#D9D9D9");
@@ -82,9 +82,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
       return;
     }
     // Optimistic mutation (Toast handled in the hook)
-    toggleWish({
-      productId: product.id,
-    });
+    toggleWish(product.id);
   };
 
   // --- DB ACTION: Add to Cart ---
@@ -256,7 +254,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
               {product.images.map((image) => (
                 <ImageWithSkeleton
                   key={image.id}
-                  src={image.url}
+                  src={image.url || "/images/caroline.jpg"}
                   alt={image.altText || product.name}
                   className={`w-full h-full transition-transform duration-1000 ease-premium ${hoverState !== "idle" ? "scale-105" : ""}`}
                 />

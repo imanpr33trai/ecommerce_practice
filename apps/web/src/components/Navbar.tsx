@@ -3,27 +3,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
 import type React from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { Input } from "@comp/input";
 import {
-  Clock,
-  X as CloseIcon,
-  Heart,
-  Loader2,
-  LogIn,
-  Menu,
-  Search,
-  ShoppingBag,
-  UserIcon,
-  X,
+    Clock,
+    X as CloseIcon,
+    Heart,
+    Loader2,
+    LogIn,
+    Menu,
+    Search,
+    ShoppingBag,
+    UserIcon,
+    X,
 } from "lucide-react";
 
 import { useCartListItemsQuery } from "@/data/cart";
 import { useProductSuggestionQuery } from "@/data/product";
 import { useWishListCountQuery } from "@/data/wish";
-import { Wish } from "@/feature/wish";
 import { useDebounce } from "@/hooks/useDebounce";
 import { authClient } from "@/lib/auth-client";
 
@@ -107,8 +106,16 @@ const Navbar: React.FC = () => {
 
   const isActive = (path: string) => location === path;
 
+  if (isWishListCountLoading) {
+    return <div>wishCount is loading</div>;
+  }
+  if (!wishCount) {
+    return <div>wishcount is undefined</div>;
+  }
+  console.log("error wishcoutn",errorWishListCount);
+
   // Calculate count safely (default to 0 if loading/error/guest)
-  const cartItemCount = cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const cartItemCount = cart?.data.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
   return (
     <nav className="sticky top-0 z-50 py-4 px-4 md:px-8 bg-nest-bg/90 backdrop-blur-md transition-all duration-300 border-b border-gray-200/50">
       <div className="flex flex-col gap-4">
@@ -166,8 +173,8 @@ const Navbar: React.FC = () => {
                       Suggestions
                     </div>
 
-                    {suggestions && suggestions.length > 0
-                      ? suggestions.map((product) => (
+                    {suggestions && suggestions.data.items.length > 0
+                      ? suggestions.data.items.map((product) => (
                           <Link
                             key={product.id}
                             href={`/product/${product.slug}`}
@@ -179,7 +186,7 @@ const Navbar: React.FC = () => {
                           >
                             <div className="relative w-10 h-10 rounded-md overflow-hidden bg-gray-100 shrink-0">
                               <Image
-                                src={product.image}
+                                src={product.images.at(0)?.url || "images/caroline.jpg"}
                                 alt={product.name}
                                 fill
                                 className="object-cover"
@@ -203,7 +210,7 @@ const Navbar: React.FC = () => {
                         )}
 
                     {/* "View All" Link */}
-                    {suggestions && suggestions.length > 0 && (
+                    {suggestions && suggestions.data.items.length > 0 && (
                       <div
                         onClick={() => submitSearch(searchQuery)}
                         className="p-3 text-center border-t border-gray-100 cursor-pointer hover:bg-gray-50 text-xs font-bold text-blue-600 uppercase tracking-wide"
@@ -285,9 +292,9 @@ const Navbar: React.FC = () => {
                   size={20}
                   className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
                 />
-                {wishCount > 0 && (
+                {wishCount.data.length > 0 && (
                   <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-black rounded-full text-white text-[10px] grid place-items-center border border-white">
-                    {wishCount}
+                    {wishCount.data.length ?? 0}
                   </span>
                 )}
               </Button>
@@ -358,9 +365,9 @@ const Navbar: React.FC = () => {
             className="p-4 bg-white rounded-2xl font-medium flex justify-between"
           >
             Wishlist
-            {wishCount > 0 && (
+            {wishCount.data.length > 0 && (
               <span className="bg-black text-white px-2 rounded-full text-xs py-1">
-                {wishCount}
+                {wishCount.data.length}
               </span>
             )}
           </Link>

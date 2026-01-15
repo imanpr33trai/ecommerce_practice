@@ -23,7 +23,7 @@ export function SearchContent() {
     limit: 20,
   });
 
-  const products = searchResults?.items || [];
+  const products = searchResults?.data.items || [];
 
   return (
     <div className="p-4 md:px-8 max-w-400 mx-auto animate-fade-in min-h-[80vh]">

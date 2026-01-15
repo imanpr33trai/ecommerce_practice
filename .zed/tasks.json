@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Dev (Next.js)",
+    "command": "bun dev:web",
+    "cwd": "apps/web"
+  },
+  {
+    "label": "Dev (Hono API)",
+    "command": "bun dev:server",
+    "cwd": "apps/server"
+  }
+]

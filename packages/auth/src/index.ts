@@ -1,6 +1,7 @@
 import prisma from "@ecomerceNextjs/db";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { openAPI } from "better-auth/plugins";
 
 export const auth = betterAuth<BetterAuthOptions>({
   database: prismaAdapter(prisma, {
@@ -16,6 +17,7 @@ export const auth = betterAuth<BetterAuthOptions>({
     enabled: true,
     autoSignIn: true,
   },
+  plugins: [openAPI()],
   secret: process.env.BETTER_AUTH_SECRET,
   advanced: {
     defaultCookieAttributes: {

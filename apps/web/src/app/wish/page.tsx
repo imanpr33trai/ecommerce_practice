@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import React from "react";
 
 import { Heart } from "lucide-react";
 
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
-import { Wish } from "@/feature/wish";
+import { useWishListQuery } from "@/data/wish";
+import { authClient } from "@/lib/auth-client";
 
 export default function WishlistPage() {
-  const { data: wishlist, isLoading, isError, error } = Wish.hooks.useWishList();
+  const { data } = authClient.useSession();
+  const { data: wishlist, isLoading, isError, error } = useWishListQuery(!!data);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -26,13 +27,13 @@ export default function WishlistPage() {
     <div className="p-4 md:px-8 max-w-[1600px] mx-auto animate-slide-up min-h-[80vh]">
       <div className="mb-8">
         <h1 className="text-4xl font-light mb-2">
-          My Wishlist <span className="text-gray-400 text-2xl">({wishlist.length})</span>
+          My Wishlist <span className="text-gray-400 text-2xl">({wishlist.data.length})</span>
         </h1>
         <p className="text-gray-500">Items you've saved for later.</p>
       </div>
-      {wishlist.length > 0 ? (
+      {wishlist.data.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {wishlist.map((product) => (
+          {wishlist.data.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -48,7 +49,9 @@ export default function WishlistPage() {
             />
           </div>
           <h2 className="text-2xl font-bold mb-4">Your wishlist is empty</h2>
-          <p className="text-gray-500 mb-8 max-w-md">Browse our collection and find something you love.</p>
+          <p className="text-gray-500 mb-8 max-w-md">
+            Browse our collection and find something you love.
+          </p>
           <Link href="/product">
             <Button size="lg">Start Shopping</Button>
           </Link>

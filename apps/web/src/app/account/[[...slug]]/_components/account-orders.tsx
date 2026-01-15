@@ -20,11 +20,11 @@ export function AccountOrders() {
       <h2 className="text-3xl font-light mb-6">Order History</h2>
       {ordersLoading ? (
         <Skeleton className="h-64 w-full rounded-2xl" />
-      ) : orders?.length === 0 ? (
+      ) : orders?.data.length === 0 ? (
         <div className="text-gray-500">No orders placed yet.</div>
       ) : (
         <div className="space-y-4">
-          {orders?.map((order) => (
+          {orders?.data.map((order) => (
             <BentoCard
               key={order.id}
               className="p-6 bg-white flex flex-col md:flex-row gap-6 items-center"

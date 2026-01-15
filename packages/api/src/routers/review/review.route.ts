@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import { authMiddleware } from "../../middlewares/auth.middleware";
 import { reviewQueries } from "./review.query";
 import { CreateReviewSchema, ReviewQuerySchema, UserReviewQuerySchema } from "./review.type";
 import type { HonoEnv } from "../../context"; // Adjust path to your context
@@ -41,20 +42,21 @@ export const review = new Hono<HonoEnv>()
   /**
    * Middleware: Auth Guard for Mutation/User Routes
    */
-  .use("*", async (c, next) => {
-    const user = c.get("user");
-    if (!user) {
-      return c.json({ success: false, error: "Unauthorized" }, 401);
-    }
-    await next();
-  })
+  .use(authMiddleware)
+  // .use("*", async (c, next) => {
+  //   const user = c.get("user");
+  //   if (!user) {
+  //     return c.json({ success: false, error: "Unauthorized" }, 401);
+  //   }
+  //   await next();
+  // })
 
   /**
    * GET /me
    * List the current logged-in user's reviews
    */
   .get("/me", zValidator("query", UserReviewQuerySchema), async (c) => {
-    const user = c.get("user")!;
+    const user = c.get("user");
     const options = c.req.valid("query");
 
     const result = await reviewQueries.listByUser(user.id, options);
@@ -66,7 +68,7 @@ export const review = new Hono<HonoEnv>()
    * Create a new review
    */
   .post("/", zValidator("json", CreateReviewSchema), async (c) => {
-    const user = c.get("user")!;
+    const user = c.get("user");
     const input = c.req.valid("json");
 
     try {
@@ -83,7 +85,7 @@ export const review = new Hono<HonoEnv>()
    * Delete a specific review
    */
   .delete("/:id", async (c) => {
-    const user = c.get("user")!;
+    const user = c.get("user");
     const reviewId = c.req.param("id");
 
     try {

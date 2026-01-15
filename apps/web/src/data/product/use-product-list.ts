@@ -1,12 +1,14 @@
-import { keepPreviousData, queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query";
 import { HTTPException } from "hono/http-exception";
 
 import {
-  type GetProductListRequest,
-  type GetProductsListResponse,
-  productKeys,
+    type GetProductListRequest,
+    type GetProductsListResponse,
+    type ProductFilters,
+    productKeys,
 } from "@/data/product";
 import { client } from "@/lib/hono-client";
+import { toQuery } from "@/lib/to-query";
 
 export const fetchProducts = async (
   filters: GetProductListRequest["query"],
@@ -35,6 +37,8 @@ export const productListOptions = (filters: Partial<GetProductListRequest["query
   });
 };
 
-export const useProductListQuery = (filter: Partial<GetProductListRequest["query"]>) => {
-  return useSuspenseQuery(productListOptions(filter));
+export const useProductListQuery = (filter: Partial<ProductFilters>) => {
+  const query = toQuery<ProductFilters>(filter) as Partial<GetProductListRequest["query"]>;
+
+  return useQuery(productListOptions(query));
 };

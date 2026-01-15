@@ -7,12 +7,13 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
 import ModalAddress from "@/components/ModalAddress";
-import { Account } from "@/feature/account";
+import { useAddressDeleteMutation } from "@/data/account/use-delete-address";
+import { useUserAddressQuery } from "@/data/account/use-user-address";
 
 export function AccountAddresses() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
-  const { data: addresses, isLoading: addressLoading } = Account.hooks.useAddresses();
-  const { mutate: deleteAddress } = Account.hooks.useDeleteAddress();
+  const { data: addresses, isLoading: addressLoading } = useUserAddressQuery();
+  const { mutate: deleteAddress } = useAddressDeleteMutation();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -30,7 +31,7 @@ export function AccountAddresses() {
         <Skeleton className="h-40 w-full" />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {addresses?.map((addr) => (
+          {addresses?.data.map((addr) => (
             <BentoCard
               key={addr.id}
               className={`p-6 bg-white border-2 relative ${addr.isDefault ? "border-black" : "border-transparent"}`}
@@ -68,7 +69,7 @@ export function AccountAddresses() {
           ))}
 
           <BentoCard
-            className="p-6 bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center min-h-[200px] cursor-pointer hover:bg-gray-100 transition-colors"
+            className="p-6 bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center min-h-50 cursor-pointer hover:bg-gray-100 transition-colors"
             onClick={() => setIsAddressModalOpen(true)}
           >
             <div className="text-center">

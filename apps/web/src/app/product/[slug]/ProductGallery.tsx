@@ -1,8 +1,5 @@
 "use client";
 
-import { use, useState } from "react";
-
-import { TRPCClientError } from "@trpc/client";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
 
@@ -20,7 +17,7 @@ export default function ProductGallery({ slug }: ProductGalleryProps) {
   const { data: session } = authClient.useSession();
   const { data: product } = useProudctDetailQuery(slug);
   const { mutate: toggleWish } = useWishToggleMutation();
-  const isWishlisted = useWishListedQuery(product?.id);
+  const isWishlisted = useWishListedQuery(!!session, product.id);
 
   if (!product) {
     return null;
@@ -30,7 +27,7 @@ export default function ProductGallery({ slug }: ProductGalleryProps) {
     if (!session) {
       return toast.error("Please login to save items");
     }
-    toggleWish({ productId: product.id });
+    toggleWish(product.id);
   };
 
   return (

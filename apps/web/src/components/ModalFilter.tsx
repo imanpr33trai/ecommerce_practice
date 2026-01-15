@@ -44,7 +44,7 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
   const handleRatingChange = (rating: number) => {
     setFilters((prev) => ({
       ...prev,
-      rating: prev.rating === rating ? null : rating,
+      rating: prev.rating === rating ? undefined : rating,
     }));
   };
 
@@ -81,9 +81,9 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
   }
 
   // Fallback if options failed to load
-  const categories = options?.categories || [];
-  const materials = options?.materials || [];
-  const colors = options?.colors || [];
+  const categories = options?.data.categories || [];
+  const materials = options?.data.materials || [];
+  const colors = options?.data.colors || [];
   console.log("options", options);
   console.log("setFilters", setFilters);
 
@@ -201,7 +201,6 @@ const ModalFilter: React.FC<ModalFilterProps> = ({ filters, setFilters }) => {
               {categories
                 .filter((c) => c.name !== "All")
                 .map((cat) => (
-                  // biome-ignore lint/a11y/useKeyWithClickEvents: <df>
                   <label
                     key={cat.id}
                     className="flex items-center gap-3 cursor-pointer group"

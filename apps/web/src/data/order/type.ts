@@ -1,14 +1,10 @@
-import { z } from "zod";
+import type { InferRequestType, InferResponseType } from "hono";
 
-import type { RouterInputs, RouterOutputs } from "@/trpc/client";
+import type { client } from "@/lib/hono-client";
 
-// Infer types from backend router outputs
-export type OrderListResponse = RouterOutputs["order"]["list"];
-export type OrderListItem = OrderListResponse[number]; // Single order in the list
+export type GetOrderSingleRespose = InferResponseType<(typeof client.api.order)[":id"]["$get"]>;
 
-export type OrderDetailResponse = RouterOutputs["order"]["getById"]; // Single order detail
+export type GetCreateOrderRequest = InferRequestType<typeof client.api.order.$post>["json"];
+export type GetCreateOrderResponse = InferResponseType<typeof client.api.order.$post>;
 
-// Infer input types from backend router inputs
-export type CreateOrderInput = RouterInputs["order"]["createFromCart"];
-export type UpdateOrderStatusInput = RouterInputs["order"]["updateStatus"];
-export type UpdateOrderPaymentStatusInput = RouterInputs["order"]["updatePaymentStatus"];
+export type GetListOrdersResponse = InferResponseType<typeof client.api.order.$get>;

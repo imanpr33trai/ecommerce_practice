@@ -6,11 +6,15 @@ import type React from "react";
 import { toast } from "sonner"; // Assuming shadcn toast path
 
 // Import strict types from your feature slice
-import { INITIAL_FILTERS, type ProductFilters, type ProductSingle } from "@/data/product/types";
+import {
+  INITIAL_FILTERS,
+  type ProductFilters,
+  type ProductSingleResponse,
+} from "@/data/product/types";
 
 // --- 1. Types ---
 
-export interface CartItem extends ProductSingle {
+export interface CartItem extends ProductSingleResponse {
   id: string;
   quantity: number;
   selectedColor?: string;
@@ -19,22 +23,22 @@ export interface CartItem extends ProductSingle {
 
 type ShopContextType = {
   // UI State
-  quickViewProduct: ProductSingle | null;
-  setQuickViewProduct: (product: ProductSingle | null) => void;
+  quickViewProduct: ProductSingleResponse | null;
+  setQuickViewProduct: (product: ProductSingleResponse | null) => void;
 
   // Lists (Client-side mainly, or synced)
-  recentlyViewed: ProductSingle[];
-  addToRecentlyViewed: (product: ProductSingle) => void;
+  recentlyViewed: ProductSingleResponse[];
+  addToRecentlyViewed: (product: ProductSingleResponse) => void;
 
-  compareList: ProductSingle[];
-  addToCompare: (product: ProductSingle) => void;
+  compareList: ProductSingleResponse[];
+  addToCompare: (product: ProductSingleResponse) => void;
   removeFromCompare: (productId: string) => void;
   isCompareOpen: boolean;
   setCompareOpen: (isOpen: boolean) => void;
 
   // Cart
   cart: CartItem[];
-  addToCart: (product: ProductSingle, options?: { color?: string; size?: string }) => void;
+  addToCart: (product: ProductSingleResponse, options?: { color?: string; size?: string }) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, delta: number) => void;
   clearCart: () => void;
@@ -42,8 +46,8 @@ type ShopContextType = {
   cartCount: number;
 
   // Wishlist
-  wishlist: ProductSingle[];
-  toggleWishlist: (product: ProductSingle) => void;
+  wishlist: ProductSingleResponse[];
+  toggleWishlist: (product: ProductSingleResponse) => void;
   isInWishlist: (productId: string) => boolean;
 
   // Filters (Note: In Next.js App Router, URL params are preferred, but this works for client-only)
@@ -93,17 +97,20 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // const {addToast}  = useToast();
 
   // State Management
-  const [recentlyViewed, setRecentlyViewed] = useLocalStorage<ProductSingle[]>(
+  const [recentlyViewed, setRecentlyViewed] = useLocalStorage<ProductSingleResponse[]>(
     "nestify_recent",
     [],
   );
-  const [compareList, setCompareList] = useLocalStorage<ProductSingle[]>("nestify_compare", []);
+  const [compareList, setCompareList] = useLocalStorage<ProductSingleResponse[]>(
+    "nestify_compare",
+    [],
+  );
   const [isCompareOpen, setCompareOpen] = useState(false);
 
   const [cart, setCart] = useLocalStorage<CartItem[]>("nestify_cart", []);
-  const [wishlist, setWishlist] = useLocalStorage<ProductSingle[]>("nestify_wishlist", []);
+  const [wishlist, setWishlist] = useLocalStorage<ProductSingleResponse[]>("nestify_wishlist", []);
 
-  const [quickViewProduct, setQuickViewProduct] = useState<ProductSingle | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<ProductSingleResponse | null>(null);
 
   // Initialize filters with Zod Defaults
   const [filters, setFilters] = useState<ProductFilters>(INITIAL_FILTERS);
@@ -111,7 +118,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // --- Actions (Memoized with useCallback) ---
 
   const addToRecentlyViewed = useCallback(
-    (product: ProductSingle) => {
+    (product: ProductSingleResponse) => {
       setRecentlyViewed((prev) => {
         // Prevent duplicates and limit to 10
         const filtered = prev.filter((p) => p.id !== product.id);
@@ -122,7 +129,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 
   const addToCompare = useCallback(
-    (product: ProductSingle) => {
+    (product: ProductSingleResponse) => {
       setCompareList((prev) => {
         if (prev.some((p) => p.id === product.id)) {
           toast.success("Already added", {
@@ -152,7 +159,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Cart Logic
   const addToCart = useCallback(
-    (product: ProductSingle, options?: { color?: string; size?: string }) => {
+    (product: ProductSingleResponse, options?: { color?: string; size?: string }) => {
       setCart((prev) => {
         // Find exact match (Same ID, Same Color, Same Size)
         const existingIndex = prev.findIndex(
@@ -220,7 +227,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Wishlist Logic
   const toggleWishlist = useCallback(
-    (product: ProductSingle) => {
+    (product: ProductSingleResponse) => {
       setWishlist((prev) => {
         const exists = prev.some((p) => p.id === product.id);
         if (exists) {

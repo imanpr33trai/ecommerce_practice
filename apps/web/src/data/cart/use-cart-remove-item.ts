@@ -1,17 +1,19 @@
-import { client } from "@/lib/hono-client";
-import { type QueryClient, useMutation, useQueryClient, mutationOptions } from "@tanstack/react-query";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { cartKeys } from "./keys";
-import { GetCartUserListResponse } from "./types";
 
+import { client } from "@/lib/hono-client";
+
+import { cartKeys } from "./keys";
+import type { GetCartUserListResponse } from "./types";
 
 // 1. Independent Fetcher (Safe)
 const cartRemoveItemFn = async (productId: string) => {
   const res = await client.api.cart[":productId"].$delete({ param: { productId } });
 
   // Use standard Error on client-side instead of server-side HTTPException
-  if (!res.ok) throw new Error("Failed to remove item");
+  if (!res.ok) {
+    throw new Error("Failed to remove item");
+  }
 
   return await res.json();
 };
@@ -44,13 +46,10 @@ export const useCartItemRemoveMutation = () => {
             items: oldCart.data.items.filter((i) => i.id !== productId),
             totalItems: Math.max(0, oldCart.data.totalItems - 1),
             // Keep existing subtotal or recalculate if you have item prices
-            subtotal: oldCart.data.subtotal
+            subtotal: oldCart.data.subtotal,
           },
         };
       });
-
-
-
 
       return { previousCart };
     },

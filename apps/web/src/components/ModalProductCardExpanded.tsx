@@ -1,13 +1,13 @@
 import type React from "react";
 
-import { ArrowLeftRight, ArrowRight, Check, Eye } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, Check } from "lucide-react";
 
-import type { ProductSingle } from "@/data/product";
+import type { ProductSingleResponse } from "@/data/product";
 
 import Button from "./Button";
 
 type ModalProductCardExpandedProps = {
-  product: ProductSingle;
+  product: ProductSingleResponse;
   isInCompare: boolean;
   isAdding: boolean;
   selectedColor: string;
@@ -19,9 +19,24 @@ type ModalProductCardExpandedProps = {
   isExpanded: boolean;
 };
 
-const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({ product, isInCompare, isAdding, selectedColor, displayColors, onQuickView, onCompare, onAddToCart, onSelectColor, isExpanded }) => (
-  <div className={`flex flex-1 flex-col justify-center space-y-4 transition-all duration-1000 ease-premium ${isExpanded ? "translate-y-0 opacity-100 delay-75" : "pointer-events-none absolute bottom-0 left-0 w-full translate-y-8 p-6 opacity-0"}`}>
-    <p className="line-clamp-2 text-gray-500 text-sm leading-relaxed">{product.description} Crafted with precision to elevate your living space.</p>
+const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({
+  product,
+  isInCompare,
+  isAdding,
+  selectedColor,
+  displayColors,
+  onQuickView,
+  onCompare,
+  onAddToCart,
+  onSelectColor,
+  isExpanded,
+}) => (
+  <div
+    className={`flex flex-1 flex-col justify-center space-y-4 transition-all duration-1000 ease-premium ${isExpanded ? "translate-y-0 opacity-100 delay-75" : "pointer-events-none absolute bottom-0 left-0 w-full translate-y-8 p-6 opacity-0"}`}
+  >
+    <p className="line-clamp-2 text-gray-500 text-sm leading-relaxed">
+      {product.description} Crafted with precision to elevate your living space.
+    </p>
 
     <div className="flex gap-2">
       {/*<Button
@@ -51,7 +66,9 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({ pro
     </div>
 
     <div>
-      <span className="mb-2 block font-bold text-[10px] text-gray-400 uppercase tracking-widest">Available Finishes</span>
+      <span className="mb-2 block font-bold text-[10px] text-gray-400 uppercase tracking-widest">
+        Available Finishes
+      </span>
       <div className="flex gap-3">
         {displayColors.map((color) => (
           <Button

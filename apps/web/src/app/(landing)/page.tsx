@@ -1,19 +1,25 @@
+export const dynamic = "force-dynamic";
+
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { productLandingOptions } from "@/data/product";
-import { getCaller, HydrateClient, prefetch, trpc } from "@/trpc/server";
-
+import { createQueryClient } from "@/lib/query-client";
 import LandingPage from "./LandingPage";
 
 export default async function Page() {
-  await prefetch(trpc.product.getLandingProducts.queryOptions({ limit: 20 }));
+  const queryClient = createQueryClient();
+
+  await queryClient.prefetchQuery(
+    productLandingOptions({ limit: "20", page: "1" })
+  );
 
   return (
-    <HydrateClient>
+    <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingSkeleton type="home" />}>
         <LandingPage />
       </Suspense>
-    </HydrateClient>
+    </HydrationBoundary>
   );
 }

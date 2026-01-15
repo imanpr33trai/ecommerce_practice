@@ -17,9 +17,12 @@ import {
 } from "@/data/cart";
 
 export default function CartPage() {
-  const { data: cart, isLoading: isCartLoading, error: cartError } = useCartListItemsQuery();
+  const { data: cartData, isLoading: isCartLoading, error: cartError } = useCartListItemsQuery();
   const { mutate: removeItem } = useCartItemRemoveMutation();
   const { mutate: updateQuantity } = useCartUpdateItemQuantityMutation();
+
+  const cart = cartData?.data;
+
   if (isCartLoading) {
     return <div>cart page is isLoading</div>;
   }
@@ -94,7 +97,7 @@ export default function CartPage() {
                   <div className="flex items-center gap-3 bg-gray-100 rounded-full px-2 py-1">
                     <button
                       onClick={() =>
-                        updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })
+                        updateQuantity({ productId: item.id, quantity: item.quantity + -1 })
                       }
                       type="button"
                       className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center text-xs hover:bg-gray-50"
@@ -104,7 +107,7 @@ export default function CartPage() {
                     <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
                     <button
                       onClick={() =>
-                        updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })
+                        updateQuantity({ productId: item.id, quantity: item.quantity + 1 })
                       }
                       type="button"
                       className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center text-xs hover:bg-gray-50"
@@ -116,7 +119,7 @@ export default function CartPage() {
               </div>
 
               <button
-                onClick={() => removeItem({ itemId: item.id })}
+                onClick={() => removeItem(item.id)}
                 type="button"
                 className="p-2 text-gray-400 hover:text-red-500 transition-colors"
               >
@@ -138,7 +141,6 @@ export default function CartPage() {
         <div className="lg:col-span-1">
           <BentoCard className="p-6 sticky top-24">
             <h2 className="text-xl font-bold mb-6">Order Summary</h2>
-
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>

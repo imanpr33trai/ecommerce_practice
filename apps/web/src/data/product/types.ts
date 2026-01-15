@@ -1,13 +1,24 @@
-import { ProductFilterSchema } from "@ecomerceNextjs/api/routers/product/product.type";
-import type { ClientResponse, InferRequestType, InferResponseType } from "hono/client";
-import type { z } from "zod";
+import type { InferRequestType, InferResponseType } from "hono/client";
 
 import { client } from "@/lib/hono-client";
 
-export type ProductFilters = z.infer<typeof ProductFilterSchema>;
+// export type ProductFilters = z.infer<typeof ProductFilterSchema>;
 
+export type ProductFilters = {
+  page: number;
+  limit: number;
+  sort: "newest" | "rating" | "price_asc" | "price_desc";
+  minPrice: number;
+  maxPrice: number;
+  categories: string[]; // 👈 NOT optional
+  materials: string[];
+  colors: string[];
+  search?: string;
+  onSale?: boolean;
+  inStock?: boolean;
+  rating?: number;
+};
 // 2. Constants
-export const INITIAL_FILTERS: ProductFilters = ProductFilterSchema.parse({});
 
 const $getProductsList = client.api.product.$get;
 const $getProductDetail = client.api.product[":slug"].$get;
@@ -19,6 +30,23 @@ export type ProductSingleResponse = GetProductsListResponse["data"]["items"][num
 
 export type ProductDetailResponse = InferResponseType<typeof $getProductDetail>;
 
-export type FilterOptionsResponse = InferResponseType<typeof $getProductFilter>;
+export type FilterOptionsResponse = InferResponseType<typeof $getProductFilter>["data"];
+
+export type Filters = GetProductListRequest["query"];
+
+export const INITIAL_FILTERS: ProductFilters = {
+  page: 1,
+  limit: 12,
+  sort: "newest",
+  minPrice: 0,
+  maxPrice: 100000,
+  categories: [],
+  materials: [],
+  colors: [],
+  search: undefined,
+  onSale: undefined,
+  inStock: undefined,
+  rating: undefined,
+};
 
 export * from "@ecomerceNextjs/api/routers/product/product.type";

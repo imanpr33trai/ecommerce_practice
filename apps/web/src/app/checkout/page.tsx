@@ -11,9 +11,10 @@ import { toast } from "sonner";
 import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Button from "@/components/Button";
+import { useAddAddressQuery } from "@/data/account/use-add-address";
+import { useUserAddressQuery } from "@/data/account/use-user-address";
 import { useCartListItemsQuery } from "@/data/cart";
-import { Account } from "@/feature/account";
-import { useCheckout } from "@/feature/checkout/client";
+import { useOrderCreateFromCartMutaiton } from "@/data/order";
 import { formatCurrency } from "@/lib/format-currency";
 
 export default function CheckoutPage() {
@@ -39,19 +40,19 @@ export default function CheckoutPage() {
 
   // --- HOOKS ---
   const { data: cartData, isLoading: isCartLoading } = useCartListItemsQuery();
-  const { data: addresses } = Account.hooks.useAddresses();
+  const { data: addressesData } = useUserAddressQuery();
 
   // We need mutateAsync to await the address creation before placing order
-  const { mutateAsync: createAddress } = Account.hooks.useAddAddress();
-  const { mutate: placeOrder, isPending: isProcessing } = useCheckout();
+  const { mutateAsync: createAddress } = useAddAddressQuery();
+  const { mutate: placeOrder, isPending: isProcessing } = useOrderCreateFromCartMutaiton();
 
   // --- DERIVED STATE ---
-  const cartItems = cartData?.items || [];
-  const subtotal = cartData?.subtotal || 0;
+  const cartItems = cartData?.data.items || [];
+  const subtotal = cartData?.data.subtotal || 0;
   const shipping = 0;
   const tax = 0;
   const total = subtotal + shipping + tax;
-
+  const addresses = addressesData?.data;
   // --- HANDLERS ---
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,8 +108,8 @@ export default function CheckoutPage() {
         });
 
         // Capture the new ID
-        if (newAddress && newAddress.id) {
-          finalAddressId = newAddress.id;
+        if (newAddress?.data.id) {
+          finalAddressId = newAddress.data.id;
         } else {
           throw new Error("Failed to retrieve new address ID");
         }

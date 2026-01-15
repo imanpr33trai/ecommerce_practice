@@ -29,15 +29,12 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
   // ({productReviews.items.length})
   // I will duplicate the fetching logic for reviews count to match original behavior exactly,
   // effectively relying on the cache if ProductReviews fetches it too.
-  const { data: productReviews } = useReviewListQuery({
-    page: 1,
-    productId: product?.id,
+  const { data: productReviews } = useReviewListQuery(product?.id, {
+    page: "1",
+
     sort: "newest",
   });
 
-  if (!product) {
-    return null;
-  }
 
   const handleAddToCart = () => {
     if (!session) {
@@ -66,7 +63,7 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
             <span className="text-sm font-bold">
               {product.rating}{" "}
               <span className="text-gray-400 font-normal">
-                ({productReviews?.items.length || 0})
+                ({productReviews?.data.items.length || 0})
               </span>
             </span>
           </div>

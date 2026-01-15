@@ -13,13 +13,7 @@ export const cart = new Hono<HonoEnv>()
    * We check if 'user' was set in context by the global auth middleware
    */
 
-  .use("*", async (c, next) => {
-    const user = c.get("user");
-    if (!user) {
-      return c.json({ success: false, error: "Unauthorized" }, 401);
-    }
-    await next();
-  })
+  .use(authMiddleware)
 
   /**
    * GET /
@@ -44,7 +38,7 @@ export const cart = new Hono<HonoEnv>()
    * POST /
    * Add item to cart
    */
-  .post("/",authMiddleware, zValidator("json", AddItemSchema), async (c) => {
+  .post("/", zValidator("json", AddItemSchema), async (c) => {
     const user = c.get("user");
     const input = c.req.valid("json");
 
@@ -62,7 +56,7 @@ export const cart = new Hono<HonoEnv>()
    * PUT /:itemId
    * Update item quantity
    */
-  .put("/:productId",authMiddleware, zValidator("json", UpdateQuantitySchema), async (c) => {
+  .put("/:productId", zValidator("json", UpdateQuantitySchema), async (c) => {
     const user = c.get("user");
     const productId = c.req.param("productId");
     const { quantity } = c.req.valid("json");
@@ -81,7 +75,7 @@ export const cart = new Hono<HonoEnv>()
    * DELETE /:itemId
    * Remove a specific item
    */
-  .delete("/:productId",authMiddleware, async (c) => {
+  .delete("/:productId", async (c) => {
     const user = c.get("user");
     const productId = c.req.param("productId");
 

@@ -1,31 +1,8 @@
-// --- 1. Validators & Types ---
+import { z } from "zod";
 
-import type { Prisma } from "@ecomerceNextjs/db";
+// Schema for Toggling (Add/Remove)
+export const ToggleWishSchema = z.object({
+  productId: z.string().min(1, "Product ID is required"),
+});
 
-/**
- * Selector for the Wishlist Page.
- * We fetch just enough product info to display a card.
- */
-export const wishItemSelect = {
-  id: true,
-  productId: true,
-  createdAt: true,
-  product: {
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      price: true,
-      discountPrice: true,
-      stock: true, // Important to show if out of stock in wishlist
-      images: {
-        where: { isPrimary: true },
-        take: 1,
-        select: { url: true, altText: true },
-      },
-      category: {
-        select: { name: true, slug: true },
-      },
-    },
-  },
-} satisfies Prisma.WishSelect;
+export type ToggleWishInput = z.infer<typeof ToggleWishSchema>;

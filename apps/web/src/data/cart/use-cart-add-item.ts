@@ -1,31 +1,33 @@
-import { type QueryClient, useMutation, useQueryClient, mutationOptions } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { GetCartAddItemRequest } from "./types";
-import { client } from "@/lib/hono-client";
+import {
+  mutationOptions,
+  type QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { HTTPException } from "hono/http-exception";
+import { toast } from "sonner";
+
+import { client } from "@/lib/hono-client";
+
 import { cartKeys } from "./keys";
+import type { GetCartAddItemRequest } from "./types";
 
+const cartAddItemFn = async (json: GetCartAddItemRequest["json"]) => {
+  const res = await client.api.cart.$post({ json });
 
-const cartAddItemFn = async(json:GetCartAddItemRequest["json"]) =>{
-  const res = await client.api.cart.$post({json})
+  if (!res.ok) {
+    const error = await res.json();
 
-  if(!res.ok){
-    const error = await res.json()
-
-    throw new HTTPException(400,{message:"Failed to add to cart ",cause:error})
+    throw new HTTPException(400, { message: "Failed to add to cart ", cause: error });
   }
-  return await res.json()
-}
+  return await res.json();
+};
 
-
-export const cartAddItemOptions = (json:GetCartAddItemRequest["json"]) => {
-   const queryClient = useQueryClient();
-
-
+export const cartAddItemOptions = (queryClient: QueryClient) => {
   return mutationOptions({
-  mutationFn:()=>cartAddItemFn(json),
+    mutationFn: (json: GetCartAddItemRequest["json"]) => cartAddItemFn(json),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey:cartKeys.userCart() });
+      queryClient.invalidateQueries({ queryKey: cartKeys.userCart() });
       toast.success("Added to cart");
     },
     onError: (err) => {
@@ -40,7 +42,7 @@ export const cartAddItemOptions = (json:GetCartAddItemRequest["json"]) => {
   });
 };
 
-export const useCartAddItemMutation = (json:GetCartAddItemRequest["json"]) => {
-
-  return useMutation(cartAddItemOptions(json));
+export const useCartAddItemMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation(cartAddItemOptions(queryClient));
 };

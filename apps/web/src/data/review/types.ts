@@ -1,10 +1,16 @@
 import { z } from "zod";
-import type { InferRequestType, InferResponseType } from "hono";
+import type { InferRequestType, InferResponseType } from "hono/client";
 
 import { client } from "@/lib/hono-client";
 
-const $getReviewProductListReq = client.api.review[":productId"].$get;
-const $getReviewProductListRes = client.api.review[":productId"].$get;
+const $getReviewProductList = client.api.review[":productId"].$get;
+
+const $getReviewProductSummary = client.api.review[":productId"].summary.$get;
+
+const $getReviewUserList = client.api.review.me.$get;
+
+const $getReviewCreate = client.api.review.$post;
+
 // Validation Schema
 export const ReviewListSchema = z.object({
   productId: z.string(),
@@ -14,10 +20,13 @@ export const ReviewListSchema = z.object({
 
 export type ReviewFilters = z.infer<typeof ReviewListSchema>;
 
-export type GetReviewProductListRequest = InferRequestType<typeof $getReviewProductListReq>;
-export type GetReviewProductListResponse = InferResponseType<typeof $getReviewProductListRes>;
+export type GetReviewProductListRequest = InferRequestType<typeof $getReviewProductList>;
+export type GetReviewProductListResponse = InferResponseType<typeof $getReviewProductList>;
 
-// Return Types
-export type ReviewItem = RouterOutputs["review"]["listByProduct"]["items"][number];
-export type ReviewSummary = RouterOutputs["review"]["getSummary"];
-export type ReviewProductListInput = RouterInputs["review"]["listByProduct"];
+export type GetReviewProductSummaryResponse = InferResponseType<typeof $getReviewProductSummary>;
+
+export type GetReviewProductUserListRequest = InferRequestType<typeof $getReviewUserList>;
+export type GetReviewProductUserListResponse = InferResponseType<typeof $getReviewUserList>;
+
+export type GetReviewProductCreateResponse = InferResponseType<typeof $getReviewCreate>;
+export type GetReviewProductCreateRequest = InferRequestType<typeof $getReviewCreate>;

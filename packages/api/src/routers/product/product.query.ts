@@ -70,13 +70,18 @@ export const productQueries = {
           name: true,
           slug: true,
           price: true,
+          description: true,
           discountPrice: true,
           stock: true,
           createdAt: true,
           colors: true,
           material: true,
           category: { select: { name: true, slug: true } },
-          images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true } },
+          images: {
+            where: { isPrimary: true },
+            take: 1,
+            select: { url: true, altText: true, id: true },
+          },
           reviews: { select: { rating: true } },
         },
       }),
@@ -102,6 +107,7 @@ export const productQueries = {
         name: p.name,
         slug: p.slug,
         price,
+        description: p.description,
         discountPrice,
         discountPercentage,
         rating: averageRating,
@@ -111,7 +117,7 @@ export const productQueries = {
         colors: p.colors || [],
         material: p.material || [],
         category: p.category,
-        image: p.images[0]?.url || "/placeholder.jpg",
+        images: p.images || [],
         reviewCount: p.reviews.length,
       };
     });
@@ -176,7 +182,7 @@ export const productQueries = {
       include: {
         category: { select: { name: true, slug: true } },
         // Fetch all images for the detail gallery
-        images: { select: { url: true, altText: true } },
+        images: { select: { url: true, altText: true, id: true } },
         // Fetch preview reviews
         reviews: {
           take: 5,
@@ -216,7 +222,7 @@ export const productQueries = {
       colors: p.colors || [],
       material: p.material || [],
       // Ensure at least one image exists for UI safety
-      images: p.images.length > 0 ? p.images : [{ url: "/placeholder.jpg", altText: p.name }],
+      images: p.images || [],
       reviewCount: p._count.reviews,
     };
   },

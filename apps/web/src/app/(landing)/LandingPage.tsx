@@ -18,18 +18,21 @@ import {
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
-import LoadingSkeleton from "@/components/LoadingSkeleton";
 import ProductCard from "@/components/ProductCard";
 import { REVIEWS, TEAM } from "@/constants";
 import { useShop } from "@/context/ShopContext";
-import { type ProductSingle, useProductLandingQuery } from "@/data/product";
+import {
+  type GetProductListRequest,
+  type ProductSingleResponse,
+  useProductLandingQuery,
+} from "@/data/product";
 
 // import type { Product } from "../types";
 
 interface ProductSliderProps {
   title: string;
   subtitle: string;
-  products: ProductSingle[];
+  products: ProductSingleResponse[];
   categoryLink: string;
 }
 
@@ -125,8 +128,12 @@ export default function LandingPage() {
 
   const { recentlyViewed } = useShop();
 
+  const filters: GetProductListRequest["query"] = {
+    sort: "newest",
+  };
+
   // Call each hook individually - NEVER conditionally
-  const { data } = useProductLandingQuery();
+  const { data: productData } = useProductLandingQuery(filters);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
@@ -151,6 +158,8 @@ export default function LandingPage() {
   // if (!data) {
   //   return <h1>products is undefined or null</h1>;
   // }
+
+  const data = productData.data.items;
 
   const featuredProduct = data[currentSlide % data.length] || data[0];
 
@@ -230,7 +239,7 @@ export default function LandingPage() {
               <Image
                 width={100}
                 height={200}
-                src={featuredProduct.images.at(0)?.url || featuredProduct.name}
+                src={"/images/caroline.jpg"}
                 alt={featuredProduct.name}
                 className="relative w-full h-full object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-105"
               />

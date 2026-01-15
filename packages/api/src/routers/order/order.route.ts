@@ -1,267 +1,101 @@
-import prisma, { OrderStatus, PaymentStatus } from "@ecomerceNextjs/db";
-import { TRPCError } from "@trpc/server";
-import z from "zod";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 
-import { protectedProcedure, router } from "../..";
+import { orderQueries } from "./order.query";
+import {
+  CreateOrderSchema,
+  UpdateOrderStatusSchema,
+  UpdatePaymentStatusSchema,
+} from "./order.types";
+import type { HonoEnv } from "../../context";
 
-export const orderRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
-    const orders = await prisma.order.findMany({
-      where: { userId },
-      select: {
-        id: true,
-        totalAmount: true,
-        status: true,
-        paymentStatus: true,
-        createdAt: true,
-        updatedAt: true,
-        userId: true,
-        items: {
-          select: {
-            id: true,
-            quantity: true,
-            product: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                price: true,
-                discountPrice: true,
-                images: {
-                  where: { isPrimary: true },
-                  take: 1,
-                  select: { url: true, id: true, altText: true },
-                },
-              },
-            },
-          },
-        },
-        payment: {
-          select: { id: true, amount: true, provider: true, status: true, transactionId: true },
-          orderBy: { createdAt: "desc" },
-          take: 1,
-        },
-        user: {
-          select: { id: true, name: true, email: true },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+export const order = new Hono<HonoEnv>()
 
-    return orders.map((order) => ({
-      ...order,
-      totalAmount: Number(order.totalAmount),
-      items: order.items.map((item) => ({
-        ...item,
-        product: {
-          ...item.product,
-          price: Number(item.product.price),
-          discountPrice: item.product.discountPrice ? Number(item.product.discountPrice) : null,
-        },
-      })),
-      payment: order.payment.map((p) => ({
-        ...p,
-        amount: Number(p.amount),
-      })),
-    }));
-  }),
-
-  getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
-    const userId = ctx.session.user.id;
-
-    const order = await prisma.order.findUnique({
-      where: { id: input.id, userId },
-      select: {
-        id: true,
-        totalAmount: true,
-        status: true,
-        paymentStatus: true,
-        createdAt: true,
-        updatedAt: true,
-        userId: true,
-        items: {
-          select: {
-            id: true,
-            quantity: true,
-            product: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                price: true,
-                discountPrice: true,
-                images: {
-                  where: { isPrimary: true },
-                  take: 1,
-                  select: { url: true, id: true, altText: true },
-                },
-              },
-            },
-          },
-        },
-        payment: {
-          select: { id: true, amount: true, provider: true, status: true, transactionId: true },
-          orderBy: { createdAt: "desc" },
-          take: 1,
-        },
-        user: {
-          select: { id: true, name: true, email: true },
-        },
-      },
-    });
-
-    if (!order) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "Order not Found" });
+  /**
+   * Middleware: Auth Guard
+   */
+  .use("*", async (c, next) => {
+    const user = c.get("user");
+    if (!user) {
+      return c.json({ success: false, error: "Unauthorized" }, 401);
     }
+    await next();
+  })
 
-    return {
-      ...order,
-      totalAmount: Number(order.totalAmount),
-      items: order.items.map((item) => ({
-        ...item,
-        product: {
-          ...item.product,
-          price: Number(item.product.price),
-          discountPrice: item.product.discountPrice ? Number(item.product.discountPrice) : null,
-        },
-      })),
-      payment: order.payment.map((p) => ({
-        ...p,
-        amount: Number(p.amount),
-      })),
-    };
-  }),
   /**
+   * GET /
+   * List my orders
+   */
+  .get("/", async (c) => {
+    const user = c.get("user");
+    const orders = await orderQueries.listByUser(user.id);
+    return c.json({ success: true, data: orders });
+  })
+
+  /**
+   * GET /:id
+   * Get single order details
+   */
+  .get("/:id", async (c) => {
+    const user = c.get("user");
+    const orderId = c.req.param("id");
+
+    try {
+      const order = await orderQueries.getById(user.id, orderId);
+      if (!order) {
+        return c.json({ success: false, error: "Order not found" }, 404);
+      }
+
+      return c.json({ success: true, data: order });
+    } catch (error: any) {
+      return c.json({ success: false, error: error.message }, 403);
+    }
+  })
+
+  /**
+   * POST /
    * Create Order (Checkout)
-   * Now requires an Address ID
    */
-  createFromCart: protectedProcedure
-    .input(
-      z.object({
-        paymentProvider: z.string().default("stripe"),
-        addressId: z.string().min(1, "Shipping address is required"),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const userId = ctx.session.user.id;
-      const { paymentProvider, addressId } = input;
+  .post("/", zValidator("json", CreateOrderSchema), async (c) => {
+    const user = c.get("user");
+    const input = c.req.valid("json");
 
-      return prisma.$transaction(async (tx) => {
-        // 1. Verify Address belongs to user
-        const address = await tx.address.findUnique({
-          where: { id: addressId },
-        });
+    try {
+      const order = await orderQueries.createFromCart(user.id, input);
+      return c.json({ success: true, data: order });
+    } catch (error: any) {
+      // Handle Stock Errors vs others
+      const status = error.message.includes("stock") ? 409 : 400;
+      return c.json({ success: false, error: error.message }, status);
+    }
+  })
 
-        if (!address || address.userId !== userId) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid shipping address" });
-        }
-
-        // 2. Fetch Cart
-        const cart = await tx.cart.findUnique({
-          where: { userId },
-          include: {
-            items: {
-              include: { product: true },
-            },
-          },
-        });
-
-        if (!cart || cart.items.length === 0) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Cart is empty" });
-        }
-
-        let totalAmount = 0;
-        const orderItemsData = [];
-
-        // 3. Stock Check & Total Calculation
-        for (const cartItem of cart.items) {
-          if (cartItem.quantity > cartItem.product.stock) {
-            throw new TRPCError({
-              code: "CONFLICT",
-              message: `Not enough stock for ${cartItem.product.name}`,
-            });
-          }
-
-          const price = Number(cartItem.product.discountPrice ?? cartItem.product.price);
-          totalAmount += price * cartItem.quantity;
-
-          orderItemsData.push({
-            productId: cartItem.productId,
-            quantity: cartItem.quantity,
-            // You might want to snapshot price here too in a real app
-          });
-
-          // Decrement Stock
-          await tx.product.update({
-            where: { id: cartItem.productId },
-            data: { stock: { decrement: cartItem.quantity } },
-          });
-        }
-
-        // 4. Create Order
-        // Note: Ideally your Order schema has a 'shippingAddressId' field.
-        // If not, you might store a snapshot. Assuming you have the relation:
-        const order = await tx.order.create({
-          data: {
-            userId,
-            totalAmount,
-            status: OrderStatus.PENDING,
-            paymentStatus: PaymentStatus.PENDING,
-            // shippingAddressId: addressId, // Uncomment if you added this field to Schema
-            items: { create: orderItemsData },
-            payment: {
-              create: {
-                amount: totalAmount,
-                provider: paymentProvider,
-                status: PaymentStatus.PENDING,
-              },
-            },
-          },
-        });
-
-        // 5. Clear Cart
-        await tx.cartItem.deleteMany({
-          where: { cartId: cart.id },
-        });
-
-        return order;
-      });
-    }) /**
-   * Admin: Update Order Status
-   * Usage: Admin Dashboard (Set to SHIPPED, DELIVERED, CANCELLED)
-   */,
-  updateStatus: protectedProcedure
-    .input(
-      z.object({
-        orderId: z.string(),
-        status: z.enum(OrderStatus),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      // TODO: Add ADMIN ROLE CHECK: if (ctx.session.user.role !== 'ADMIN') throw new TRPCError({ code: 'FORBIDDEN' });
-      return prisma.order.update({
-        where: { id: input.orderId },
-        data: { status: input.status, updatedAt: new Date() },
-      });
-    }),
+  // --- ADMIN ROUTES (Optional: Add Role Guard) ---
 
   /**
-   * Admin: Update Payment Status
-   * Usage: Admin Dashboard (Set to PAID, REFUNDED)
+   * PATCH /:id/status
+   * Update Order Status
    */
-  updatePaymentStatus: protectedProcedure
-    .input(
-      z.object({
-        orderId: z.string(),
-        status: z.enum(PaymentStatus),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      // TODO: Add ADMIN ROLE CHECK
-      return prisma.order.update({
-        where: { id: input.orderId },
-        data: { paymentStatus: input.status, updatedAt: new Date() },
-      });
-    }),
-});
+  .patch("/:id/status", zValidator("json", UpdateOrderStatusSchema), async (c) => {
+    const orderId = c.req.param("id");
+    const { status } = c.req.valid("json");
+
+    // Add logic here: if (user.role !== 'ADMIN') return 403
+
+    const result = await orderQueries.updateStatus(orderId, status);
+    return c.json({ success: true, data: result });
+  })
+
+  /**
+   * PATCH /:id/payment
+   * Update Payment Status
+   */
+  .patch("/:id/payment", zValidator("json", UpdatePaymentStatusSchema), async (c) => {
+    const orderId = c.req.param("id");
+    const { status } = c.req.valid("json");
+
+    // Add logic here: if (user.role !== 'ADMIN') return 403
+
+    const result = await orderQueries.updatePaymentStatus(orderId, status);
+    return c.json({ success: true, data: result });
+  });

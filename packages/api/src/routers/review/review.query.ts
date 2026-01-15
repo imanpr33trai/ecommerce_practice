@@ -1,11 +1,12 @@
 import prisma, { type Prisma } from "@ecomerceNextjs/db";
 
-import type { ReviewListOptions } from "./review.type";
+import type { CreateReviewInput, ReviewListOptions, UserReviewQueryInput } from "./review.type";
 
 // Selector to ensure we only send necessary public data
 const reviewSelect = {
   id: true,
   rating: true,
+  userId: true,
   comment: true,
   createdAt: true,
   user: {
@@ -112,7 +113,7 @@ export const reviewQueries = {
               images: {
                 where: { isPrimary: true },
                 take: 1,
-                select: { url: true },
+                select: { url: true, id: true, altText: true },
               },
             },
           },
@@ -139,16 +140,16 @@ export const reviewQueries = {
    */
   create: async (userId: string, input: CreateReviewInput) => {
     // 1. Check if user already reviewed this product
-    const existing = await prisma.review.findFirst({
-      where: {
-        userId,
-        productId: input.productId,
-      },
-    });
+    // const existing = await prisma.review.findFirst({
+    //   where: {
+    //     userId,
+    //     productId: input.productId,
+    //   },
+    // });
 
-    if (existing) {
-      throw new Error("You have already reviewed this product.");
-    }
+    // if (existing) {
+    //   throw new Error("You have already reviewed this product.");
+    // }
 
     // 2. Create Review
     return prisma.review.create({

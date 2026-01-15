@@ -7,15 +7,15 @@ import { Bell, Heart, Package } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
+import { useUserProfileQuery } from "@/data/account/use-user-profile";
 import { useOrderListQuery } from "@/data/order";
-import { Account } from "@/feature/account";
 
 export function AccountOverview() {
-  const { data: profile } = Account.hooks.useProfile();
+  const { data: profile } = useUserProfileQuery();
   const { data: orders, isLoading: ordersLoading } = useOrderListQuery();
 
   // 1. Safely grab the first order if it exists
-  const recentOrder = orders?.[0];
+  const recentOrder = orders.data[0];
 
   return (
     <div className="space-y-8 animate-fade-in">

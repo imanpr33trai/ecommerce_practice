@@ -1,29 +1,36 @@
-import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { trpc } from "@/trpc/client";
+import { reviewKeys } from "@/data/review/keys";
+import { client } from "@/lib/hono-client";
 
-import { reviewKeys } from "./keys";
-
-export function reviewDeleteOptions(utils: QueryClient) {
-  return trpc.review.delete.mutationOptions({
-    onSuccess: (_, variables) => {
-      toast.success("Review deleted");
-
-      // We invalidate all review lists because we might not know the exact productId context here easily
-      // Optimized: You could pass productId to the mutation context if strict performance is needed
-      utils.invalidateQueries({
-        queryKey: trpc.review.listByProduct.queryKey(),
+export const useReviewDeleteMutation = (productId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (reviewId: string) => {
+      const res = await client.api.review[":id"].$delete({
+        param: { id: reviewId },
       });
-      utils.invalidateQueries({ queryKey: trpc.review.getSummary.queryKey() });
+
+      const result = await res.json();
+
+      if (!res.ok || result.success === false) {
+        if ("error" in result) {
+          throw new Error(result.error || "Failed to delete review");
+        }
+      }
+      return result;
     },
-    onError: (err) => {
-      toast.error(err.message || "Failed to delete review");
+    onSuccess: () => {
+      if (productId) {
+        queryClient.invalidateQueries({ queryKey: reviewKeys.byProduct(productId) });
+        queryClient.invalidateQueries({ queryKey: reviewKeys.summary(productId) });
+      }
+
+      toast.success("Review Deleted successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
     },
   });
-}
-
-export const useReviewDeleteMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation(reviewDeleteOptions(queryClient));
 };

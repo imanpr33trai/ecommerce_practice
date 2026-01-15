@@ -1,8 +1,9 @@
-import type { RouterOutputs } from "@/trpc/client";
+import type { InferRequestType, InferResponseType } from "hono";
 
-// 1. The Full Wishlist (for the page)
-export type WishlistOutput = RouterOutputs["wish"]["getAll"];
-export type WishlistItem = WishlistOutput[number];
+import type { client } from "@/lib/hono-client";
 
-// 2. The IDs (for the heart icons)
-export type WishlistIds = RouterOutputs["wish"]["getIds"];
+export type GetWishListResponse = InferResponseType<typeof client.api.wish.$get>;
+
+export type GetWishListIDsResponse = InferResponseType<typeof client.api.wish.ids.$get>;
+export type GetWishToggleResponse = InferResponseType<typeof client.api.wish.toggle.$post>;
+export type GetWishToggleRequest = InferRequestType<typeof client.api.wish.toggle.$post>;

@@ -1,25 +1,35 @@
-import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export function reviewCreateOptions(utils: QueryClient) {
-  return trpc.review.create.mutationOptions({
-    onSuccess: (_, variables) => {
-      utils.invalidateQueries({
-        queryKey: trpc.review.listByProduct.queryKey(),
-      });
-      utils.invalidateQueries({ queryKey: trpc.review.getSummary.queryKey() });
+import { reviewKeys } from "@/data/review/keys";
+import { client } from "@/lib/hono-client";
+import type { GetReviewProductCreateRequest } from "@/data/review/types";
 
-      toast.success("Review posted successfully!");
-      // Invalidate the List so the new review appears
+export const useReviewCreateMutation = (productId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (json: GetReviewProductCreateRequest["json"]) => {
+      const res = await client.api.review.$post({ json });
+
+      const result = await res.json();
+
+      if (!res.ok || result.success === false) {
+        if ("error" in result) {
+          throw new Error(result.error || "Failed to submit review");
+        }
+
+        throw new Error("An Unknown error occured");
+      }
+      return result.data;
     },
-    onError: (err) => {
-      // Handle "You have already reviewed this product" errors specifically if needed
-      toast.error(err.message || "Failed to post review");
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: reviewKeys.byProduct(productId) });
+      queryClient.invalidateQueries({ queryKey: reviewKeys.summary(productId) });
+
+      toast.success("Review submitted Successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
     },
   });
-}
-
-export const useReviewCreateMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation(reviewCreateOptions(queryClient));
 };

@@ -5,15 +5,14 @@ import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
 import { Button as ShadcnButton } from "@comp/button";
-import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ArrowRight, Heart, ShieldCheck, ShoppingBag, Star, Truck, X } from "lucide-react";
+import { ArrowRight, Heart, ShoppingBag, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
 import Button from "@/components/Button";
 import { useShop } from "@/context/ShopContext";
 import { useCartAddItemMutation } from "@/data/cart";
 import { useProudctDetailQuery } from "@/data/product";
-import { useWishMutations, useWishQueries } from "@/feature/wish/client";
+import { useWishToggleMutation } from "@/data/wish";
 import { authClient } from "@/lib/auth-client";
 
 // Next.js 15+ Params are Promises
@@ -25,7 +24,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   // --- HOOKS ---
   const { data: product, isLoading } = useProudctDetailQuery(slug);
   const { mutate: addItem, isPending: isAdding } = useCartAddItemMutation();
-  const { mutate: toggleWish } = useWishMutations.useToggle();
+  const { mutate: toggleWish } = useWishToggleMutation();
   const { data: session } = authClient.useSession();
 
   // Safe access to wishlist status (requires product id)
@@ -37,7 +36,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   // Initialize color when product loads
   useEffect(() => {
     if (product?.colors && product.colors.length > 0) {
-      setActiveColor(product.colors[0]!);
+      setActiveColor(product.colors[0] || "");
     }
   }, [product]);
 
@@ -79,7 +78,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
     if (!product) {
       return;
     }
-    toggleWish({ productId: product.id });
+    toggleWish(product.id);
   };
 
   // --- RENDER ---
@@ -183,6 +182,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
                   {product.colors.map((color) => (
                     <button
                       key={color}
+                      type="button"
                       onClick={() => setActiveColor(color)}
                       className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ${activeColor === color ? "border-black scale-110" : "border-gray-200 hover:border-gray-400"}`}
                       style={{ backgroundColor: color.toLowerCase() }}

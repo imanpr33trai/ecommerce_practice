@@ -8,17 +8,19 @@ import { ExternalLink, MessageSquare, Star, Trash2 } from "lucide-react";
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
 import { useReviewDeleteMutation, useReviewsUserQuery } from "@/data/review";
+import { authClient } from "@/lib/auth-client";
 
 export function AccountReviews() {
-  const { data: userReviews } = useReviewsUserQuery();
+  const { data: session } = authClient.useSession();
+  const { data: userReviews } = useReviewsUserQuery(session?.user.id, { limit: "10", page: "1" });
   const { mutate: deleteReview } = useReviewDeleteMutation();
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h2 className="text-3xl font-light mb-6">My Reviews ({userReviews.length})</h2>
-      {userReviews.length > 0 ? (
+      <h2 className="text-3xl font-light mb-6">My Reviews ({userReviews.data.items.length})</h2>
+      {userReviews.data.items.length > 0 ? (
         <div className="space-y-4">
-          {userReviews.map((review) => {
+          {userReviews.data.items.map((review) => {
             return (
               <BentoCard
                 key={review.id}
@@ -60,7 +62,7 @@ export function AccountReviews() {
                         </div>
                       </div>
                       <button
-                        onClick={() => deleteReview({ id: review.id })}
+                        onClick={() => deleteReview(review.id)}
                         className="text-gray-300 hover:text-red-500 p-2 transition-colors md:opacity-0 group-hover/item:opacity-100"
                         type="button"
                       >
@@ -72,7 +74,7 @@ export function AccountReviews() {
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                        Posted on {review.createdAt.toDateString()}
+                        Posted on {review.createdAt}
                       </span>
                       <Link
                         href={`/product/${review.product.slug}`}

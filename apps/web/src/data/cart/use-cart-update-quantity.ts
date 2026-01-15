@@ -23,12 +23,10 @@ export const useCartUpdateItemQuantityMutation = () => {
         if ("error" in result) {
           throw new Error(result.error || "Failed to update quantity or Stock confilict");
         }
-        if ("message" in result) {
-          throw new Error(result.message);
-        }
+
         throw new Error("An Unknown error occured");
       }
-      return await res.json();
+      return result.data;
     },
 
     onMutate: async ({ productId, quantity }) => {

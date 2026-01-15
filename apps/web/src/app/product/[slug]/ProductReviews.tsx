@@ -3,25 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@comp/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@comp/select";
 import { Skeleton } from "@comp/skeleton";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  MessageSquare,
-  Send,
-  ShieldCheck,
-  Star,
-  Trash2,
+    ChevronLeft,
+    ChevronRight,
+    MessageSquare,
+    Send,
+    ShieldCheck,
+    Star,
+    Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,10 +21,10 @@ import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
 import { useProudctDetailQuery } from "@/data/product";
 import {
-  useReviewCreateMutation,
-  useReviewDeleteMutation,
-  useReviewListQuery,
-  useReviewSummaryQuery,
+    useReviewCreateMutation,
+    useReviewDeleteMutation,
+    useReviewListQuery,
+    useReviewSummaryQuery,
 } from "@/data/review";
 import { authClient } from "@/lib/auth-client";
 
@@ -50,12 +41,14 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<"newest" | "highest" | "lowest">("newest");
 
-  const { mutate: createReview, isPending: isPosting } = useReviewCreateMutation();
-  const { mutate: deleteReview } = useReviewDeleteMutation();
+  const pageStr = page.toString();
+
+  const { mutate: createReview, isPending: isPosting } = useReviewCreateMutation(product.id);
+  const { mutate: deleteReview } = useReviewDeleteMutation(product.id);
   const { data: summary, isLoading: isSummaryLoading } = useReviewSummaryQuery(product.id);
-  const { data: productReviews, isLoading: isListLoading } = useReviewListQuery({
-    page,
-    productId: product.id,
+  const { data: productReviews, isLoading: isListLoading } = useReviewListQuery(product.id, {
+    page: pageStr,
+
     sort,
   });
 
@@ -179,7 +172,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
             <h4 className="font-bold">Rating Summary</h4>
             {summary && (
               <span className="text-xs text-gray-500 font-medium">
-                {summary.average.toFixed(1)} / 5.0 ({summary.total})
+                {summary.data.average.toFixed(1)} / 5.0 ({summary.data.total})
               </span>
             )}
           </div>
@@ -196,8 +189,8 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
           ) : (
             <div className="space-y-3">
               {[5, 4, 3, 2, 1].map((r) => {
-                const count = summary?.distribution[r] || 0;
-                const total = summary?.total || 1; // Avoid div by zero
+                const count = summary?.data.distribution[r] || 0;
+                const total = summary?.data.total || 1; // Avoid div by zero
                 const percentage = (count / total) * 100;
 
                 return (
@@ -231,7 +224,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
           <h3 className="font-bold text-xl">
             Reviews
             <span className="text-muted-foreground text-sm font-normal ml-2">
-              ({productReviews.pagination.total ?? 0})
+              ({productReviews.data.pagination.total ?? 0})
             </span>
           </h3>
 
@@ -276,8 +269,8 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                 className="h-48 w-full rounded-[2rem]"
               />
             ))
-          ) : productReviews && productReviews.items.length > 0 ? (
-            productReviews.items.map((review) => (
+          ) : productReviews && productReviews.data.items.length > 0 ? (
+            productReviews.data.items.map((review) => (
               <BentoCard
                 key={review.id}
                 className="p-8 bg-white group/rev transition-all hover:shadow-md"
@@ -318,7 +311,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                   {session && review.userId === session.user.id && (
                     <button
                       type="button"
-                      onClick={() => deleteReview({ id: review.id })}
+                      onClick={() => deleteReview(review.id)}
                       className="p-2 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover/rev:opacity-100 bg-gray-50 rounded-full"
                       title="Delete Review"
                     >
@@ -347,7 +340,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
         </div>
 
         {/* Pagination Controls */}
-        {productReviews && productReviews.pagination.totaPages > 1 && (
+        {productReviews && productReviews.data.pagination.totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-8">
             <Button
               variant="outline"
@@ -359,12 +352,12 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
               <ChevronLeft size={20} />
             </Button>
             <span className="text-sm font-medium text-gray-500">
-              Page {page} of {productReviews.pagination.totaPages}
+              Page {page} of {productReviews.data.pagination.totalPages}
             </span>
             <Button
               variant="outline"
               size="icon"
-              disabled={page >= productReviews.pagination.totaPages}
+              disabled={page >= productReviews.data.pagination.totalPages}
               onClick={() => setPage((p) => p + 1)}
               className="rounded-full"
             >

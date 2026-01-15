@@ -1,15 +1,26 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-import { trpc } from "@/trpc/client";
+import { reviewKeys } from "@/data/review/keys";
+import { client } from "@/lib/hono-client";
+import type { GetReviewProductSummaryResponse } from "@/data/review/types";
+
+const fetchReviewSummary = async (productId: string): Promise<GetReviewProductSummaryResponse> => {
+  const res = await client.api.review[":productId"].summary.$get({
+    param: { productId },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch Review Summary");
+  }
+  return await res.json();
+};
 
 export function reviewSummaryOptions(productId: string) {
-  return trpc.review.getSummary.queryOptions(
-    { productId },
-    {
-      staleTime: 1000 * 60 * 10, // 10 minutes
-      enabled: !!productId,
-    },
-  );
+  return queryOptions({
+    queryKey: reviewKeys.summary(productId),
+    queryFn: () => fetchReviewSummary(productId),
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    enabled: !!productId,
+  });
 }
 
 export const useReviewSummaryQuery = (productId: string) => {

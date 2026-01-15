@@ -85,7 +85,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-100">
-            <h2 className="text-xl font-bold">Shopping Cart ({cart?.items.length || 0})</h2>
+            <h2 className="text-xl font-bold">Shopping Cart ({cart?.data.items.length || 0})</h2>
             <button
               onClick={onClose}
               type="button"
@@ -101,7 +101,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               <div className="flex justify-center items-center h-full">Loading...</div>
             ) : cartError ? (
               <div className="text-red-500 text-center">Error loading cart.</div>
-            ) : !cart || cart.items.length === 0 ? (
+            ) : !cart || cart.data.items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
                 <ShoppingBag size={48} />
                 <p>Your cart is empty.</p>
@@ -114,7 +114,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               </div>
             ) : (
               // Cart Items List
-              cart.items.map((item) => (
+              cart.data.items.map((item) => (
                 <div
                   key={item.id}
                   className="flex gap-4 group"
@@ -143,7 +143,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                       <div className="flex items-center border border-gray-200 rounded-full">
                         <button
                           onClick={() =>
-                            updateQuantity({ itemId: item.id, quantity: item.quantity + -1 })
+                            updateQuantity({ productId: item.id, quantity: item.quantity + -1 })
                           }
                           type="button"
                           className="w-6 h-6 flex items-center justify-center hover:bg-gray-50 rounded-l-full transition-colors"
@@ -153,7 +153,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                         <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
                         <button
                           onClick={() =>
-                            updateQuantity({ itemId: item.id, quantity: item.quantity + 1 })
+                            updateQuantity({ productId: item.id, quantity: item.quantity + 1 })
                           }
                           type="button"
                           className="w-6 h-6 flex items-center justify-center hover:bg-gray-50 rounded-r-full transition-colors"
@@ -162,7 +162,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                         </button>
                       </div>
                       <button
-                        onClick={() => removeItem({ itemId: item.id })}
+                        onClick={() => removeItem(item.id)}
                         type="button"
                         className="text-gray-400 hover:text-red-500 transition-colors"
                       >
@@ -176,11 +176,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Footer */}
-          {cart && cart.items.length > 0 && (
+          {cart && cart.data.items.length > 0 && (
             <div className="p-6 bg-gray-50 border-t border-gray-100 space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Subtotal</span>
-                <span className="font-bold">${cart.subtotal.toFixed(2)}</span>
+                <span className="font-bold">${cart.data.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex gap-3 pt-2">
                 <Link

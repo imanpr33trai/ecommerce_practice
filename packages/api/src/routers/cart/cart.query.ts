@@ -14,13 +14,20 @@ const cartItemSelect = {
       name: true,
       slug: true,
       price: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
       discountPrice: true,
       stock: true,
       colors: true,
       images: {
         where: { isPrimary: true },
         take: 1,
-        select: { url: true, altText: true },
+        select: { url: true, altText: true, id: true },
       },
     },
   },
@@ -68,9 +75,10 @@ export const cartQueries = {
           id: item.product.id,
           name: item.product.name,
           slug: item.product.slug,
+          category: item.product.category,
           price: Number(item.product.price),
           discountPrice: item.product.discountPrice ? Number(item.product.discountPrice) : null,
-          image: item.product.images[0]?.url || "/placeholder.jpg",
+          images: item.product.images || [],
           stock: item.product.stock,
         },
       };
