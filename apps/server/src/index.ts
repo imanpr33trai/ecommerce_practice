@@ -1,49 +1,62 @@
-import "dotenv";
-
 import { api } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import type { HonoEnv } from "@ecomerceNextjs/api/context";
 
 const app = new Hono<HonoEnv>()
-
   .use(logger())
   .use(
     "*",
     cors({
-      origin: Bun.env.CORS_ORIGIN,
+      origin: process.env.CORS_ORIGIN || "http://localhost:3001",
       allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       allowHeaders: ["Content-Type", "Authorization"],
       credentials: true,
     }),
   )
-
   .basePath("/api")
   .route("/", api)
   .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
-  // 1. Session Middleware: Fetch once per request
-
-  .get("/", (c) => {
+  .get("/d", (c) => {
     return c.text("OK");
   });
 
-// REQUIRED for Vercel
-export default app;
+// Start server based on runtime
+const port = Number(process.env.PORT) || 3000;
 
-// showRoutes(app, {
-//   colorize: true,
-//   verbose: true,
-// });
+/**
+ * 1. RUNTIME STARTUP LOGIC
+ * We check the environment without using top-level exports inside blocks.
+ */
+if (typeof Bun !== "undefined") {
+  // In Bun, we don't need to call a function;
+  // exporting the object at the bottom handles it.
+  console.log(`🚀 Server running on http://localhost:${port} (Bun)`);
+} else if (process.env.NODE_ENV !== "production") {
+  // If in Node.js (and not on a platform like Vercel which handles its own fetch)
+  serve(
+    {
+      fetch: app.fetch,
+      port,
+    },
+    (info) => {
+      console.log(`🚀 Server running on http://localhost:${info.port} (Node.js)`);
+    },
+  );
+}
 
-// console.log(getRouterName(app));
+/**
+ * 2. EXPORTS
+ * This satisfies both Bun (which looks for fetch/port) and Vercel/Node (which looks for the app)
+ */
+export default {
+  port,
+  fetch: app.fetch,
+};
 
-// const port = 3000;
-// console.log(`Server is running on port ${port}`);
-// serve({
-//   fetch: app.fetch,
-//   port,
-// });
-
+// If using Vercel or standard Hono RPC, you often need the app exported too
+export { app };
 export type AppType = typeof app;

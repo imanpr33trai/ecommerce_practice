@@ -9,19 +9,28 @@
     "outDir": "./dist",
     "rootDir": "./src",
 
-    /* BUN + ESM */
-    "target": "es2022",
-    "module": "esnext",
+    /* NODE + ESM (compatible with both Bun and Node) */
+    "target": "ES2022",
+    "module": "ESNext",
     "moduleResolution": "bundler",
+    "lib": ["ES2022"],
 
     /* TYPES */
-    "types": ["bun"],
+    "types": ["node"],
 
     /* BUILD ARTIFACTS */
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true
+    "declaration": false,
+    "declarationMap": false,
+
+    /* INTEROP */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+
+    /* BUNDLER COMPATIBILITY */
+    "skipLibCheck": true
   },
-  "include": ["src", "../../packages/env/src/env.d.ts"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts"]
+  "include": ["src/**/*", "build.ts", "../../packages/env/src/env.d.ts"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }

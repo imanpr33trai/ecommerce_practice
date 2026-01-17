@@ -21,6 +21,7 @@ export const errorHandler = (err: Error, c: Context) => {
   }
 
   // 3. Handle Generic Errors
+  // biome-ignore lint/suspicious/noConsole: Error logging
   console.error(`[Internal Server Error]: ${err.message}`);
 
   return c.json(

@@ -17,9 +17,11 @@ export function getEnv() {
     return cachedEnv;
   }
 
+  // biome-ignore lint/style/noProcessEnv: This package is responsible for reading environment variables
   const parsed = envSchema.safeParse(process.env);
 
   if (!parsed.success) {
+    // biome-ignore lint/suspicious/noConsole: Critical error logging during startup
     console.error("❌ Environment Validation Failed:", parsed.error.format());
     throw new Error("Invalid environment variables");
   }

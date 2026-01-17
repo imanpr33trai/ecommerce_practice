@@ -18,10 +18,10 @@ export const auth = betterAuth<BetterAuthOptions>({
     autoSignIn: true,
   },
   plugins: [openAPI()],
-  secret: Bun.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET,
   advanced: {
     defaultCookieAttributes: {
-      sameSite: Bun.env.NODE_ENV === "production" ? "lax" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "lax" : "lax",
       secure: true,
       httpOnly: true,
     },
