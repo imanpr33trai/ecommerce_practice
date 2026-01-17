@@ -7,7 +7,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import CartDrawer from "@/components/CartDrawer";
 import { Toaster } from "@/components/sonner";
-
 import { LayoutContext } from "@/context/LayoutContext";
 import { ShopProvider } from "@/context/ShopContext";
 import { authClient } from "@/lib/auth-client";
@@ -30,18 +29,18 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <LayoutContext.Provider value={{ isCartOpen, toggleCart }}>
           {/*<ToastProvider>*/}
 
-            <ShopProvider>
-              <ReactQueryDevtools />
-              {isUser && (
-                <CartDrawer
-                  isOpen={isCartOpen}
-                  onClose={() => setIsCartOpen(false)}
-                />
-              )}
+          <ShopProvider>
+            <ReactQueryDevtools />
+            {isUser && (
+              <CartDrawer
+                isOpen={isCartOpen}
+                onClose={() => setIsCartOpen(false)}
+              />
+            )}
 
-              {children}
-              <Toaster richColors />
-            </ShopProvider>
+            {children}
+            <Toaster richColors />
+          </ShopProvider>
 
           {/*</ToastProvider>*/}
         </LayoutContext.Provider>

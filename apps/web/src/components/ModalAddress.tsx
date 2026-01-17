@@ -10,7 +10,9 @@ interface ModalAddressProps {
 }
 
 const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
@@ -32,7 +34,9 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
 
         <div className="p-6 md:p-8 space-y-4 max-h-[70vh] overflow-y-auto">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Address Label (Optional)</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              Address Label (Optional)
+            </label>
             <input
               type="text"
               placeholder="e.g. Home, Work"
@@ -42,14 +46,18 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">First Name</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                First Name
+              </label>
               <input
                 type="text"
                 className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black/5 outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Last Name</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Last Name
+              </label>
               <input
                 type="text"
                 className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black/5 outline-none"
@@ -58,7 +66,9 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Street Address</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              Street Address
+            </label>
             <input
               type="text"
               placeholder="123 Main St"
@@ -73,14 +83,18 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">City</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                City
+              </label>
               <input
                 type="text"
                 className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black/5 outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">State / Province</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                State / Province
+              </label>
               <input
                 type="text"
                 className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black/5 outline-none"
@@ -90,14 +104,18 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Zip / Postal Code</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Zip / Postal Code
+              </label>
               <input
                 type="text"
                 className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black/5 outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Country</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Country
+              </label>
               <select className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-black/5 outline-none appearance-none">
                 <option>United States</option>
                 <option>Canada</option>

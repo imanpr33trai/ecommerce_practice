@@ -35,7 +35,6 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
     sort: "newest",
   });
 
-
   const handleAddToCart = () => {
     if (!session) {
       return toast.error("Please login to add to cart");

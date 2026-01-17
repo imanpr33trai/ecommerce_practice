@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import { authMiddleware } from "../../middlewares/auth.middleware";
 import { orderQueries } from "./order.query";
 import {
   CreateOrderSchema,
@@ -14,13 +15,14 @@ export const order = new Hono<HonoEnv>()
   /**
    * Middleware: Auth Guard
    */
-  .use("*", async (c, next) => {
-    const user = c.get("user");
-    if (!user) {
-      return c.json({ success: false, error: "Unauthorized" }, 401);
-    }
-    await next();
-  })
+  .use(authMiddleware)
+  // .use("*", async (c, next) => {
+  //   const user = c.get("user");
+  //   if (!user) {
+  //     return c.json({ success: false, error: "Unauthorized" }, 401);
+  //   }
+  //   await next();
+  // })
 
   /**
    * GET /

@@ -1,13 +1,13 @@
 {
-  "extends": "@ecomerceNextjs/config/base.json",
-  "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "types": ["bun"],
-    "strict": true
-  },
-  "include": ["packages/**/*", "apps/**/*"]
+  "files": [],
+  "references": [
+    { "path": "apps/web" },
+    { "path": "apps/server" },
+    { "path": "packages/api" },
+    { "path": "packages/db" },
+    { "path": "packages/ui" },
+    { "path": "packages/auth" },
+    { "path": "packages/config" },
+    { "path": "packages/env" }
+  ]
 }
-

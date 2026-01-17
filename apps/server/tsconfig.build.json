@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /* EMIT */
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+
+    /* OUTPUT */
+    "outDir": "./dist",
+    "rootDir": "./src",
+
+    /* BUN + ESM */
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+
+    /* TYPES */
+    "types": ["bun"],
+
+    /* BUILD ARTIFACTS */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src", "../../packages/env/src/env.d.ts"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts"]
+}

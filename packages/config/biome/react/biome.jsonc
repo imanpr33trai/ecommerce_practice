@@ -15,7 +15,7 @@
 				"useJsxKeyInIterable": "error"
 			},
 			"nursery": {
-				"noReactForwardRef": "error"
+				"noReactForwardRef": "off"
 			},
 			"suspicious": {
 				"noArrayIndexKey": "error",

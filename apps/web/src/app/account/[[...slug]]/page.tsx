@@ -1,21 +1,31 @@
+// app/account/[[...slug]]/page.tsx
+
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { auth } from "@ecomerceNextjs/auth"; // Server-side auth check
-import { dehydrate, HydrationBoundary, useQueryClient } from "@tanstack/react-query";
+import { auth } from "@ecomerceNextjs/auth";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
-import { userProfileOptions } from "@/data/account/use-user-profile";
+import { createQueryClient } from "@/lib/query-client";
 
-import { AccountContent } from "./_components/account-content"; // Client Logic moved here
+import { AccountContent } from "./_components/account-content";
 
 interface PageProps {
-  params: Promise<{ slug?: string[] }>; // Optional array: ['orders'] or undefined
+  params: Promise<{ slug?: string[] }>; // Note the optional '?' as slug can be undefined
 }
 
 export default async function AccountPage({ params }: PageProps) {
-  const queryClient = useQueryClient();
+  // Await params as required in modern Next.js
+  // params.slug is string[] | undefined for [[...slug]]
+  const { slug } = await params;
+
+  // Ensure activeTab is strictly a string
+  const activeTab: string = slug?.[0] ?? "overview";
+
+  const queryClient = createQueryClient();
+
   // 1. Server-Side Auth Check
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -26,11 +36,10 @@ export default async function AccountPage({ params }: PageProps) {
   }
 
   // 2. Prefetch Profile Data
-  queryClient.prefetchQuery(userProfileOptions());
-  const { slug } = await params;
+  // queryClient.prefetchQuery(userProfileOptions());
 
-  // 3. Determine Active Tab (e.g. "orders", "addresses")
-  const activeTab = slug?.[0] || "overview";
+  // 3. Determine Active Tab
+  // Safely check if slug exists and has at least one element
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

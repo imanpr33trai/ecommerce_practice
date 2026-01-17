@@ -1,9 +1,9 @@
 {
-  "main": "src/schema.ts",
+  "main": "src/index.ts",
   "name": "@ecomerceNextjs/env",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "lint": "biome check ."
   },
@@ -13,4 +13,3 @@
     "typescript": "^5.0.0"
   }
 }
-

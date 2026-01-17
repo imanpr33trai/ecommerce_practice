@@ -10,7 +10,9 @@ const Breadcrumbs: React.FC = () => {
   const location = usePathname();
   const pathnames = location.split("/").filter((x) => x);
 
-  if (pathnames.length === 0) return null;
+  if (pathnames.length === 0) {
+    return null;
+  }
 
   return (
     <nav className="flex items-center text-sm text-gray-500 mb-6 animate-fade-in overflow-x-auto no-scrollbar whitespace-nowrap">

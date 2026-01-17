@@ -2,7 +2,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^7.2.0",
-    "dotenv": "^17.2.2",
+    "@prisma/client-runtime-utils": "^7.2.0",
     "pg": "^8.16.3",
     "zod": "^4.1.11"
   },
@@ -15,7 +15,12 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
+    },
+    "./generated": {
+      "types": "./generated/index.d.ts",
+      "default": "./generated/index.js"
     },
     "./*": {
       "default": "./src/*.ts"
@@ -26,14 +31,14 @@
     "typescript": "^5"
   },
   "scripts": {
-    "build": "prisma generate && tsc",
     "type-check": "tsc --noEmit",
+    "build:types": "tsc --emitDeclarationOnly",
     "lint": "biome check .",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:push": "prisma db push",
-    "db:pull": "prisma db pull",
-    "db:studio": "prisma studio",
+    "db:generate": "bunx --bun prisma generate",
+    "db:migrate": "bunx --bun prisma migrate dev",
+    "db:push": "bunx --bun prisma db push",
+    "db:pull": "bunx --bun prisma db pull",
+    "db:studio": "bunx --bun prisma studio",
     "db:seed": "bun run prisma/seed.ts",
     "db:start": "docker compose up -d",
     "db:watch": "docker compose up",

@@ -1,7 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
-  "globalEnv": ["DATABASE_URL"],
+  "ui": "tui","envMode":"loose",
+  "globalEnv": [
+          "DATABASE_URL",
+          "NEXT_PUBLIC_SERVER_URL",
+          "BETTER_AUTH_URL",
+          "CORS_ORIGIN"
+        ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -9,13 +14,21 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],"outputs": []
+    },
+    "build:types":{
+      "dependsOn":["^build:types"],"outputs": ["dist/**/*.d.ts"]
     },
     "type-check": {
       "dependsOn": ["^type-check"]
     },
     "dev": {
-      "cache": false,
+      "cache": false,"env": [
+              "DATABASE_URL",
+              "NEXT_PUBLIC_SERVER_URL",
+              "BETTER_AUTH_URL",
+              "CORS_ORIGIN"
+            ],
       "persistent": true
     },
     "db:push": {
@@ -31,7 +44,8 @@
       "persistent": true
     },
     "db:generate": {
-      "cache": false,
+      "cache": false,"env": ["DATABASE_URL"]
+,
       "persistent": true
     },
     "db:start": {
@@ -52,4 +66,3 @@
     }
   }
 }
-

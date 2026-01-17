@@ -4,5 +4,5 @@ export const reviewKeys = {
   byProduct: (productId: string) => ["review", "list", productId] as const,
   summary: (productId: string) => ["review", "summary", productId] as const,
 
-  user: (userId: string | undefined) => ["reviews", userId],
+  user: () => ["reviews", "user"],
 };

@@ -7,7 +7,11 @@
  * @param locale The locale string (e.g., 'en-US', 'de-DE').
  * @returns A formatted currency string.
  */
-export function formatCurrency(amount: number | string | null | undefined, currency: string = "USD", locale: string = "en-US"): string {
+export function formatCurrency(
+  amount: number | string | null | undefined,
+  currency: string = "USD",
+  locale: string = "en-US",
+): string {
   if (amount === null || amount === undefined) {
     return new Intl.NumberFormat(locale, {
       style: "currency",

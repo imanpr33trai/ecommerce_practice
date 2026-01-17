@@ -6,13 +6,13 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@comp/select";
 import { Skeleton } from "@comp/skeleton";
 import {
-    ChevronLeft,
-    ChevronRight,
-    MessageSquare,
-    Send,
-    ShieldCheck,
-    Star,
-    Trash2,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquare,
+  Send,
+  ShieldCheck,
+  Star,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,10 +21,10 @@ import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
 import { useProudctDetailQuery } from "@/data/product";
 import {
-    useReviewCreateMutation,
-    useReviewDeleteMutation,
-    useReviewListQuery,
-    useReviewSummaryQuery,
+  useReviewCreateMutation,
+  useReviewDeleteMutation,
+  useReviewListQuery,
+  useReviewSummaryQuery,
 } from "@/data/review";
 import { authClient } from "@/lib/auth-client";
 

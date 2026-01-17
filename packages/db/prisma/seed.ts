@@ -170,7 +170,20 @@ async function main() {
     },
   });
 
-  console.log("Categories created:", [electronics.name, furniture.name, books.name, laptops.name, smartphones.name, sofas.name, chairs.name, sectionalSofas.name, fiction.name].join(", "));
+  console.log(
+    "Categories created:",
+    [
+      electronics.name,
+      furniture.name,
+      books.name,
+      laptops.name,
+      smartphones.name,
+      sofas.name,
+      chairs.name,
+      sectionalSofas.name,
+      fiction.name,
+    ].join(", "),
+  );
 
   // --- 4. CREATE PRODUCTS & IMAGES (ASSIGN TO SPECIFIC CATEGORIES) ---
   console.log("Creating products and images...");

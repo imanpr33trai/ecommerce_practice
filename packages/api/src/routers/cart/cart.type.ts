@@ -10,6 +10,5 @@ export const AddItemSchema = z.object({
 export type AddItemInput = z.infer<typeof AddItemSchema>;
 
 export const UpdateQuantitySchema = z.object({
-
   quantity: z.number().int().min(1, "Quantity must be at least 1"),
 });

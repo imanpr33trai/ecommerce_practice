@@ -3,7 +3,8 @@
     "@ecomerceNextjs/api": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
-    "@prisma/client": "^7.0.0",
+    "@ecomerceNextjs/env": "workspace:*",
+
     "@tanstack/react-form": "^1.12.3",
     "@tanstack/react-query": "^5.90.12",
     "@workspace/ui": "workspace:*",
@@ -38,11 +39,12 @@
   "name": "web",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "start": "next start -p 3001",
-    "dev": "next dev --port=3001",
-    "type-check": "tsc -b",
-    "lint": "next lint"
+    "dev": "bun --env-file=../../.env.development --bun next dev -p 3001",
+    "build": "bun --env-file=../../.env.production --bun next build",
+    "start": "bun --bun next start -p 3001",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "version": "0.1.0"
 }

@@ -3,21 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type React from "react";
 import { useContext, useEffect, useRef, useState } from "react";
+import type React from "react";
 
 import { Input } from "@comp/input";
 import {
-    Clock,
-    X as CloseIcon,
-    Heart,
-    Loader2,
-    LogIn,
-    Menu,
-    Search,
-    ShoppingBag,
-    UserIcon,
-    X,
+  Clock,
+  X as CloseIcon,
+  Heart,
+  Loader2,
+  LogIn,
+  Menu,
+  Search,
+  ShoppingBag,
+  UserIcon,
+  X,
 } from "lucide-react";
 
 import { useCartListItemsQuery } from "@/data/cart";
@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
   if (!wishCount) {
     return <div>wishcount is undefined</div>;
   }
-  console.log("error wishcoutn",errorWishListCount);
+  console.log("error wishcoutn", errorWishListCount);
 
   // Calculate count safely (default to 0 if loading/error/guest)
   const cartItemCount = cart?.data.items.reduce((acc, item) => acc + item.quantity, 0) || 0;

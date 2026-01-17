@@ -42,7 +42,9 @@ const ModalCompare: React.FC = () => {
               <span className="text-4xl">⚖️</span>
             </div>
             <h3 className="text-xl font-bold mb-2">No products to compare</h3>
-            <p className="text-gray-500 mb-6">Add products to the comparison list to see them side by side.</p>
+            <p className="text-gray-500 mb-6">
+              Add products to the comparison list to see them side by side.
+            </p>
             <Button onClick={() => setCompareOpen(false)}>Continue Shopping</Button>
           </div>
         ) : (
@@ -86,17 +88,29 @@ const ModalCompare: React.FC = () => {
 
                   <div className="space-y-8">
                     <div className="h-12 flex items-center text-xl font-medium md:border-b-0 border-b border-gray-50">
-                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">Price:</span> ${product.price}
+                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">Price:</span>{" "}
+                      ${product.price}
                     </div>
                     <div className="h-12 flex items-center md:border-b-0 border-b border-gray-50">
-                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">Rating:</span> ⭐ {product.rating}
+                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">
+                        Rating:
+                      </span>{" "}
+                      ⭐ {product.rating}
                     </div>
                     <div className="h-12 flex items-center md:border-b-0 border-b border-gray-50">
-                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">Category:</span> {product.category?.name}
+                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">
+                        Category:
+                      </span>{" "}
+                      {product.category?.name}
                     </div>
-                    <div className="h-auto md:h-24 flex items-center text-sm text-gray-500 leading-relaxed md:border-b-0 border-b border-gray-50 py-2 md:py-0">{product.description}</div>
+                    <div className="h-auto md:h-24 flex items-center text-sm text-gray-500 leading-relaxed md:border-b-0 border-b border-gray-50 py-2 md:py-0">
+                      {product.description}
+                    </div>
                     <div className="h-12 flex items-center md:border-b-0 border-b border-gray-50">
-                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">Material:</span> Solid Wood / Fabric
+                      <span className="md:hidden font-bold w-24 text-gray-400 text-sm">
+                        Material:
+                      </span>{" "}
+                      Solid Wood / Fabric
                     </div>
                     <div className="h-12 flex items-center pt-4">
                       <Button

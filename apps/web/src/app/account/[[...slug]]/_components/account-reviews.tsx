@@ -12,15 +12,15 @@ import { authClient } from "@/lib/auth-client";
 
 export function AccountReviews() {
   const { data: session } = authClient.useSession();
-  const { data: userReviews } = useReviewsUserQuery(session?.user.id, { limit: "10", page: "1" });
+  const { data: userReviews } = useReviewsUserQuery(!!session, { limit: "10", page: "1" });
   const { mutate: deleteReview } = useReviewDeleteMutation();
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h2 className="text-3xl font-light mb-6">My Reviews ({userReviews.data.items.length})</h2>
-      {userReviews.data.items.length > 0 ? (
+      <h2 className="text-3xl font-light mb-6">My Reviews ({userReviews.items.length})</h2>
+      {userReviews.items.length > 0 ? (
         <div className="space-y-4">
-          {userReviews.data.items.map((review) => {
+          {userReviews.items.map((review) => {
             return (
               <BentoCard
                 key={review.id}

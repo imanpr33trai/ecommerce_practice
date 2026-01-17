@@ -4,7 +4,9 @@ interface SkeletonProps {
   type?: "home" | "products" | "detail" | "account" | "generic";
 }
 
-const Shimmer = () => <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite] skew-x-12" />;
+const Shimmer = () => (
+  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite] skew-x-12" />
+);
 
 const SkeletonItem = ({ className = "" }: { className?: string }) => (
   <div className={`relative overflow-hidden bg-gray-200/60 rounded-[2rem] ${className}`}>

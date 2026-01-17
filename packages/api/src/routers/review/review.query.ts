@@ -125,9 +125,10 @@ export const reviewQueries = {
       items: reviews.map((r) => ({
         ...r,
         productImage: r.product.images[0]?.url || "/placeholder.jpg",
-      })),
+      })),user:userId,
       pagination: {
-        total,
+         total,
+
         page,
         totalPages: Math.ceil(total / limit),
       },

@@ -4,10 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "biome check .",
+    "lint": "biome check .","build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
-    "ui:add": "bunx shadcn@latest add",
-    "build": "tsc"
+    "ui:add": "bunx shadcn@latest add"
+
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",

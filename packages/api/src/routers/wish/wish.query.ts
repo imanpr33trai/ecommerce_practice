@@ -2,7 +2,6 @@ import prisma from "@ecomerceNextjs/db";
 
 // Selector for the "My Wishlist" Page
 
-
 export const wishQueries = {
   /**
    * Get Full Wishlist (For the Wishlist Page)
@@ -131,6 +130,6 @@ export const wishQueries = {
       where: { userId },
     });
 
-    return clear.count
-   },
+    return clear.count;
+  },
 };

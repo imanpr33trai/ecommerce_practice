@@ -29,13 +29,12 @@ export const useWishListCountQuery = () => {
   // 1. Pass the session check to the options
   const { data, isLoading, error } = useQuery(wishCountOptions(!!session));
 
-
   // 2. The Final Fallback:
   // 'ids' will be undefined during: Loading, Error, or Disabled state.
   // Use Nullish Coalescing (??) to guarantee a return value.
 
   return {
-     data,
+    data,
     isLoading,
     error,
   };

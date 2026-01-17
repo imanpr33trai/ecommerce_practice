@@ -3,7 +3,7 @@ import { createAuthClient } from "better-auth/react";
 import type { auth } from "@ecomerceNextjs/auth";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
   plugins: [inferAdditionalFields<typeof auth>()],
 });
 

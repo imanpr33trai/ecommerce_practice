@@ -9,7 +9,12 @@ interface BentoCardProps extends HTMLAttributes<HTMLDivElement> {
   hoverEffect?: boolean;
 }
 
-const BentoCard: React.FC<BentoCardProps> = ({ children, className, hoverEffect = false, ...props }) => {
+const BentoCard: React.FC<BentoCardProps> = ({
+  children,
+  className,
+  hoverEffect = false,
+  ...props
+}) => {
   return (
     <div
       className={cn(

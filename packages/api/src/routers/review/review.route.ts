@@ -1,3 +1,4 @@
+import prisma from "@ecomerceNextjs/db";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
@@ -59,8 +60,10 @@ export const review = new Hono<HonoEnv>()
     const user = c.get("user");
     const options = c.req.valid("query");
 
+    const totalCount = await prisma.review.count();
+
     const result = await reviewQueries.listByUser(user.id, options);
-    return c.json({ success: true, data: result });
+    return c.json({ success: true, data: result, count: totalCount, userId: user.id });
   })
 
   /**

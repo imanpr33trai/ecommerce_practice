@@ -4,28 +4,24 @@
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
-    "@hono/node-server": "^1.19.7",
     "@hono/zod-validator": "^0.7.6",
-    "@trpc/server": "^11.8.0",
     "better-auth": "^1.4.0",
-    "dotenv": "^17.2.2",
     "hono": "^4.11.3",
     "zod": "^4.3.5"
   },
   "devDependencies": {
     "@ecomerceNextjs/config": "workspace:*",
     "@types/bun": "^1.2.6",
-    "tsdown": "^0.16.5",
     "typescript": "^5.8.2"
   },
   "main": "src/index.ts",
   "name": "server",
   "scripts": {
-    "build": "tsdown",
-    "type-check": "tsc -b",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "bun run --hot src/index.ts",
-    "start": "node dist/index.mjs"
+    "dev": "bun --env-file=../../.env.development run --hot src/index.ts",
+    "type-check": "tsc --noEmit",
+    "build": "bun tsc -p tsconfig.build.json",
+    "compile": "bun build ./src/index.ts --compile --outfile server",
+    "start": "bun run ./dist/index.js"
   },
   "type": "module"
 }

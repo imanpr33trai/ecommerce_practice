@@ -7,36 +7,41 @@ import type {
   GetReviewProductUserListResponse,
 } from "@/data/review/types";
 
-const fetchUserReviews = async (
-  query: GetReviewProductUserListRequest["query"],
-): Promise<GetReviewProductUserListResponse> => {
+const fetchUserReviewsFn = async (query: GetReviewProductUserListRequest["query"]) => {
   const res = await client.api.review.me.$get({
     query,
   });
-  if (res.status === 401) {
-    throw new Error("Unauthorized:Please login to see your reviews");
-  }
+
+  const result = (await res.json().catch(() => ({
+    success: false,
+    error: "Network error: Failed to parse reviews",
+  }))) as GetReviewProductUserListResponse;
+
   if (!res.ok) {
-    throw new Error("Failed to load your reviews");
+    // Type-safe property access using the 'in' operator for the union type
+    const errorMessage = "Failed to load your reviews";
+    throw new Error(errorMessage);
   }
-  return await res.json();
+
+  // Returning the data (profile reviews list)
+  return result.data;
 };
 
 export function reviewsUserOptions(
-  userId: string | undefined,
+  isAuth: boolean,
   query: GetReviewProductUserListRequest["query"],
 ) {
   return queryOptions({
-    queryKey: reviewKeys.user(userId),
-    queryFn: () => fetchUserReviews(query),
-    enabled: !!userId,
+    queryKey: reviewKeys.user(),
+    queryFn: () => fetchUserReviewsFn(query),
+    enabled: isAuth,
     staleTime: 1000 * 60 * 5, // 5 mins
   });
 }
 
 export const useReviewsUserQuery = (
-  userId: string | undefined,
+  isAuth: boolean,
   query: GetReviewProductUserListRequest["query"],
 ) => {
-  return useSuspenseQuery(reviewsUserOptions(userId, query));
+  return useSuspenseQuery(reviewsUserOptions(isAuth, query));
 };

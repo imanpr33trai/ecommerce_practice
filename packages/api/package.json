@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "lint": "biome check ."
   },
@@ -25,10 +25,10 @@
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
-    "@prisma/client": "^7.0.0",
-    "dotenv": "^17.2.2",
+
+
     "hono": "^4.11.3",
-    "superjson": "^2.2.6",
+
     "zod": "^4.3.5"
   }
 }

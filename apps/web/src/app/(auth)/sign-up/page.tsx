@@ -75,7 +75,9 @@ export default function SignUpPage() {
         >
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">First Name</Label>
+              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                First Name
+              </Label>
               <Input
                 type="text"
                 required
@@ -85,7 +87,9 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Last Name</Label>
+              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Last Name
+              </Label>
               <Input
                 type="text"
                 required
@@ -96,7 +100,9 @@ export default function SignUpPage() {
             </div>
           </div>
           <div>
-            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email</Label>
+            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              Email
+            </Label>
             <Input
               type="email"
               required
@@ -107,7 +113,9 @@ export default function SignUpPage() {
             />
           </div>
           <div>
-            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Password</Label>
+            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              Password
+            </Label>
             <Input
               type="password"
               placeholder="Create a password"

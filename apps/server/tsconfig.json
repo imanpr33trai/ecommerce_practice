@@ -1,18 +1,8 @@
 {
-  "extends": "@ecomerceNextjs/config/tsconfig.base.json",
+  "extends": "@ecomerceNextjs/config/node.json",
   "compilerOptions": {
-    "composite": true,
     "outDir": "dist",
-    "baseUrl": ".",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "rootDir": "src"
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["src", "../../packages/env/src/env.d.ts"]
 }

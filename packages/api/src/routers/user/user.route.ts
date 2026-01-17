@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import { authMiddleware } from "../../middlewares/auth.middleware";
 import { userQueries } from "./user.query";
 import { UpdateProfileSchema } from "./user.types";
 import type { HonoEnv } from "../../context"; // Adjust path
@@ -11,13 +12,14 @@ export const user = new Hono<HonoEnv>()
    * Middleware: Auth Guard
    * All user routes require login
    */
-  .use("*", async (c, next) => {
-    const user = c.get("user");
-    if (!user) {
-      return c.json({ success: false, error: "Unauthorized" }, 401);
-    }
-    await next();
-  })
+  .use(authMiddleware)
+  // .use("*", async (c, next) => {
+  //   const user = c.get("user");
+  //   if (!user) {
+  //     return c.json({ success: false, error: "Unauthorized" }, 401);
+  //   }
+  //   await next();
+  // })
 
   /**
    * GET /me

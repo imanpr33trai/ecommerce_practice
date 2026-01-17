@@ -1,19 +1,10 @@
 {
-  "extends": ["@ecomerceNextjs/config/tsconfig.base.json", "../../tsconfig.json"],
+  "extends": "@ecomerceNextjs/config/node.json",
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "noEmit": false,
-    "allowImportingTsExtensions": false,
-    "paths": {
-      "@/*": ["../../*"]
-    }
+    "emitDeclarationOnly": true
   },
-  "include": ["prisma/**/*", "src/**/*"],
-  "exclude": ["dist", "node_modules", "prisma/migrations"]
+  "include": ["src/**/*.ts", "prisma/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
-

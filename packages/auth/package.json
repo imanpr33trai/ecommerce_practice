@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
     "lint": "biome check ."
   },
@@ -23,9 +23,8 @@
   },
   "dependencies": {
     "better-auth": "^1.4.0",
-    "dotenv": "^17.2.2",
+
     "zod": "^4.1.11",
     "@ecomerceNextjs/db": "workspace:*"
   }
 }
-

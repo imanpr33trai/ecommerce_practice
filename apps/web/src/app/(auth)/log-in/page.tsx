@@ -69,7 +69,9 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
         >
           <div>
-            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Email</Label>
+            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              Email
+            </Label>
             <Input
               type="email"
               required
@@ -80,7 +82,9 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Password</Label>
+            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              Password
+            </Label>
             <Input
               type="password"
               placeholder="••••••••"

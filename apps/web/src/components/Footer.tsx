@@ -18,7 +18,9 @@ const Footer: React.FC = () => {
               </div>
               <span className="font-bold text-xl tracking-tight">Nestify</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight leading-tight mb-4">Crafting minimal spaces for modern minds.</h2>
+            <h2 className="text-4xl md:text-5xl font-light tracking-tight leading-tight mb-4">
+              Crafting minimal spaces for modern minds.
+            </h2>
           </div>
           <div className="flex gap-4 mt-auto">
             <Button
@@ -43,7 +45,9 @@ const Footer: React.FC = () => {
         </BentoCard>
 
         <BentoCard className="md:col-span-3 lg:col-span-2 bg-white p-8">
-          <span className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-6">Shop</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-6">
+            Shop
+          </span>
           <div className="flex flex-col gap-4 font-medium text-gray-600">
             <Link
               href="/product"
@@ -79,7 +83,9 @@ const Footer: React.FC = () => {
         </BentoCard>
 
         <BentoCard className="md:col-span-3 lg:col-span-2 bg-white p-8">
-          <span className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-6">Company</span>
+          <span className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-6">
+            Company
+          </span>
           <div className="flex flex-col gap-4 font-medium text-gray-600">
             <Link
               href={{ pathname: "/about" }}
@@ -115,7 +121,9 @@ const Footer: React.FC = () => {
         </BentoCard>
 
         <BentoCard className="md:col-span-12 lg:col-span-3 bg-[#E8E8E6] p-8 flex flex-col justify-center">
-          <span className="block text-gray-500 text-xs font-bold uppercase tracking-wider mb-4">Stay Updated</span>
+          <span className="block text-gray-500 text-xs font-bold uppercase tracking-wider mb-4">
+            Stay Updated
+          </span>
           <h3 className="text-2xl font-bold mb-4">Join our newsletter for 10% off.</h3>
           <div className="flex flex-col gap-3">
             <input

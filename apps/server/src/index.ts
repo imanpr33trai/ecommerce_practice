@@ -1,12 +1,12 @@
-// dotenv.config({ path: "../../.env" });
+import "dotenv";
 
 import { api } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
-
-import type { HonoEnv } from "@ecomerceNextjs/api/context";
+import { serve } from "bun";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import type { HonoEnv } from "@ecomerceNextjs/api/context";
 
 const app = new Hono<HonoEnv>()
 
@@ -14,7 +14,7 @@ const app = new Hono<HonoEnv>()
   .use(
     "*",
     cors({
-      origin: process.env.CORS_ORIGIN || "http://localhost:3001",
+      origin: Bun.env.CORS_ORIGIN,
       allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       allowHeaders: ["Content-Type", "Authorization"],
       credentials: true,
@@ -30,13 +30,16 @@ const app = new Hono<HonoEnv>()
     return c.text("OK");
   });
 
+serve({
+  port: 3000,
+  fetch: app.fetch,
+});
 // showRoutes(app, {
 //   colorize: true,
 //   verbose: true,
 // });
 
 // console.log(getRouterName(app));
-export default app;
 
 // const port = 3000;
 // console.log(`Server is running on port ${port}`);

@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { accountKeys } from "@/data/account/keys";
 import { client } from "@/lib/hono-client";
@@ -44,5 +44,5 @@ export const userProfileOptions = () =>
  * 3. React Hook
  */
 export const useUserProfileQuery = () => {
-  return useQuery(userProfileOptions());
+  return useSuspenseQuery(userProfileOptions());
 };
