@@ -28,8 +28,5 @@
     "compile": "bun build ./src/index.ts --compile --outfile server",
     "start": "node --env-file=../../.env dist/index.js"
   },
-  "type": "module",
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "type": "module"
 }
