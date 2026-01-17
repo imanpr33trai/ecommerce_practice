@@ -2,7 +2,6 @@ import "dotenv";
 
 import { api } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
-import { serve } from "bun";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -30,10 +29,9 @@ const app = new Hono<HonoEnv>()
     return c.text("OK");
   });
 
-serve({
-  port: 3000,
-  fetch: app.fetch,
-});
+// REQUIRED for Vercel
+export default app;
+
 // showRoutes(app, {
 //   colorize: true,
 //   verbose: true,

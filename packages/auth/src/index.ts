@@ -7,9 +7,9 @@ export const auth = betterAuth<BetterAuthOptions>({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  baseURL: "http://localhost:3000",
+  baseURL: "https://ecommerce-practice-server.vercel.app",
   trustedOrigins: [
-    "http://localhost:3001", // Next.js dev
+    "https://ecommerce-practice-server.vercel.app/", // Next.js dev
     // API server
     // Add production URLs
   ],
