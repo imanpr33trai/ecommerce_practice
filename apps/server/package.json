@@ -27,8 +27,5 @@
     "build:vercel": "node build-v-node.mjs",
     "start": "node dist/index.js"
   },
-  "type": "module",
-  "engines": {
-    "node": ">=20.0.0"
-  }
+  "type": "module"
 }
