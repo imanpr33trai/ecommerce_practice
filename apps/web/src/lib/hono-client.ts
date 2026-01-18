@@ -2,7 +2,7 @@ import { type ClientResponse, hc } from "hono/client";
 
 import type { AppType } from "../../../server/src";
 
-export const client = hc<AppType>("http://localhost:3000", {
+export const client = hc<AppType>(process.env.NEXT_PUBLIC_SERVER_URL!, {
   init: {
     credentials: "include",
   },

@@ -12,6 +12,24 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },    "web#build": {
+
+      "dependsOn": ["^build"],
+
+      "outputs": [".next/**", "!.next/cache/**"],
+
+      "env": ["NEXT_PUBLIC_API_URL"]
+
+    },
+
+    "api#build": {
+
+      "dependsOn": ["^build"],
+
+      "outputs": ["dist/**"],
+
+      "env": [""]
+
     },
     "lint": {
       "dependsOn": ["^lint"],"outputs": []
