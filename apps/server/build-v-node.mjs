@@ -1,6 +1,6 @@
 import { build } from "esbuild";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,18 +16,23 @@ async function buildServer() {
       target: "node20",
       outfile: path.resolve(__dirname, "dist/index.js"),
       format: "esm",
-      minify: true,
+      minify: false,
+      sourcemap: true,
+      // Bundle everything except native modules
       external: [
         "@prisma/client",
-        ".prisma/client"
+        ".prisma/client",
+        "@prisma/adapter-pg",
+        "@prisma/client-runtime-utils",
       ],
-      banner: {
-        js: "import { createRequire } from 'module';const require = createRequire(import.meta.url);",
-      },
+      // Resolve workspace packages from node_modules
+      mainFields: ["module", "main"],
+      conditions: ["import"],
       logLevel: "info",
     });
 
-    console.log("✅ Server built successfully!");
+    console.log("✅ Server built successfully for Vercel!");
+    console.log(`📦 Output: dist/index.js`);
   } catch (error) {
     console.error("❌ Build failed:", error);
     process.exit(1);

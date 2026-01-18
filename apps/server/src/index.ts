@@ -24,19 +24,16 @@ const app = new Hono<HonoEnv>()
     return c.text("OK");
   });
 
+// Export for other modules
+export { app };
+
 // Start server based on runtime
 const port = Number(process.env.PORT) || 3000;
 
 /**
- * 1. RUNTIME STARTUP LOGIC
- * We check the environment without using top-level exports inside blocks.
+ * Start server in Node.js environment (not on Vercel)
  */
-if (typeof Bun !== "undefined") {
-  // In Bun, we don't need to call a function;
-  // exporting the object at the bottom handles it.
-  console.log(`🚀 Server running on http://localhost:${port} (Bun)`);
-} else if (process.env.NODE_ENV !== "production") {
-  // If in Node.js (and not on a platform like Vercel which handles its own fetch)
+if (process.env.NODE_ENV !== "production") {
   serve(
     {
       fetch: app.fetch,

@@ -1,17 +1,16 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "installCommand": "bun install",
-
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
+  "framework": "hono",
+  "env": {
+    "NODE_ENV": "production"
+  },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/dist/index.js"
+      "dest": "/index.js"
     }
-  ],
-
-
-    "outputDirectory": "dist",
-    "framework": "hono"
-
+  ]
 }

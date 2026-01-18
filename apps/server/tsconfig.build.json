@@ -4,33 +4,39 @@
     /* EMIT */
     "noEmit": false,
     "allowImportingTsExtensions": false,
-
     /* OUTPUT */
     "outDir": "./dist",
     "rootDir": "./src",
-
-    /* NODE + ESM (compatible with both Bun and Node) */
+    /* NODE + ESM (compatible with Node.js) */
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "ES2022",
     "moduleResolution": "bundler",
-    "lib": ["ES2022"],
-
+    "lib": [
+      "ES2022"
+    ],
     /* TYPES */
-    "types": ["node"],
-
+    "types": [
+      "node"
+    ],
     /* BUILD ARTIFACTS */
     "sourceMap": true,
     "declaration": false,
     "declarationMap": false,
-
     /* INTEROP */
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-
     /* BUNDLER COMPATIBILITY */
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "build.ts", "../../packages/env/src/env.d.ts"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src/**/*",
+    "../../packages/env/src/env.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
