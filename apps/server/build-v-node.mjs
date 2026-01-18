@@ -5,9 +5,9 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function buildServer() {
+async function bundleServer() {
   try {
-    console.log("🔨 Building server for Vercel (Node.js runtime) with esbuild...");
+    console.log("🔨 Building server for Vercel (Node.js runtime)...");
 
     await build({
       entryPoints: [path.resolve(__dirname, "src/index.vercel.ts")],
@@ -18,16 +18,19 @@ async function buildServer() {
       format: "esm",
       minify: false,
       sourcemap: true,
-      // Bundle everything except native modules
+      packages: "bundle",
+      // Resolve workspace packages
+      alias: {
+        "@ecomerceNextjs/env": path.resolve(__dirname, "../../packages/env/src/index.ts"),
+        "@ecomerceNextjs/db": path.resolve(__dirname, "../../packages/db/src/index.ts"),
+        "@ecomerceNextjs/auth": path.resolve(__dirname, "../../packages/auth/src/index.ts"),
+        "@ecomerceNextjs/api": path.resolve(__dirname, "../../packages/api/src/index.ts"),
+      },
+      // Only mark native modules as external
       external: [
-        "@prisma/client",
-        ".prisma/client",
-        "@prisma/adapter-pg",
-        "@prisma/client-runtime-utils",
+        "pg",
+        "dotenv",
       ],
-      // Resolve workspace packages from node_modules
-      mainFields: ["module", "main"],
-      conditions: ["import"],
       logLevel: "info",
     });
 
@@ -39,4 +42,4 @@ async function buildServer() {
   }
 }
 
-buildServer();
+bundleServer();
