@@ -1,10 +1,10 @@
 import { api } from "@ecomerceNextjs/api";
+import type { HonoEnv } from "@ecomerceNextjs/api/context";
 import { auth } from "@ecomerceNextjs/auth";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import type { HonoEnv } from "@ecomerceNextjs/api/context";
 
 const app = new Hono<HonoEnv>()
   .use(logger())
@@ -52,11 +52,11 @@ if (typeof Bun !== "undefined") {
  * 2. EXPORTS
  * This satisfies both Bun (which looks for fetch/port) and Vercel/Node (which looks for the app)
  */
-export default {
-  port,
-  fetch: app.fetch,
-};
+// export default {
+//   port,
+//   fetch: app.fetch,
+// };
 
 // If using Vercel or standard Hono RPC, you often need the app exported too
-export { app };
+export default app;
 export type AppType = typeof app;
