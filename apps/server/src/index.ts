@@ -1,6 +1,5 @@
 import { api } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
-import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -33,34 +32,39 @@ app
 /* EXPORTS — THIS IS WHAT VERCEL + BUN + NODE EXPECT */
 /* ------------------------------------------------------------------ */
 
-export const fetch = app.fetch;
-export type AppType = typeof app;
-
-export default {
-  fetch,
-};
-
-/* ------------------------------------------------------------------ */
-/* LOCAL DEV ONLY (SAFE) */
-/* ------------------------------------------------------------------ */
-const port = Number(process.env.PORT) || 3000;
-
-if (process.env.NODE_ENV !== "production") {
-  if (typeof Bun !== "undefined") {
-    Bun.serve({
-      port,
-      fetch: app.fetch,
-    });
-    console.log(`🚀 Server running on http://localhost:${port} (Bun)`);
-  } else {
-    serve(
-      {
-        fetch: app.fetch,
-        port,
-      },
-      (info) => {
-        console.log(`🚀 Server running on http://localhost:${info.port} (Node.js)`);
-      },
-    );
-  }
+// export const fetch = app.fetch;
+// export type AppType = typeof app;
+export default function handler() {
+  return {
+    fetch: app.fetch,
+  };
 }
+
+// export default {
+//   fetch,
+// };
+
+// /* ------------------------------------------------------------------ */
+// /* LOCAL DEV ONLY (SAFE) */
+// /* ------------------------------------------------------------------ */
+// const port = Number(process.env.PORT) || 3000;
+
+// if (process.env.NODE_ENV !== "production") {
+//   if (typeof Bun !== "undefined") {
+//     Bun.serve({
+//       port,
+//       fetch: app.fetch,
+//     });
+//     console.log(`🚀 Server running on http://localhost:${port} (Bun)`);
+//   } else {
+//     serve(
+//       {
+//         fetch: app.fetch,
+//         port,
+//       },
+//       (info) => {
+//         console.log(`🚀 Server running on http://localhost:${info.port} (Node.js)`);
+//       },
+//     );
+//   }
+// }
