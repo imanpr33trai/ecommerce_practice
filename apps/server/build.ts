@@ -1,19 +1,11 @@
-// build.ts
-import { build } from "esbuild";
-
-await build({
-  entryPoints: ["src/index.ts"],
-  outfile: "dist/index.js",
-  bundle: true,
-  platform: "node",
-  format: "esm",
-  target: "es2022",
-  sourcemap: true,
+// build.ts (using Bun's native bundler)
+await Bun.build({
+  entrypoints: ["src/index.ts"],
+  outdir: "dist",
+  target: "browser", // Vercel's Bun runtime prefers this for ESM compatibility
   minify: true,
-
-  // ADD 'hono' TO EXTERNAL
-  // This allows Vercel's scanner to detect the hono dependency in the final bundle
-  external: ["hono", "@ecomerceNextjs/*", "@prisma/client", "@prisma/adapter-pg", ".prisma/client"],
-
-  logLevel: "info",
+  external: ["@prisma/client", ".prisma/client"],
 });
+console.log("✅ Build complete with Bun");
+
+export {};
