@@ -33,12 +33,8 @@ app
 /* ------------------------------------------------------------------ */
 
 // export const fetch = app.fetch;
-// export type AppType = typeof app;
-export default function handler() {
-  return {
-    fetch: app.fetch,
-  };
-}
+export type AppType = typeof app;
+export default app;
 
 // export default {
 //   fetch,
