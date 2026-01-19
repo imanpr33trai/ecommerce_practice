@@ -36,6 +36,10 @@ app
 export const fetch = app.fetch;
 export type AppType = typeof app;
 
+export default {
+  fetch,
+};
+
 /* ------------------------------------------------------------------ */
 /* LOCAL DEV ONLY (SAFE) */
 /* ------------------------------------------------------------------ */
