@@ -2,10 +2,10 @@ import prisma from "@ecomerceNextjs/db";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
-import { authMiddleware } from "../../middlewares/auth.middleware";
-import { reviewQueries } from "./review.query";
-import { CreateReviewSchema, ReviewQuerySchema, UserReviewQuerySchema } from "./review.type";
-import type { HonoEnv } from "../../context"; // Adjust path to your context
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { reviewQueries } from "./review.query.js";
+import { CreateReviewSchema, ReviewQuerySchema, UserReviewQuerySchema } from "./review.type.js";
+import type { HonoEnv } from "../../context.js"; // Adjust path to your context
 
 export const review = new Hono<HonoEnv>()
 

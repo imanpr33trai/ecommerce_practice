@@ -1,13 +1,29 @@
 {
   "files": [],
   "references": [
-    { "path": "apps/web" },
-    { "path": "apps/server" },
-    { "path": "packages/api" },
-    { "path": "packages/db" },
-    { "path": "packages/ui" },
-    { "path": "packages/auth" },
-    { "path": "packages/config" },
-    { "path": "packages/env" }
+    {
+      "path": "apps/web"
+    },
+    {
+      "path": "apps/server"
+    },
+    {
+      "path": "packages/api"
+    },
+    {
+      "path": "packages/db"
+    },
+    {
+      "path": "packages/ui"
+    },
+    {
+      "path": "packages/auth"
+    },
+    {
+      "path": "packages/config/base.json"
+    },
+    {
+      "path": "packages/env"
+    }
   ]
 }

@@ -174,7 +174,7 @@
       "linter": {
         "rules": {
           "style": {
-            "noProcessEnv": "off"
+            "noProcessEnv": null
           }
         }
       }

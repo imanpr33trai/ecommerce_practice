@@ -1,10 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
-import { authMiddleware } from "../../middlewares/auth.middleware";
-import { userQueries } from "./user.query";
-import { UpdateProfileSchema } from "./user.types";
-import type { HonoEnv } from "../../context"; // Adjust path
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { userQueries } from "./user.query.js";
+import { UpdateProfileSchema } from "./user.types.js";
+import type { HonoEnv } from "../../context.js"; // Adjust path
 
 export const user = new Hono<HonoEnv>()
 

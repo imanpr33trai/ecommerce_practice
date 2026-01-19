@@ -49,4 +49,3 @@ export const INITIAL_FILTERS: ProductFilters = {
   rating: undefined,
 };
 
-export * from "@ecomerceNextjs/api/routers/product/product.type";

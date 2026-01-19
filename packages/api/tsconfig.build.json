@@ -7,9 +7,16 @@
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
-    "composite": true,
+    "module": "esnext",
     "allowImportingTsExtensions": false,
-    "types": []
+    "target": "es2022",
+    "moduleResolution": "bundler"
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

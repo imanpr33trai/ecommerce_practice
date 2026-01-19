@@ -1,42 +1,19 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    /* EMIT */
     "noEmit": false,
-    "allowImportingTsExtensions": false,
-    /* OUTPUT */
-    "outDir": "./dist",
-    "rootDir": "./src",
-    /* NODE + ESM (compatible with Node.js) */
-    "target": "ES2022",
-    "module": "ES2022",
+
+    "outDir": "dist",
+    "rootDir": "src",
+
+    "module": "esnext",
+    "target": "es2022",
     "moduleResolution": "bundler",
-    "lib": [
-      "ES2022"
-    ],
-    /* TYPES */
-    "types": [
-      "node"
-    ],
-    /* BUILD ARTIFACTS */
+
     "sourceMap": true,
-    "declaration": false,
-    "declarationMap": false,
-    /* INTEROP */
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    /* BUNDLER COMPATIBILITY */
+
     "skipLibCheck": true
   },
-  "include": [
-    "src/**/*",
-    "../../packages/env/src/env.d.ts"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -2,16 +2,15 @@
   "name": "@ecomerceNextjs/auth",
   "exports": {
     ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "type": "module",
   "scripts": {
     "build:types": "tsc --emitDeclarationOnly",
     "type-check": "tsc --noEmit",
+    "build": "bun tsc -p tsconfig.build.json",
     "lint": "biome check ."
   },
   "devDependencies": {
@@ -23,7 +22,6 @@
   },
   "dependencies": {
     "better-auth": "^1.4.0",
-
     "zod": "^4.1.11",
     "@ecomerceNextjs/db": "workspace:*"
   }

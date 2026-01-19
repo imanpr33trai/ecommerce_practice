@@ -1,5 +1,5 @@
 import { auth } from "@ecomerceNextjs/auth";
-import type { HonoEnv } from "@ecomerceNextjs/api/context";
+import type { HonoEnv } from "../context";
 import type { Context, Next } from "hono";
 
 // Middleware to populate context

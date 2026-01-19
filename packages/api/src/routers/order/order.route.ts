@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
-import { authMiddleware } from "../../middlewares/auth.middleware";
-import { orderQueries } from "./order.query";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { orderQueries } from "./order.query.js";
 import {
   CreateOrderSchema,
   UpdateOrderStatusSchema,

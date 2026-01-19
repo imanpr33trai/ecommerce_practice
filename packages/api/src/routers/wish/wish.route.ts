@@ -1,10 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
-import { authMiddleware } from "../../middlewares/auth.middleware";
-import { wishQueries } from "./wish.query";
-import { ToggleWishSchema } from "./wish.type";
-import type { HonoEnv } from "../../context"; // Adjust path
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { wishQueries } from "./wish.query.js";
+import { ToggleWishSchema } from "./wish.type.js";
+import type { HonoEnv } from "../../context.js"; // Adjust path
 
 export const wish = new Hono<HonoEnv>()
 

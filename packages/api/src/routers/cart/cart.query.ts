@@ -1,6 +1,6 @@
 import prisma, { type Prisma } from "@ecomerceNextjs/db";
 
-import type { AddItemInput } from "./cart.type";
+import type { AddItemInput } from "./cart.type.js";
 
 // Selector to get product details inside cart items
 const cartItemSelect = {

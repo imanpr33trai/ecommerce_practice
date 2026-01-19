@@ -3,6 +3,9 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
     "emitDeclarationOnly": true
   },
   "include": ["src/**/*.ts", "../env/src/env.d.ts"],

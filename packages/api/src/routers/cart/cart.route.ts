@@ -1,10 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
-import { authMiddleware } from "../../middlewares/auth.middleware";
-import { cartQueries } from "./cart.query";
-import { AddItemSchema, UpdateQuantitySchema } from "./cart.type";
-import type { HonoEnv } from "../../context"; // Adjust to your context path
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { cartQueries } from "./cart.query.js";
+import { AddItemSchema, UpdateQuantitySchema } from "./cart.type.js";
+import type { HonoEnv } from "../../context.js"; // Adjust to your context path
 
 export const cart = new Hono<HonoEnv>()
 
