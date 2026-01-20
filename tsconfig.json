@@ -1,11 +1,12 @@
 {
   "files": [],
   "compilerOptions": {
+    "baseUrl": "./",
     "paths": {
-      "@ecomerceNextjs/api": ["packages/api/src"],
-      "@ecomerceNextjs/auth": ["packages/auth/src"],
-      "@ecomerceNextjs/db": ["packages/db/src"],
-      "@ecomerceNextjs/env": ["packages/env/src"],
+      "@ecomerceNextjs/api": ["packages/api/dist"],
+      "@ecomerceNextjs/auth": ["packages/auth/dist"],
+      "@ecomerceNextjs/db": ["packages/db/dist"],
+      "@ecomerceNextjs/env": ["packages/env/dist"],
       "@ecomerceNextjs/ui/*": ["packages/ui/src/*"]
     }
   },
