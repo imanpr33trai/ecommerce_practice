@@ -22,16 +22,15 @@ const app = new Hono<HonoEnv>()
   .get("/", (c) => c.text("OK"));
 
 /* ------------------------------------------------------------------ */
-/* EXPORTS — shape compatible with Vercel Node & Bun runtimes         */
+/* EXPORTS — Node.js runtime handler for Vercel                       */
 /* ------------------------------------------------------------------ */
 
-export const fetch = app.fetch;
 export type AppType = typeof app;
 
-// Default export as an object with a `fetch` handler works on Vercel.
-export default {
-  fetch,
-};
+// Vercel Node.js runtime expects a default exported handler function.
+export default async function handler(request: Request) {
+  return app.fetch(request);
+}
 
 // /* ------------------------------------------------------------------ */
 // /* LOCAL DEV ONLY (SAFE) */
