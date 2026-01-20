@@ -1,5 +1,14 @@
 {
   "files": [],
+  "compilerOptions": {
+    "paths": {
+      "@ecomerceNextjs/api": ["packages/api/src"],
+      "@ecomerceNextjs/auth": ["packages/auth/src"],
+      "@ecomerceNextjs/db": ["packages/db/src"],
+      "@ecomerceNextjs/env": ["packages/env/src"],
+      "@ecomerceNextjs/ui/*": ["packages/ui/src/*"]
+    }
+  },
   "references": [
     {
       "path": "apps/web"
