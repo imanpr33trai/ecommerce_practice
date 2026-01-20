@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "build:types": "tsc --emitDeclarationOnly",
     "dev": "tsc -p tsconfig.build.json --watch",
     "type-check": "tsc --noEmit",

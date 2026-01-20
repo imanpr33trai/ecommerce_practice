@@ -40,7 +40,7 @@
   "private": true,
   "scripts": {
     "dev": "bun --env-file=../../.env.development --bun next dev -p 3001",
-    "build": "bun --env-file=../../.env.production --bun next build",
+    "build:w": "bun --env-file=../../.env.production --bun next build",
     "start": "bun --bun next start -p 3001",
     "type-check": "tsc --noEmit",
     "lint": "biome check .",
