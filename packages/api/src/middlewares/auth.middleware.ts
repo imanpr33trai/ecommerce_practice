@@ -16,5 +16,5 @@ export async function authMiddleware(c: Context<HonoEnv>, next: Next) {
   c.set("user", session.user);
   c.set("session", session.session);
 
-  await next();
+  return await next();
 }

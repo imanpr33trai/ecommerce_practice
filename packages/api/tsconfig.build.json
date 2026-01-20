@@ -6,11 +6,9 @@
     "outDir": "dist",
     "rootDir": "src",
     "declaration": true,
-    "declarationMap": true,
-    "module": "esnext",
     "allowImportingTsExtensions": false,
-    "target": "es2022",
-    "moduleResolution": "bundler"
+    "declarationMap": true,
+    "sourceMap": true
   },
   "include": [
     "src"

@@ -5,11 +5,10 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import type { HonoEnv } from "@ecomerceNextjs/api";
 
-const app = new Hono<HonoEnv>();
+const app = new Hono<HonoEnv>()
 
-app.use(logger());
+  .use(logger())
 
-app
   .use(
     "*",
     cors({

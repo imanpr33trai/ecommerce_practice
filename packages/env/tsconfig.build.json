@@ -2,12 +2,11 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "noEmit": false,
+        "allowImportingTsExtensions": false,
         "emitDeclarationOnly": false,
         "outDir": "dist",
-        "allowImportingTsExtensions": false,
         "rootDir": "src",
         "declaration": true,
-        "declarationMap": true,
         "sourceMap": true
     },
     "include": [

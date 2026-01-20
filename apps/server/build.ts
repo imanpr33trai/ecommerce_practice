@@ -1,16 +1,45 @@
-// build.ts
+import { resolve } from "path";
 
-await Bun.build({
-  entrypoints: ["src/index.ts"],
-  outdir: "dist",
+async function buildServer() {
+  try {
+    console.log("🔨 Building server with Bun...");
 
-  format: "esm",
-  target: "browser",
-  sourcemap: true,
-  minify: true,
+    const result = await Bun.build({
+      entrypoints: [resolve("src/index.ts")],
+      outdir: resolve("dist"),
+      target: "node",
+      format: "esm",
+      sourcemap: true,
+      minify: process.env.NODE_ENV === "production",
+      external: [
+        "hono",
+        "@hono/node-server",
+        "@ecomerceNextjs/api",
+        "@ecomerceNextjs/auth",
+        "@ecomerceNextjs/db",
+        "@ecomerceNextjs/env",
+        "@prisma/client",
+        "@prisma/adapter-pg",
+        ".prisma/client",
+        "pg",
+        "dotenv",
+      ],
+    });
 
-  // ADD 'hono' TO EXTERNAL
-  // This allows Vercel's scanner to detect the hono dependency in the final bundle
-  external: ["hono", "@ecomerceNextjs/*", "@prisma/client", "@prisma/adapter-pg", ".prisma/client"],
-});
-export {};
+    if (!result.success) {
+      console.error("❌ Build failed");
+      for (const log of result.logs) {
+        console.error(log);
+      }
+      process.exit(1);
+    }
+
+    console.log("✅ Server built successfully!");
+    console.log(`📦 Output: dist/index.js`);
+  } catch (error) {
+    console.error("❌ Build failed:", error);
+    process.exit(1);
+  }
+}
+
+buildServer();

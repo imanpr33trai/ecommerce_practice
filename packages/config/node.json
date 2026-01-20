@@ -3,9 +3,16 @@
   "display": "Node / Bun",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "types": ["bun"],
+    "lib": [
+      "ES2022"
+    ],
+    "types": [
+      "bun"
+    ],
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "outDir": "dist",
+    "rootDir": "src"
   }
 }

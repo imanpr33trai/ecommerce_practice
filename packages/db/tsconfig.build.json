@@ -2,15 +2,13 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "noEmit": false,
+        "allowImportingTsExtensions": false,
         "emitDeclarationOnly": false,
         "outDir": "dist",
         "rootDir": "src",
         "declaration": true,
         "declarationMap": true,
-        "module": "esnext",
-        "allowImportingTsExtensions": false,
-        "target": "es2022",
-        "moduleResolution": "bundler"
+        "sourceMap": true
     },
     "include": [
         "src"

@@ -1,21 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "buildCommand": "bun run build",
   "bunVersion": "1.x",
+  "buildCommand": "bun run build:tsc",
   "installCommand": "bun install",
-  "framework": "hono",
   "outputDirectory": "dist",
-  "cleanUrls": true,
-  "trailingSlash": false,
+  "framework": "hono",
   "env": {
-    "NODE_ENV": "production",
-    "VERCEL_EXPERIMENTAL_BACKENDS": "1"
+    "NODE_ENV": "production"
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "src": "/(.*)",
+      "dest": "/index.js"
     }
   ]
 }

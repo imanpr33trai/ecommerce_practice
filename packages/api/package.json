@@ -8,8 +8,9 @@
   },
   "type": "module",
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "build:types": "tsc --emitDeclarationOnly",
-    "build": "bun tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
     "type-check": "tsc --noEmit",
     "lint": "biome check ."
   },

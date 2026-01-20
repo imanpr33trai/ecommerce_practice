@@ -29,9 +29,8 @@
     "dev": "bun --env-file=../../.env.development run --hot src/index.ts",
     "type-check": "tsc --noEmit",
     "build": "bun run build.ts",
-
+    "build:watch": "tsc -p tsconfig.build.json --watch",
     "build:tsc": "tsc -p tsconfig.build.json",
-    "build:vercel": "node build-v-node.mjs",
     "start": "bun --env-file=../../.env.development dist/index.js"
   },
   "type": "module"
