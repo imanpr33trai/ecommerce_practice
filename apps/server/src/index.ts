@@ -6,9 +6,7 @@ import { logger } from "hono/logger";
 import type { HonoEnv } from "@ecomerceNextjs/api";
 
 const app = new Hono<HonoEnv>()
-
   .use(logger())
-
   .use(
     "*",
     cors({
@@ -18,26 +16,22 @@ const app = new Hono<HonoEnv>()
       credentials: true,
     }),
   )
-
   .basePath("/api")
-
   .route("/", api)
-
   .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
-
   .get("/", (c) => c.text("OK"));
 
 /* ------------------------------------------------------------------ */
-/* EXPORTS — THIS IS WHAT VERCEL + BUN + NODE EXPECT */
+/* EXPORTS — shape compatible with Vercel Node & Bun runtimes         */
 /* ------------------------------------------------------------------ */
 
-// export const fetch = app.fetch;
+export const fetch = app.fetch;
 export type AppType = typeof app;
-export default app;
 
-// export default {
-//   fetch,
-// };
+// Default export as an object with a `fetch` handler works on Vercel.
+export default {
+  fetch,
+};
 
 // /* ------------------------------------------------------------------ */
 // /* LOCAL DEV ONLY (SAFE) */

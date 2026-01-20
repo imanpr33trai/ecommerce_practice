@@ -4,7 +4,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 // import dotenv from "dotenv";
 import { Pool } from "pg";
 
-import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "../prisma/generated/client"; // path may differ
+import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "./generated/client"; // path may differ
 
 // dotenv.config({
 //   path: "../../../apps/server/.env", quiet: true, override: true, debug: true

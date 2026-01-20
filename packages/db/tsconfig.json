@@ -1,6 +1,9 @@
 {
   "extends": "@ecomerceNextjs/config/node.json",
-  "include": ["src/**/*.ts", "prisma/**/*.ts"],
+  "include": ["src/**/*.ts", "prisma/*.ts"],
+  "compilerOptions": {
+    "rootDir": "."
+  },
   "tsc-alias": {
     "resolveFullPaths": true
   },

@@ -1,13 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "bunVersion": "1.x",
   "buildCommand": "bun run build",
   "installCommand": "bun install",
   "outputDirectory": "dist",
   "framework": "hono",
   "env": {
     "NODE_ENV": "production"
+  },
+  "functions": {
+    "index.js": {
+      "runtime": "nodejs20.x"
+    }
   },
   "routes": [
     {
