@@ -10,7 +10,7 @@
     "@ecomerceNextjs/config": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
     "@types/bun": "^1.3.3",
-    "@types/node": "^20",
+    "@types/node": "^25",
     "@types/pg": "^8.11.11",
     "prisma": "^7.2.0",
     "typescript": "^5.8.2"
