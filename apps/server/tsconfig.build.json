@@ -1,13 +1,14 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": false,
+    "allowImportingTsExtensions": false,
     "outDir": "dist",
     "rootDir": "src",
-    "declaration": false,
     "sourceMap": true,
-    "allowImportingTsExtensions": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "lib": ["ES2022"],
+    "types": ["bun", "node"]
   },
   "tsc-alias": {
     "resolveFullPaths": true

@@ -1,0 +1,124 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # ==========================================
+  # PR Size Check
+  # ==========================================
+  check-size:
+    name: Check PR Size
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR size
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          CHANGED_LINES=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1 | awk '{print $4}')
+          
+          echo "Changed files: $CHANGED_FILES"
+          echo "Changed lines: $CHANGED_LINES"
+          
+          if [ $CHANGED_FILES -gt 50 ]; then
+            echo "::warning::This PR changes $CHANGED_FILES files. Consider breaking it into smaller PRs."
+          fi
+          
+          if [ $CHANGED_LINES -gt 1000 ]; then
+            echo "::warning::This PR changes $CHANGED_LINES lines. Consider breaking it into smaller PRs."
+          fi
+
+  # ==========================================
+  # Conventional Commits Check
+  # ==========================================
+  check-commits:
+    name: Check Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check conventional commits
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+
+  # ==========================================
+  # Lint Dockerfile
+  # ==========================================
+  lint-dockerfile:
+    name: Lint Dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/Dockerfile
+          ignore: DL3008,DL3018
+          verbose: true
+
+  # ==========================================
+  # Docker Compose Validation
+  # ==========================================
+  validate-compose:
+    name: Validate Docker Compose
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose files
+        run: |
+          docker compose -f docker-compose.yml config > /dev/null
+          docker compose -f docker-compose.override.yml config > /dev/null
+          echo "All Docker Compose files are valid!"
+
+  # ==========================================
+  # Check for Secrets
+  # ==========================================
+  detect-secrets:
+    name: Detect Secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run GitLeaks
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: "detect --source . --verbose --redact"
+        continue-on-error: true
+
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+        continue-on-error: true

@@ -7,7 +7,7 @@
       "@ecomerceNextjs/auth": ["packages/auth/dist"],
       "@ecomerceNextjs/db": ["packages/db/dist"],
       "@ecomerceNextjs/env": ["packages/env/dist"],
-      "@ecomerceNextjs/ui/*": ["packages/ui/src/*"]
+      "@workspace/ui/*": ["packages/ui/src/*"]
     }
   },
   "references": [
@@ -28,9 +28,6 @@
     },
     {
       "path": "packages/auth"
-    },
-    {
-      "path": "packages/config/base.json"
     },
     {
       "path": "packages/env"

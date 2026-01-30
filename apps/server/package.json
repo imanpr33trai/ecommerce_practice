@@ -31,7 +31,7 @@
     "build": "bun run tsc -p tsconfig.build.json && bun run tsc-alias -p tsconfig.build.json",
     "build:watch": "tsc -p tsconfig.build.json --watch",
     "build:tsc": "tsc -p tsconfig.build.json",
-    "start": "bun --env-file=../../.env.development dist/index.js"
+    "start": "bun dist/index.js"
   },
   "type": "module",
   "engines": {

@@ -1,0 +1,250 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  # ==========================================
+  # Create Release
+  # ==========================================
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from input or tag
+        id: get_version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s" --no-merges)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" --no-merges ${LAST_TAG}..HEAD)
+          fi
+          
+          # Categorize commits
+          FEATURES=$(echo "$COMMITS" | grep -E "^-\s*feat" || echo "")
+          FIXES=$(echo "$COMMITS" | grep -E "^-\s*fix" || echo "")
+          DOCS=$(echo "$COMMITS" | grep -E "^-\s*docs" || echo "")
+          OTHER=$(echo "$COMMITS" | grep -v -E "^-\s*(feat|fix|docs)" || echo "")
+          
+          NOTES="## What's Changed\n\n"
+          
+          if [ ! -z "$FEATURES" ]; then
+            NOTES="${NOTES}### ✨ Features\n${FEATURES}\n\n"
+          fi
+          
+          if [ ! -z "$FIXES" ]; then
+            NOTES="${NOTES}### 🐛 Bug Fixes\n${FIXES}\n\n"
+          fi
+          
+          if [ ! -z "$DOCS" ]; then
+            NOTES="${NOTES}### 📚 Documentation\n${DOCS}\n\n"
+          fi
+          
+          if [ ! -z "$OTHER" ]; then
+            NOTES="${NOTES}### 📝 Other Changes\n${OTHER}\n\n"
+          fi
+          
+          NOTES="${NOTES}## Docker Images\n\n"
+          NOTES="${NOTES}- \`ghcr.io/${{ github.repository }}-web:${VERSION}\`\n"
+          NOTES="${NOTES}- \`ghcr.io/${{ github.repository }}-server:${VERSION}\`\n"
+          
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.release_notes.outputs.NOTES }}
+          draft: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, 'beta') || contains(steps.get_version.outputs.VERSION, 'alpha') || contains(steps.get_version.outputs.VERSION, 'rc') }}
+          files: |
+            LICENSE
+            README.md
+
+  # ==========================================
+  # Build and Push Production Images
+  # ==========================================
+  build-production:
+    name: Build Production Images
+    runs-on: ubuntu-latest
+    needs: create-release
+    strategy:
+      matrix:
+        service: [web, server]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push production image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          target: runner-${{ matrix.service }}
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.get_version.outputs.VERSION }}
+            ghcr.io/${{ github.repository }}-${{ matrix.service }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            APP_NAME=${{ matrix.service }}
+            NODE_VERSION=22-alpine
+
+      - name: Sign container image
+        uses: sigstore/cosign-installer@v3
+        continue-on-error: true
+
+      - name: Sign the published Docker image
+        if: success()
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign sign --yes ghcr.io/${{ github.repository }}-${{ matrix.service }}:${{ steps.get_version.outputs.VERSION }} || true
+        continue-on-error: true
+
+  # ==========================================
+  # Deploy to Production
+  # ==========================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-production
+    environment:
+      name: production
+      url: https://your-production-url.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying version ${{ steps.get_version.outputs.VERSION }} to production..."
+          # Add your production deployment commands here
+          # Example using SSH:
+          # ssh user@production-server "cd /app && docker compose pull && docker compose up -d"
+
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment..."
+          # Add health check commands here
+          # curl -f https://your-production-url.com/health || exit 1
+
+      - name: Notify on success
+        if: success()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "🚀 Production deployment successful!",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "🚀 Production Deployment Successful"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Version:*\n${{ steps.get_version.outputs.VERSION }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commit:*\n${{ github.sha }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "❌ Production deployment failed!",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "❌ Production Deployment Failed"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Please check the workflow logs for details."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true

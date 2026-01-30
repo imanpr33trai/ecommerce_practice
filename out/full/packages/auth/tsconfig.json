@@ -1,0 +1,11 @@
+{
+  "extends": "@ecomerceNextjs/config/node.json",
+  "include": ["src/**/*.ts", "../env/src/env.d.ts"],
+  "compilerOptions": {
+    "rootDir": "./src"
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

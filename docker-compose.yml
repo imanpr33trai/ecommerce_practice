@@ -1,11 +1,10 @@
-version: "3.9"
 
 services:
   # ================================
   # PostgreSQL Database
   # ================================
   postgres:
-    image: postgres:latest
+    image: postgres:16-alpine
     container_name: monorepo-postgres
     restart: unless-stopped
     ports:
@@ -20,10 +19,16 @@ services:
     networks:
       - monorepo-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-monorepo}"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # ================================
   # Hono Backend Server
@@ -31,7 +36,11 @@ services:
   server:
     build:
       context: .
-      dockerfile: apps/server/Dockerfile
+      dockerfile: docker/Dockerfile
+      target: runner-server
+      args:
+        APP_NAME: server
+        NODE_VERSION: 22-alpine
     container_name: monorepo-server
     restart: unless-stopped
     ports:
@@ -40,26 +49,29 @@ services:
       NODE_ENV: production
       PORT: 3001
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-monorepo}?schema=public
-      # Add your other env vars here
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - monorepo-network
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    volumes:
+      - server_logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
 
   # ================================
   # Next.js Frontend
@@ -67,7 +79,11 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: docker/Dockerfile
+      target: runner-web
+      args:
+        APP_NAME: web
+        NODE_VERSION: 22-alpine
     container_name: monorepo-web
     restart: unless-stopped
     ports:
@@ -75,26 +91,29 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      # Backend API URL (internal Docker network)
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://server:3001}
-      # Database URL (if Next.js needs direct DB access)
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-monorepo}?schema=public
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     networks:
       - monorepo-network
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    volumes:
+      - web_logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
 
 # ================================
 # Networks
@@ -103,6 +122,10 @@ networks:
   monorepo-network:
     driver: bridge
     name: monorepo-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
 
 # ================================
 # Volumes
@@ -111,3 +134,9 @@ volumes:
   postgres_data:
     driver: local
     name: monorepo-postgres-data
+  server_logs:
+    driver: local
+    name: monorepo-server-logs
+  web_logs:
+    driver: local
+    name: monorepo-web-logs
