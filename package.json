@@ -73,7 +73,11 @@
     "dev:web": "turbo -F web dev",
     "docker:build": "docker compose build",
     "docker:run": "docker compose up",
-    "ui:add": "bunx shadcn@latest add"
+    "ui:add": "bunx shadcn@latest add",
+    "deploy:web": "cd apps/web && vercel --prod",
+    "deploy:server": "cd apps/server && vercel --prod",
+    "deploy:all": "./scripts/deploy.sh all production",
+    "deploy:preview": "./scripts/deploy.sh all preview"
   },
   "type": "module",
   "workspaces": [

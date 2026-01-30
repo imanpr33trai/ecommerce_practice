@@ -1,13 +1,51 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": " bun install",
-  "buildCommand": " bun run build",
-  "outputDirectory": "apps/server/dist",
+  "installCommand": "cd ../../ && bun install --frozen-lockfile",
+  "buildCommand": "cd ../../ && bun run build:server",
+  "outputDirectory": "dist",
   "framework": "hono",
   "env": {
     "NODE_ENV": "production"
   },
+  "functions": {
+    "dist/index.js": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=86400, stale-while-revalidate=3600"
+        }
+      ]
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",

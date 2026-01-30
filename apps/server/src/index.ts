@@ -1,24 +1,45 @@
 import { api } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
+import { env } from "@ecomerceNextjs/env";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { requestId } from "hono/request-id";
+import { secureHeaders } from "hono/secure-headers";
+import { timing } from "hono/timing";
 import type { HonoEnv } from "@ecomerceNextjs/api";
 
 const app = new Hono<HonoEnv>()
+  .use(
+    "*",
+    secureHeaders({
+      contentSecurityPolicy: false, // Disable CSP for API
+      crossOriginEmbedderPolicy: false,
+    }),
+  )
+  .use("*", requestId())
+  .use("*", timing())
   .use(logger())
   .use(
     "*",
     cors({
-      origin: process.env.CORS_ORIGIN || "http://localhost:3001",
+      origin: env.CORS_ORIGIN || "http://localhost:3001",
       allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-      allowHeaders: ["Content-Type", "Authorization"],
+      allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
       credentials: true,
     }),
   )
   .basePath("/api")
   .route("/", api)
   .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
+  .get("/health", (c) =>
+    c.json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      version: "1.0.0",
+      environment: env.NODE_ENV,
+    }),
+  )
   .get("/", (c) => c.text("OK"));
 
 /* ------------------------------------------------------------------ */
