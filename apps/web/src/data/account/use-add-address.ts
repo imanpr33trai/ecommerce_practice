@@ -11,7 +11,7 @@ import { client } from "@/lib/hono-client";
 import type { GetAddAddressRequest } from "@/data/account/types";
 
 const addAddress = async (json: GetAddAddressRequest["json"]) => {
-  const res = await client.api.address.$post({ json });
+  const res = await client.address.$post({ json });
 
   if (!res.ok) {
     throw new Error("Failed to add the addresss");

@@ -11,7 +11,7 @@ const fetchProductReviews = async (
   productId: string,
   query: GetReviewProductListRequest["query"],
 ): Promise<GetReviewProductListResponse> => {
-  const res = await client.api.review[":productId"].$get({
+  const res = await client.review[":productId"].$get({
     param: { productId },
     query,
   });

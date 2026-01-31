@@ -1,9 +1,13 @@
 {
-  "extends": "@ecomerceNextjs/config/node.json",
-  "include": ["src/**/*.ts", "prisma/*.ts", "../../packages/env/src/env.d.ts"],
+  "extends": "../config/node.json",
+  "include": ["src/**/*.ts", "prisma/**/*.ts", "../../packages/env/src/env.d.ts"],
   "compilerOptions": {
+    "composite": false,
+    "outDir": "./dist",
     "rootDir": ".",
-    "types": ["bun", "node"]
+    "allowImportingTsExtensions": false,
+    "noEmit": false,
+    "sourceMap": true
   },
   "tsc-alias": {
     "resolveFullPaths": true

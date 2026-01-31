@@ -10,7 +10,7 @@ import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "./generated/cl
 //   path: "../../../apps/server/.env", quiet: true, override: true, debug: true
 // });
 
-const pool = new Pool({ connectionString: Bun.env.DATABASE_URL || "" });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL || "" });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 // Initialize Prisma Client

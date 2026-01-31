@@ -1,16 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "installCommand": "cd ../../ && bun install --frozen-lockfile",
-  "buildCommand": "cd ../../ && bun run build:server",
+  "buildCommand": "cd ../../ && pnpm run build:server",
   "outputDirectory": "dist",
-  "framework": "hono",
-  "env": {
-    "NODE_ENV": "production"
-  },
+  "installCommand": "cd ../../ && pnpm install --frozen-lockfile",
   "functions": {
-    "dist/index.js": {
-      "runtime": "nodejs18.x",
+    "src/index.ts": {
+      "runtime": "nodejs20.x",
       "maxDuration": 30
     }
   },
@@ -32,7 +27,7 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
         }
       ]
     },
@@ -41,15 +36,16 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "s-maxage=86400, stale-while-revalidate=3600"
+          "value": "s-maxage=300, stale-while-revalidate=30"
         }
       ]
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/index.js"
+      "source": "/(.*)",
+      "destination": "/src/index.ts"
     }
-  ]
+  ],
+  "regions": ["iad1"]
 }

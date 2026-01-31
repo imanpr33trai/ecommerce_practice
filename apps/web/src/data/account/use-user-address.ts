@@ -5,7 +5,7 @@ import { client } from "@/lib/hono-client";
 import { accountKeys } from "./keys";
 
 const fetchAddress = async () => {
-  const res = await client.api.address.$get();
+  const res = await client.address.$get();
 
   if (!res.ok) {
     throw new Error("Failed to fetch the addresses");

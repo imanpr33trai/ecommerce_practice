@@ -2,10 +2,10 @@ import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query"
 import { HTTPException } from "hono/http-exception";
 
 import {
-  type GetProductListRequest,
-  type GetProductsListResponse,
-  type ProductFilters,
-  productKeys,
+    type GetProductListRequest,
+    type GetProductsListResponse,
+    type ProductFilters,
+    productKeys,
 } from "@/data/product";
 import { client } from "@/lib/hono-client";
 import { toQuery } from "@/lib/to-query";
@@ -13,7 +13,7 @@ import { toQuery } from "@/lib/to-query";
 export const fetchProducts = async (
   filters: GetProductListRequest["query"],
 ): Promise<GetProductsListResponse> => {
-  const res = await client.api.product.$get({
+  const res = await client.product.$get({
     query: filters,
   });
 

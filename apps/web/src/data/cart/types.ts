@@ -2,8 +2,8 @@ import type { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/hono-client";
 
-const $getCartList = client.api.cart.$get;
-const $getCartAddItem = client.api.cart.$post;
+const $getCartList = client.cart.$get;
+const $getCartAddItem = client.cart.$post;
 // 1. The Full Cart Output (includes subtotal, totalItems, items array)
 export type GetCartUserListResponse = InferResponseType<typeof $getCartList>;
 

@@ -8,29 +8,24 @@
   },
   "devDependencies": {
     "@ecomerceNextjs/config": "workspace:*",
-    "@ecomerceNextjs/env": "workspace:*",
-    "@types/bun": "^1.3.3",
+
     "@types/node": "^20",
     "@types/pg": "^8.11.11",
     "prisma": "^7.2.0",
     "typescript": "^5.8.2"
   },
   "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
+
   "name": "@ecomerceNextjs/db",
   "peerDependencies": {
     "typescript": "^5.8.2"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "build": "prisma generate && tsup ",
     "build:types": "tsc --emitDeclarationOnly",
-    "dev": "tsc -p tsconfig.build.json --watch",
+    "dev": "tsup --watch",
     "type-check": "tsc --noEmit",
     "lint": "biome check .",
     "db:generate": "prisma generate",

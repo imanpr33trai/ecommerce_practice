@@ -11,7 +11,7 @@ import { client } from "@/lib/hono-client";
 export const fetchProductLanding = async (
   filters: GetProductListRequest["query"],
 ): Promise<GetProductsListResponse> => {
-  const res = await client.api.product.$get({
+  const res = await client.product.$get({
     query: filters,
   });
 

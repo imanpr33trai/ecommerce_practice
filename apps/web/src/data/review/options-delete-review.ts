@@ -8,7 +8,7 @@ export const useReviewDeleteMutation = (productId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reviewId: string) => {
-      const res = await client.api.review[":id"].$delete({
+      const res = await client.review[":id"].$delete({
         param: { id: reviewId },
       });
 

@@ -1,6 +1,8 @@
 {
-  "extends": "@ecomerceNextjs/config/nextjs.json",
+  "extends": "../../packages/config/nextjs.json",
   "compilerOptions": {
+    "composite": true,
+    "allowImportingTsExtensions": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -13,7 +15,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../../packages/env/src/env.d.ts"
+    "../../packages/env/src/env.d.ts",
+    "../../packages/ui/src/**/*.ts",
+    "../../packages/ui/src/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }

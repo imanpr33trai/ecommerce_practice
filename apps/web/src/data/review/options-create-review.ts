@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { reviewKeys } from "@/data/review/keys";
-import { client } from "@/lib/hono-client";
 import type { GetReviewProductCreateRequest } from "@/data/review/types";
+import { client } from "@/lib/hono-client";
 
 export const useReviewCreateMutation = (productId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (json: GetReviewProductCreateRequest["json"]) => {
-      const res = await client.api.review.$post({ json });
+      const res = await client.review.$post({ json });
 
       const result = await res.json();
 

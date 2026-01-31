@@ -12,10 +12,10 @@ import type { HonoEnv } from "./context";
 
 export * from "./context";
 
-export const api = new Hono<HonoEnv>()
-  .onError(errorHandler)
+export const api = new Hono<HonoEnv>().onError(errorHandler);
 
-  // 📦 Routes
+// 📦 Routes
+const routes = api
   .route("/cart", cart)
   .route("/review", review)
   .route("/address", address)
@@ -23,3 +23,5 @@ export const api = new Hono<HonoEnv>()
   .route("/wish", wish)
   .route("/user", user)
   .route("/order", order);
+
+export type AppType = typeof routes;

@@ -11,7 +11,7 @@ import { client } from "@/lib/hono-client";
 import type { GetUpdateAddressRequest } from "@/data/account/types";
 
 const updateAdd = async ({ id, json }: { id: string; json: GetUpdateAddressRequest["json"] }) => {
-  const res = await client.api.address[":id"].$put({
+  const res = await client.address[":id"].$put({
     param: { id },
     json,
   });

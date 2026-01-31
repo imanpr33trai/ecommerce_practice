@@ -12,7 +12,7 @@ import type { GetProfileResponse } from "@/data/account/types";
  * 1. Standalone Function (Fetcher)
  */
 const getProfileFn = async () => {
-  const res = await client.api.user.me.$get();
+  const res = await client.user.me.$get();
 
   const result = (await res.json().catch(() => ({
     success: false,

@@ -1,17 +1,17 @@
 import {
-  mutationOptions,
-  type QueryClient,
-  useMutation,
-  useQueryClient,
+    mutationOptions,
+    type QueryClient,
+    useMutation,
+    useQueryClient,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { accountKeys } from "@/data/account/keys";
-import { client } from "@/lib/hono-client";
 import type { GetSetDefaultResponse } from "@/data/account/types";
+import { client } from "@/lib/hono-client";
 
 const setDefaultAddressFn = async ({ id }: { id: string }) => {
-  const res = await client.api.address[":id"].default.$put({
+  const res = await client.address[":id"].default.$put({
     param: { id },
   });
   const result = (await res.json()) as GetSetDefaultResponse;

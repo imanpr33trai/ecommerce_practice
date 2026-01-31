@@ -1,14 +1,7 @@
 {
   "files": [],
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@ecomerceNextjs/api": ["packages/api/dist"],
-      "@ecomerceNextjs/auth": ["packages/auth/dist"],
-      "@ecomerceNextjs/db": ["packages/db/dist"],
-      "@ecomerceNextjs/env": ["packages/env/dist"],
-      "@workspace/ui/*": ["packages/ui/src/*"]
-    }
+    "baseUrl": "./"
   },
   "references": [
     {

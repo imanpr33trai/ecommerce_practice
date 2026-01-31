@@ -5,7 +5,7 @@ import { client } from "@/lib/hono-client";
 import { productKeys } from "./keys";
 
 const productDetailFn = async (slug: string) => {
-  const res = await client.api.product[":slug"].$get({ param: { slug } });
+  const res = await client.product[":slug"].$get({ param: { slug } });
 
   if (!res.ok) {
     throw new Error("Fetch Failed");

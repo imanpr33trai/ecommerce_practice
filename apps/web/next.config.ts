@@ -6,16 +6,12 @@ const nextConfig: NextConfig = {
     "@ecomerceNextjs/api",
     "@ecomerceNextjs/auth",
     "@ecomerceNextjs/db",
-    "@ecomerceNextjs/env",
   ],
   typedRoutes: true,
   reactCompiler: true,
   experimental: {
     optimizeCss: true,
-    optimizeServerReact: true,
-    turbotrace: {
-      logLevel: "error",
-    },
+    optimizeServerReact: true, // Temporarily disabled due to build issues
   },
   compress: true,
   poweredByHeader: false,
@@ -34,7 +30,6 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: true,
   },
-  swcMinify: true,
   async headers() {
     return [
       {

@@ -1,11 +1,11 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { wishKeys } from "@/data/wish/keys";
-import { client } from "@/lib/hono-client";
 import type { GetWishListIDsResponse } from "@/data/wish/types";
+import { client } from "@/lib/hono-client";
 
 const fetchWishListIDs = async (): Promise<GetWishListIDsResponse | null> => {
-  const res = await client.api.wish.ids.$get();
+  const res = await client.wish.ids.$get();
 
   if (res.status === 401) {
     return null;

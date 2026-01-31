@@ -1,10 +1,22 @@
 {
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "clean": "rimraf .next out",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
+  },
   "dependencies": {
     "@ecomerceNextjs/api": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
-    "@ecomerceNextjs/env": "workspace:*",
-
     "@tanstack/react-form": "^1.12.3",
     "@tanstack/react-query": "^5.90.12",
     "@workspace/ui": "workspace:*",
@@ -36,15 +48,7 @@
     "tailwindcss": "^4.1.10",
     "typescript": "^5.8.2"
   },
-  "name": "web",
-  "private": true,
-  "scripts": {
-    "dev": "bun --env-file=../../.env.development --bun next dev -p 3001",
-    "build": "bun --env-file=../../.env.production --bun next build",
-    "start": "bun --bun next start -p 3001",
-    "type-check": "tsc --noEmit",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write ."
-  },
-  "version": "0.1.0"
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

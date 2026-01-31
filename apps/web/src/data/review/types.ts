@@ -3,13 +3,13 @@ import type { InferRequestType, InferResponseType } from "hono/client";
 
 import { client } from "@/lib/hono-client";
 
-const $getReviewProductList = client.api.review[":productId"].$get;
+const $getReviewProductList = client.review[":productId"].$get;
 
-const $getReviewProductSummary = client.api.review[":productId"].summary.$get;
+const $getReviewProductSummary = client.review[":productId"].summary.$get;
 
-const $getReviewUserList = client.api.review.me.$get;
+const $getReviewUserList = client.review.me.$get;
 
-const $getReviewCreate = client.api.review.$post;
+const $getReviewCreate = client.review.$post;
 
 // Validation Schema
 export const ReviewListSchema = z.object({

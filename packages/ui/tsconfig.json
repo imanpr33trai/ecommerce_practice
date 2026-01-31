@@ -1,11 +1,15 @@
 {
-  "extends": "@ecomerceNextjs/config/react-library.json",
+  "extends": "../config/react-library.json",
   "compilerOptions": {
+    "composite": true,
     "baseUrl": ".",
-    "rootDir": "src",
+    "rootDir": ".",
     "paths": {
       "@workspace/ui/*": ["src/*"]
-    }
+    },
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "sourceMap": true
   },
   "include": ["src/**/*", "../../packages/env/src/env.d.ts"],
   "exclude": ["node_modules", "dist"]

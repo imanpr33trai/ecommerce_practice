@@ -7,7 +7,7 @@ import { client } from "@/lib/hono-client";
 export const wishCountOptions = (sessionExists: boolean) => {
   return queryOptions({
     queryFn: async () => {
-      const res = await client.api.wish.ids.$get();
+      const res = await client.wish.ids.$get();
 
       if (!res.ok) {
         throw new Error("Failed to fetch the count");

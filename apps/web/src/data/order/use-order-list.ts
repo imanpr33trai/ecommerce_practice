@@ -4,7 +4,7 @@ import { orderKeys } from "@/data/order/keys";
 import { client } from "@/lib/hono-client";
 
 const listOrdersFn = async () => {
-  const res = await client.api.order.$get();
+  const res = await client.order.$get();
 
   if (!res.ok) {
     // Type-safe property access for the union type

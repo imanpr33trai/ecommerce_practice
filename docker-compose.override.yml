@@ -16,11 +16,7 @@ services:
       LOG_LEVEL: debug
     volumes:
       - ./apps/server:/app/apps/server
-      - ./packages:/app/packages
-      - server_node_modules:/app/node_modules
-    command: ["bun", "--watch", "apps/server/src/index.ts"]
 
-  web:
     build:
       target: builder
     environment:

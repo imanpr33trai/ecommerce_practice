@@ -8,7 +8,7 @@ import { cartKeys } from "./keys";
 import type { GetCartUserListResponse } from "./types";
 
 export const fetchUserCart = async (): Promise<GetCartUserListResponse | null> => {
-  const res = await client.api.cart.$get();
+  const res = await client.cart.$get();
 
   if (res.status === 401) {
     return null;

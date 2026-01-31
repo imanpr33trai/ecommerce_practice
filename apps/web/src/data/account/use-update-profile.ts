@@ -2,8 +2,8 @@ import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-q
 import { toast } from "sonner";
 
 import { accountKeys } from "@/data/account/keys";
-import { client } from "@/lib/hono-client";
 import type { GetUpdateProfileRequest, GetUpdateProfileResponse } from "@/data/account/types";
+import { client } from "@/lib/hono-client";
 
 /**
  * Type inference for Request (JSON body) and Response
@@ -13,7 +13,7 @@ import type { GetUpdateProfileRequest, GetUpdateProfileResponse } from "@/data/a
  * 1. Standalone Function (Fetcher)
  */
 const updateProfileFn = async (json: GetUpdateProfileRequest) => {
-  const res = await client.api.user.me.$put({
+  const res = await client.user.me.$put({
     json,
   });
 

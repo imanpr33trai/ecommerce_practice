@@ -1,8 +1,0 @@
-{
-  "extends": "@ecomerceNextjs/config/node.json",
-  "include": ["src/**/*.ts"],
-  "tsc-alias": {
-    "resolveFullPaths": true
-  },
-  "exclude": ["node_modules", "dist"]
-}
