@@ -5,9 +5,7 @@
   "private": true,
   "scripts": {
     "lint": "biome check .",
-    "build:types": "tsc --emitDeclarationOnly",
-    "dev": "tsc --watch",
-    "type-check": "tsc --noEmit",
+
     "ui:add": "shadcn@latest add"
   },
   "dependencies": {
@@ -46,8 +44,10 @@
     "typescript": "^5.8.2"
   },
   "exports": {
-    ".": "./dist/index.js",
-    "./components/*": "./dist/components/ui/*.js",
-    "./styles.css": "./dist/index.css"
+    "./globals.css": "./src/styles/globals.css",
+    "./postcss.config": "./postcss.config.mjs",
+    "./lib/*": "./src/lib/*.ts",
+    "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts"
   }
 }

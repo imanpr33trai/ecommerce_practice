@@ -4,12 +4,12 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { auth } from "@ecomerceNextjs/auth";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { createQueryClient } from "@/lib/query-client";
 
+import { auth } from "../../../../../../packages/auth/src/index";
 import { AccountContent } from "./_components/account-content";
 
 interface PageProps {

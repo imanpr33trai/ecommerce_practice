@@ -7,6 +7,7 @@ export default defineConfig({
   // tsconfig: "./tsconfig.json",
   dts: true,
   clean: true,
+  splitting: true,
   // Ensure the generated client is NOT bundled into the output,
   // but let tsup know where to find the types for .d.ts generation.
   external: [/^\.prisma\/client/],

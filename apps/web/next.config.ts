@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "@workspace/ui",
     "@ecomerceNextjs/api",
-    "@ecomerceNextjs/auth",
+
     "@ecomerceNextjs/db",
   ],
+  serverExternalPackages: ["better-auth", "@ecomerceNextjs/auth"],
   typedRoutes: true,
   reactCompiler: true,
   experimental: {
@@ -30,33 +31,33 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: true,
   },
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "X-DNS-Prefetch-Control",
-            value: "on",
-          },
-          {
-            key: "X-XSS-Protection",
-            value: "1; mode=block",
-          },
-        ],
-      },
-    ];
-  },
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: "/api/:path*",
-          destination: "https://your-server.vercel.app/api/:path*",
-        },
-      ],
-    };
-  },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: "/(.*)",
+  //       headers: [
+  //         {
+  //           key: "X-DNS-Prefetch-Control",
+  //           value: "on",
+  //         },
+  //         {
+  //           key: "X-XSS-Protection",
+  //           value: "1; mode=block",
+  //         },
+  //       ],
+  //     },
+  //   ];
+  // },
+  // async rewrites() {
+  //   return {
+  //     beforeFiles: [
+  //       {
+  //         source: "/api/:path*",
+  //         destination: "https://your-server.vercel.app/api/:path*",
+  //       },
+  //     ],
+  //   };
+  // },
 };
 
 export default nextConfig;

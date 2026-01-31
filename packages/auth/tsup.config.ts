@@ -6,5 +6,6 @@ export default defineConfig({
   format: ["esm"],
   dts: true,
   clean: true,
-  external: ["@repo/db"], // Don't bundle the DB into the Auth package
+  splitting: true,
+  external: ["@ecomerceNextjs/db"], // Don't bundle the DB into the Auth package
 });

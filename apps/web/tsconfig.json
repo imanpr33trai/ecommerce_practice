@@ -17,6 +17,7 @@
     ".next/types/**/*.ts",
     "../../packages/env/src/env.d.ts",
     "../../packages/ui/src/**/*.ts",
+    "../../packages/auth/src/**/*.ts",
     "../../packages/ui/src/**/*.tsx"
   ],
   "exclude": ["node_modules"]
