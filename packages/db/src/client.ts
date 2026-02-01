@@ -1,4 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
+import "dotenv/config";
 
 import { PrismaClient } from "../prisma/generated/client";
 
@@ -21,5 +22,3 @@ export const prisma: PrismaClient =
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
-
-// export default prisma;

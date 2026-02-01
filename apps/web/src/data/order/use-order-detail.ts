@@ -1,8 +1,8 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { orderKeys } from "@/data/order/keys";
-import type { GetOrderSingleRespose } from "@/data/order/type";
 import { client } from "@/lib/hono-client";
+import type { GetOrderSingleRespose } from "@/data/order/type";
 
 const getOrderDetailFn = async (id: string) => {
   const res = await client.order[":id"].$get({

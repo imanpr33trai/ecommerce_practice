@@ -15,10 +15,10 @@ const Breadcrumbs: React.FC = () => {
   }
 
   return (
-    <nav className="flex items-center text-sm text-gray-500 mb-6 animate-fade-in overflow-x-auto no-scrollbar whitespace-nowrap">
+    <nav className="no-scrollbar mb-6 flex animate-fade-in items-center overflow-x-auto whitespace-nowrap text-gray-500 text-sm">
       <Link
         href="/"
-        className="hover:text-black flex items-center transition-colors"
+        className="flex items-center transition-colors hover:text-black"
       >
         <Home
           size={14}
@@ -53,7 +53,7 @@ const Breadcrumbs: React.FC = () => {
                 href={{
                   pathname: to,
                 }}
-                className="hover:text-black transition-colors"
+                className="transition-colors hover:text-black"
               >
                 {displayName}
               </Link>

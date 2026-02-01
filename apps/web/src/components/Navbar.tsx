@@ -117,26 +117,26 @@ const Navbar: React.FC = () => {
   // Calculate count safely (default to 0 if loading/error/guest)
   const cartItemCount = cart?.data.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
   return (
-    <nav className="sticky top-0 z-50 py-4 px-4 md:px-8 bg-nest-bg/90 backdrop-blur-md transition-all duration-300 border-b border-gray-200/50">
+    <nav className="sticky top-0 z-50 border-gray-200/50 border-b bg-nest-bg/90 px-4 py-4 backdrop-blur-md transition-all duration-300 md:px-8">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2 bg-white rounded-full px-6 py-3 shadow-sm min-w-max hover:shadow-md transition-all group"
+            className="group flex min-w-max items-center gap-2 rounded-full bg-white px-6 py-3 shadow-sm transition-all hover:shadow-md"
           >
-            <div className="w-6 h-6 bg-black rounded-full grid place-items-center group-hover:scale-110 transition-transform">
-              <span className="text-white text-xs font-bold">N</span>
+            <div className="grid h-6 w-6 place-items-center rounded-full bg-black transition-transform group-hover:scale-110">
+              <span className="font-bold text-white text-xs">N</span>
             </div>
             <span className="font-bold text-lg tracking-tight">Nestify</span>
           </Link>
 
           <div
             ref={searchRef}
-            className="hidden md:block flex-1 max-w-2xl relative z-50"
+            className="relative z-50 hidden max-w-2xl flex-1 md:block"
           >
             <form
               onSubmit={handleFormSubmit}
-              className="flex bg-white rounded-full p-1.5 shadow-sm items-center pl-6 hover:shadow-md transition-shadow focus-within:ring-2 focus-within:ring-black/5 relative z-20"
+              className="relative z-20 flex items-center rounded-full bg-white p-1.5 pl-6 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-black/5 hover:shadow-md"
             >
               <input
                 type="text"
@@ -144,13 +144,13 @@ const Navbar: React.FC = () => {
                 onFocus={() => setIsFocused(true)}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search collection..."
-                className="flex-1 bg-transparent border-none outline-none text-sm placeholder:text-gray-400 font-medium min-w-0"
+                className="min-w-0 flex-1 border-none bg-transparent font-medium text-sm outline-none placeholder:text-gray-400"
               />
               <Button
                 type="submit"
                 size="icon"
                 variant="primary"
-                className="w-10! h-10! shrink-0"
+                className="h-10! w-10! shrink-0"
               >
                 {isSuggestionsLoading ? (
                   <Loader2
@@ -165,11 +165,11 @@ const Navbar: React.FC = () => {
 
             {/* DROPDOWN RESULTS */}
             {isFocused && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in z-10">
+              <div className="absolute top-full right-0 left-0 z-10 mt-2 animate-fade-in overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl">
                 {/* SCENARIO A: User is typing -> Show Live Suggestions */}
                 {searchQuery.length > 0 ? (
                   <div>
-                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-4 py-2 bg-gray-50/50">
+                    <div className="bg-gray-50/50 px-4 py-2 font-bold text-gray-400 text-xs uppercase tracking-wider">
                       Suggestions
                     </div>
 
@@ -182,9 +182,9 @@ const Navbar: React.FC = () => {
                               addToSearchHistory(searchQuery);
                               setIsFocused(false);
                             }}
-                            className="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition-colors group"
+                            className="group flex items-center gap-4 px-4 py-3 transition-colors hover:bg-gray-50"
                           >
-                            <div className="relative w-10 h-10 rounded-md overflow-hidden bg-gray-100 shrink-0">
+                            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-gray-100">
                               <Image
                                 src={product.images.at(0)?.url || "images/caroline.jpg"}
                                 alt={product.name}
@@ -192,19 +192,19 @@ const Navbar: React.FC = () => {
                                 className="object-cover"
                               />
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate text-gray-900 group-hover:text-black">
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-medium text-gray-900 text-sm group-hover:text-black">
                                 {product.name}
                               </p>
-                              <p className="text-xs text-gray-500">{product.category?.name}</p>
+                              <p className="text-gray-500 text-xs">{product.category?.name}</p>
                             </div>
-                            <span className="text-xs font-bold text-gray-400 group-hover:text-black transition-colors">
+                            <span className="font-bold text-gray-400 text-xs transition-colors group-hover:text-black">
                               ${product.price}
                             </span>
                           </Link>
                         ))
                       : !isSuggestionsLoading && (
-                          <div className="p-4 text-center text-sm text-gray-500">
+                          <div className="p-4 text-center text-gray-500 text-sm">
                             No products found.
                           </div>
                         )}
@@ -213,7 +213,7 @@ const Navbar: React.FC = () => {
                     {suggestions && suggestions.data.items.length > 0 && (
                       <div
                         onClick={() => submitSearch(searchQuery)}
-                        className="p-3 text-center border-t border-gray-100 cursor-pointer hover:bg-gray-50 text-xs font-bold text-blue-600 uppercase tracking-wide"
+                        className="cursor-pointer border-gray-100 border-t p-3 text-center font-bold text-blue-600 text-xs uppercase tracking-wide hover:bg-gray-50"
                       >
                         View all results for "{searchQuery}"
                       </div>
@@ -223,7 +223,7 @@ const Navbar: React.FC = () => {
                   /* SCENARIO B: Input Empty -> Show History */
                   searchHistory.length > 0 && (
                     <div>
-                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider px-4 py-2 bg-gray-50/50">
+                      <div className="bg-gray-50/50 px-4 py-2 font-bold text-gray-400 text-xs uppercase tracking-wider">
                         Recent Searches
                       </div>
                       {searchHistory.map((term, idx) => (
@@ -233,7 +233,7 @@ const Navbar: React.FC = () => {
                             setSearchQuery(term);
                             submitSearch(term);
                           }}
-                          className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer group"
+                          className="group flex cursor-pointer items-center justify-between px-4 py-3 hover:bg-gray-50"
                         >
                           <div className="flex items-center gap-3 text-gray-600">
                             <Clock size={14} />
@@ -242,7 +242,7 @@ const Navbar: React.FC = () => {
                           <button
                             type="button"
                             onClick={(e) => removeHistoryItem(e, term)}
-                            className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                            className="text-gray-300 opacity-0 transition-all hover:text-red-500 group-hover:opacity-100"
                           >
                             <X size={14} />
                           </button>
@@ -260,7 +260,7 @@ const Navbar: React.FC = () => {
               <Link href={{ pathname: "/account" }}>
                 <Button
                   variant="icon"
-                  className=" md:flex relative group hidden sm:flex max-h-[46] min-h-[46]"
+                  className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex"
                   active={isActive("/account")}
                 >
                   <UserIcon size={20} />
@@ -271,7 +271,7 @@ const Navbar: React.FC = () => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="max-h-[46] min-h-[46] md:flex relative group hidden sm:flex"
+                  className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex"
                 >
                   <LogIn
                     size={16}
@@ -285,7 +285,7 @@ const Navbar: React.FC = () => {
             <Link href="/wish">
               <Button
                 variant="icon"
-                className="relative group hidden sm:flex"
+                className="group relative hidden sm:flex"
                 active={isActive("/wishlist")}
               >
                 <Heart
@@ -293,7 +293,7 @@ const Navbar: React.FC = () => {
                   className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
                 />
                 {wishCount.data.length > 0 && (
-                  <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-black rounded-full text-white text-[10px] grid place-items-center border border-white">
+                  <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 place-items-center rounded-full border border-white bg-black text-[10px] text-white">
                     {wishCount.data.length ?? 0}
                   </span>
                 )}
@@ -302,12 +302,12 @@ const Navbar: React.FC = () => {
 
             <Button
               variant="icon"
-              className="relative hover:bg-black hover:text-white transition-colors"
+              className="relative transition-colors hover:bg-black hover:text-white"
               onClick={toggleCart}
             >
               <ShoppingBag size={20} />
               {cartItemCount > 0 && (
-                <span className="absolute top-0 right-0 -mt-1 -mr-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] grid place-items-center border border-white animate-fade-in">
+                <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 animate-fade-in place-items-center rounded-full border border-white bg-red-500 text-[10px] text-white">
                   {cartItemCount}
                 </span>
               )}
@@ -325,7 +325,7 @@ const Navbar: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-nest-bg p-4 shadow-xl rounded-b-3xl border-t border-gray-200 flex flex-col gap-4 animate-slide-up z-50">
+        <div className="absolute top-full left-0 z-50 flex w-full animate-slide-up flex-col gap-4 rounded-b-3xl border-gray-200 border-t bg-nest-bg p-4 shadow-xl md:hidden">
           <form
             onSubmit={handleFormSubmit}
             className="flex gap-2"
@@ -335,7 +335,7 @@ const Navbar: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="flex-1 bg-white rounded-2xl px-4 py-3 outline-none"
+              className="flex-1 rounded-2xl bg-white px-4 py-3 outline-none"
             />
             <Button
               type="submit"
@@ -348,25 +348,25 @@ const Navbar: React.FC = () => {
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="p-4 bg-white rounded-2xl font-medium"
+            className="rounded-2xl bg-white p-4 font-medium"
           >
             Home
           </Link>
           <Link
             href="/product"
             onClick={() => setIsOpen(false)}
-            className="p-4 bg-white rounded-2xl font-medium"
+            className="rounded-2xl bg-white p-4 font-medium"
           >
             Shop Collection
           </Link>
           <Link
             href="/wish"
             onClick={() => setIsOpen(false)}
-            className="p-4 bg-white rounded-2xl font-medium flex justify-between"
+            className="flex justify-between rounded-2xl bg-white p-4 font-medium"
           >
             Wishlist
             {wishCount.data.length > 0 && (
-              <span className="bg-black text-white px-2 rounded-full text-xs py-1">
+              <span className="rounded-full bg-black px-2 py-1 text-white text-xs">
                 {wishCount.data.length}
               </span>
             )}
@@ -376,7 +376,7 @@ const Navbar: React.FC = () => {
             <Link
               href={{ pathname: "/account" }}
               onClick={() => setIsOpen(false)}
-              className="p-4 bg-white rounded-2xl font-medium"
+              className="rounded-2xl bg-white p-4 font-medium"
             >
               Account
             </Link>
@@ -384,7 +384,7 @@ const Navbar: React.FC = () => {
             <Link
               href="/log-in"
               onClick={() => setIsOpen(false)}
-              className="p-4 bg-white rounded-2xl font-medium"
+              className="rounded-2xl bg-white p-4 font-medium"
             >
               Sign In
             </Link>

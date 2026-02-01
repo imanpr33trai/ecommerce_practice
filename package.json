@@ -13,7 +13,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "pnpm -r --sort run build",
+    "build": "pnpm run clean:build && pnpm -r --sort run build",
     "build:types": "pnpm -r run build:types",
     "build:web": "pnpm --filter web run build",
     "build:server": "pnpm --filter server run build",

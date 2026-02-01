@@ -2,8 +2,8 @@ import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-q
 import { toast } from "sonner";
 
 import { accountKeys } from "@/data/account/keys";
-import type { GetDeleteAddressResponse } from "@/data/account/types";
 import { client } from "@/lib/hono-client";
+import type { GetDeleteAddressResponse } from "@/data/account/types";
 
 const deleteAddressFn = async ({ id }: { id: string }) => {
   const res = await client.address[":id"].$delete({

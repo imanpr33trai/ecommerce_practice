@@ -1,4 +1,3 @@
-
 import type { MiddlewareHandler } from "hono";
 
 // Simple rate limiting implementation for Vercel

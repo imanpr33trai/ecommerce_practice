@@ -8,11 +8,11 @@ import { Suspense } from "react";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
+import { authClient } from "@/lib/auth-client";
 import { createQueryClient } from "@/lib/query-client";
 
 // import { auth } from "../../../../../../packages/auth/src/index";
 import { AccountContent } from "./_components/account-content";
-import { authClient } from "@/lib/auth-client";
 
 interface PageProps {
   params: Promise<{ slug?: string[] }>; // Note the optional '?' as slug can be undefined

@@ -9,7 +9,6 @@ import { ArrowRight, Heart, ShoppingBag, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
 import Button from "@/components/Button";
-import { useShop } from "@/context/ShopContext";
 import { useCartAddItemMutation } from "@/data/cart";
 import { useProudctDetailQuery } from "@/data/product";
 import { useWishToggleMutation } from "@/data/wish";
@@ -19,7 +18,6 @@ import { authClient } from "@/lib/auth-client";
 export default function ModalProduct({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const router = useRouter();
-  const { quickViewProduct, setQuickViewProduct } = useShop();
 
   // --- HOOKS ---
   const { data: product, isLoading } = useProudctDetailQuery(slug);
@@ -102,21 +100,18 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
 
       {/* Modal Content */}
       <div
-        className={`
-          relative bg-white w-full max-w-6xl h-[90vh] md:h-[800px] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row
-          transform transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
-          ${isAnimating ? "scale-100 translate-y-0 opacity-100" : "scale-95 translate-y-12 opacity-0"}
+        className={`relative flex h-[90vh] w-full max-w-6xl transform flex-col overflow-hidden rounded-[2.5rem] bg-white shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] md:h-[800px] md:flex-row ${isAnimating ? "translate-y-0 scale-100 opacity-100" : "translate-y-12 scale-95 opacity-0"}
         `}
       >
         <button
           onClick={onDismiss}
-          className="absolute top-3 right-3 z-20 p-2 bg-white/80 backdrop-blur-md rounded-full hover:bg-black hover:text-white transition-all duration-300"
+          className="absolute top-3 right-3 z-20 rounded-full bg-white/80 p-2 backdrop-blur-md transition-all duration-300 hover:bg-black hover:text-white"
         >
           <X size={24} />
         </button>
 
         {/* Left: Image */}
-        <div className="w-full md:w-[60%] h-[40vh] md:h-full bg-gray-100 relative group">
+        <div className="group relative h-[40vh] w-full bg-gray-100 md:h-full md:w-[60%]">
           {product.images[0] && (
             <Image
               src={product.images[0].url}
@@ -127,12 +122,12 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
           )}
           <div className="absolute bottom-8 left-8 flex gap-3">
             {product.isNew && (
-              <span className="bg-black text-white px-4 py-2 rounded-full text-xs font-bold uppercase">
+              <span className="rounded-full bg-black px-4 py-2 font-bold text-white text-xs uppercase">
                 New Arrival
               </span>
             )}
             {product.isOnSale && (
-              <span className="bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold uppercase">
+              <span className="rounded-full bg-red-500 px-4 py-2 font-bold text-white text-xs uppercase">
                 Sale
               </span>
             )}
@@ -140,42 +135,42 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
         </div>
 
         {/* Right: Details */}
-        <div className="w-full md:w-[40%] flex flex-col h-full bg-white overflow-y-auto no-scrollbar p-8 md:p-10">
+        <div className="no-scrollbar flex h-full w-full flex-col overflow-y-auto bg-white p-8 md:w-[40%] md:p-10">
           <div className="mb-auto">
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+            <div className="mb-2 flex items-start justify-between">
+              <span className="font-bold text-gray-400 text-xs uppercase tracking-widest">
                 {product.category?.name}
               </span>
-              <div className="flex items-center gap-1 text-yellow-500 bg-yellow-50 px-2 py-1 rounded-lg">
+              <div className="flex items-center gap-1 rounded-lg bg-yellow-50 px-2 py-1 text-yellow-500">
                 <Star
                   size={14}
                   fill="currentColor"
                 />
-                <span className="text-sm font-bold text-black">
+                <span className="font-bold text-black text-sm">
                   {product.rating?.toFixed(1) || "New"}
                 </span>
               </div>
             </div>
 
-            <h2 className="text-4xl font-light mb-4 leading-tight">{product.name}</h2>
+            <h2 className="mb-4 font-light text-4xl leading-tight">{product.name}</h2>
 
-            <div className="flex items-baseline gap-3 mb-8">
-              <span className="text-3xl font-medium">${Number(product.price).toFixed(2)}</span>
+            <div className="mb-8 flex items-baseline gap-3">
+              <span className="font-medium text-3xl">${Number(product.price).toFixed(2)}</span>
               {product.discountPrice && (
-                <span className="text-lg text-gray-400 line-through">
+                <span className="text-gray-400 text-lg line-through">
                   ${Number(product.discountPrice).toFixed(2)}
                 </span>
               )}
             </div>
 
-            <p className="text-gray-600 leading-relaxed mb-8 text-lg">
+            <p className="mb-8 text-gray-600 text-lg leading-relaxed">
               {product.description || "No description available."}
             </p>
 
             {/* Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-4">
+                <span className="mb-4 block font-bold text-gray-400 text-xs uppercase tracking-widest">
                   Select Finish
                 </span>
                 <div className="flex gap-4">
@@ -184,7 +179,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
                       key={color}
                       type="button"
                       onClick={() => setActiveColor(color)}
-                      className={`w-12 h-12 rounded-full border-2 transition-all duration-300 ${activeColor === color ? "border-black scale-110" : "border-gray-200 hover:border-gray-400"}`}
+                      className={`h-12 w-12 rounded-full border-2 transition-all duration-300 ${activeColor === color ? "scale-110 border-black" : "border-gray-200 hover:border-gray-400"}`}
                       style={{ backgroundColor: color.toLowerCase() }}
                       title={color}
                     />
@@ -195,23 +190,23 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
           </div>
 
           {/* Footer Actions */}
-          <div className="space-y-4 pt-8 border-t border-gray-100 mt-8">
+          <div className="mt-8 space-y-4 border-gray-100 border-t pt-8">
             <div className="flex gap-3">
               <Button
-                className="flex-1 h-14 text-lg group bg-black text-white hover:bg-gray-800"
+                className="group h-14 flex-1 bg-black text-lg text-white hover:bg-gray-800"
                 onClick={handleAddToCart}
                 disabled={isAdding || product.stock === 0}
               >
                 {isAdding ? "Adding..." : product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                 <ShoppingBag
                   size={20}
-                  className="ml-2 group-hover:-translate-y-1 transition-transform"
+                  className="ml-2 transition-transform group-hover:-translate-y-1"
                 />
               </Button>
 
               <button
                 onClick={handleWishlist}
-                className={`w-14 h-14 rounded-full border border-gray-200 flex items-center justify-center transition-all ${isWishlisted ? "bg-red-50 border-red-200" : "hover:bg-gray-50"}`}
+                className={`flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 transition-all ${isWishlisted ? "border-red-200 bg-red-50" : "hover:bg-gray-50"}`}
               >
                 <Heart
                   size={24}
@@ -226,7 +221,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
                 // Hard Navigation to bypass modal
                 window.location.href = `/product/${product.slug}`;
               }}
-              className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black flex items-center justify-center gap-1 mx-auto mt-2"
+              className="mx-auto mt-2 flex items-center justify-center gap-1 font-bold text-gray-400 text-xs uppercase tracking-widest hover:text-black"
             >
               View Full Details Page <ArrowRight size={12} />
             </ShadcnButton>

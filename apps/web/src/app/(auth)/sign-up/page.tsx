@@ -50,22 +50,22 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-nest-bg">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-nest-bg p-4">
       <div className="mb-8">
         <Link
           href="/"
-          className="flex items-center gap-2 bg-white rounded-full px-6 py-3 shadow-sm"
+          className="flex items-center gap-2 rounded-full bg-white px-6 py-3 shadow-sm"
         >
-          <div className="w-6 h-6 bg-black rounded-full grid place-items-center">
-            <span className="text-white text-xs font-bold">N</span>
+          <div className="grid h-6 w-6 place-items-center rounded-full bg-black">
+            <span className="font-bold text-white text-xs">N</span>
           </div>
           <span className="font-bold text-lg tracking-tight">Nestify</span>
         </Link>
       </div>
 
-      <BentoCard className="w-full max-w-md p-8 bg-white">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-light mb-2">Create Account</h1>
+      <BentoCard className="w-full max-w-md bg-white p-8">
+        <div className="mb-8 text-center">
+          <h1 className="mb-2 font-light text-3xl">Create Account</h1>
           <p className="text-gray-500 text-sm">Join Nestify for exclusive deals.</p>
         </div>
 
@@ -75,7 +75,7 @@ export default function SignUpPage() {
         >
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              <Label className="mb-2 block font-bold text-gray-500 text-xs uppercase tracking-wider">
                 First Name
               </Label>
               <Input
@@ -83,11 +83,11 @@ export default function SignUpPage() {
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full rounded-2xl border-none bg-gray-50 px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-black/5"
               />
             </div>
             <div>
-              <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+              <Label className="mb-2 block font-bold text-gray-500 text-xs uppercase tracking-wider">
                 Last Name
               </Label>
               <Input
@@ -95,12 +95,12 @@ export default function SignUpPage() {
                 required
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full rounded-2xl border-none bg-gray-50 px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-black/5"
               />
             </div>
           </div>
           <div>
-            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+            <Label className="mb-2 block font-bold text-gray-500 text-xs uppercase tracking-wider">
               Email
             </Label>
             <Input
@@ -109,18 +109,18 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="hello@example.com"
-              className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
+              className="w-full rounded-2xl border-none bg-gray-50 px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-black/5"
             />
           </div>
           <div>
-            <Label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+            <Label className="mb-2 block font-bold text-gray-500 text-xs uppercase tracking-wider">
               Password
             </Label>
             <Input
               type="password"
               placeholder="Create a password"
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-50 rounded-2xl px-5 py-3 text-sm border-none outline-none focus:ring-2 focus:ring-black/5"
+              className="w-full rounded-2xl border-none bg-gray-50 px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-black/5"
             />
           </div>
 
@@ -134,11 +134,11 @@ export default function SignUpPage() {
           </div>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-gray-500 text-sm">
           Already have an account?{" "}
           <Link
             href="/log-in"
-            className="text-black font-bold hover:underline"
+            className="font-bold text-black hover:underline"
           >
             Log in
           </Link>

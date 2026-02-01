@@ -1,4 +1,4 @@
-import prisma from "@ecomerceNextjs/db";
+import { prisma } from "@ecomerceNextjs/db";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { openAPI } from "better-auth/plugins";
@@ -7,9 +7,9 @@ export const auth = betterAuth<BetterAuthOptions>({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  baseURL: "https://ecommerce-practice-server.vercel.app",
+  baseURL: process.env.BETTER_AUTH,
   trustedOrigins: [
-    "https://ecommerce-practice-server.vercel.app/", // Next.js dev
+    "http://localhost:3001", // Next.js dev
     // API server
     // Add production URLs
   ],

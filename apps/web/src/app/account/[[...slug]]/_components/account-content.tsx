@@ -13,6 +13,8 @@ import {
   Package,
   Settings,
 } from "lucide-react";
+// import type { User } from "better-auth";
+import type { Session } from "@ecomerceNextjs/auth";
 
 import Image from "@/components/AppImage";
 import Button from "@/components/Button";
@@ -23,8 +25,6 @@ import { AccountOrders } from "./account-orders";
 import { AccountOverview } from "./account-overview";
 import { AccountReviews } from "./account-reviews";
 import { AccountSettings } from "./account-settings";
-// import type { User } from "better-auth";
-import type { Session } from "@ecomerceNextjs/auth";
 
 interface Props {
   activeTab: string;
@@ -49,17 +49,17 @@ export function AccountContent({ activeTab, user }: Props) {
   ];
 
   return (
-    <div className="p-4 md:px-8 max-w-[1600px] mx-auto pb-12 min-h-screen">
+    <div className="mx-auto min-h-screen max-w-[1600px] p-4 pb-12 md:px-8">
       {/* Header */}
-      <div className="flex items-end justify-between mb-8 mt-4">
+      <div className="mt-4 mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-4xl font-light mb-2">Hello, {user.name}</h1>
+          <h1 className="mb-2 font-light text-4xl">Hello, {user.name}</h1>
           <p className="text-gray-500">Manage your orders and preferences.</p>
         </div>
         <Button
           variant="outline"
           onClick={handleLogout}
-          className="text-red-500 border-red-200 hover:bg-red-50"
+          className="border-red-200 text-red-500 hover:bg-red-50"
         >
           <LogOut
             size={16}
@@ -69,11 +69,11 @@ export function AccountContent({ activeTab, user }: Props) {
         </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 mt-8">
+      <div className="mt-8 flex flex-col gap-8 md:flex-row">
         {/* Sidebar */}
-        <aside className="w-full md:w-72 shrink-0 space-y-8">
+        <aside className="w-full shrink-0 space-y-8 md:w-72">
           <div className="flex items-center gap-4 px-2">
-            <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden relative">
+            <div className="relative h-12 w-12 overflow-hidden rounded-full bg-gray-200">
               {user.image && (
                 <Image
                   src={user.image}
@@ -85,7 +85,7 @@ export function AccountContent({ activeTab, user }: Props) {
             </div>
             <div>
               <h2 className="font-bold leading-tight">{user.name}</h2>
-              <p className="text-xs text-gray-500 truncate max-w-[150px]">{user.email}</p>
+              <p className="max-w-[150px] truncate text-gray-500 text-xs">{user.email}</p>
             </div>
           </div>
 
@@ -94,9 +94,7 @@ export function AccountContent({ activeTab, user }: Props) {
               <Link
                 key={item.id}
                 href={{ pathname: item.path }}
-                className={`
-                   flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 group
-                   ${activeTab === item.id ? "bg-black text-white shadow-lg" : "hover:bg-white text-gray-600"}
+                className={`group flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-300 ${activeTab === item.id ? "bg-black text-white shadow-lg" : "text-gray-600 hover:bg-white"}
                 `}
               >
                 <div className="flex items-center gap-3">

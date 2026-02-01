@@ -90,7 +90,7 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({
 
     <div className="mt-auto flex gap-3 pt-2">
       <Button
-        className={`hover:-translate-y-0.5 h-12 flex-1 font-bold text-sm shadow-lg transition-all duration-300 hover:shadow-xl ${isAdding ? "bg-green-600" : "bg-black text-white hover:bg-gray-800"}`}
+        className={`h-12 flex-1 font-bold text-sm shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${isAdding ? "bg-green-600" : "bg-black text-white hover:bg-gray-800"}`}
         onClick={onAddToCart}
       >
         {isAdding ? "Added" : "Add to Cart"}

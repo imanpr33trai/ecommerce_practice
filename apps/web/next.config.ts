@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
     "@ecomerceNextjs/api",
     "@ecomerceNextjs/auth",
     "@ecomerceNextjs/db",
-
   ],
   typedRoutes: true,
   reactCompiler: true,

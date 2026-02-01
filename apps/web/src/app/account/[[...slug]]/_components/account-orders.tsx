@@ -16,8 +16,8 @@ export function AccountOrders() {
   const { data: orders, isLoading: ordersLoading } = useOrderListQuery();
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <h2 className="text-3xl font-light mb-6">Order History</h2>
+    <div className="animate-fade-in space-y-6">
+      <h2 className="mb-6 font-light text-3xl">Order History</h2>
       {ordersLoading ? (
         <Skeleton className="h-64 w-full rounded-2xl" />
       ) : orders?.data.length === 0 ? (
@@ -27,13 +27,13 @@ export function AccountOrders() {
           {orders?.data.map((order) => (
             <BentoCard
               key={order.id}
-              className="p-6 bg-white flex flex-col md:flex-row gap-6 items-center"
+              className="flex flex-col items-center gap-6 bg-white p-6 md:flex-row"
             >
-              <div className="w-20 h-20 bg-gray-100 rounded-xl overflow-hidden shrink-0 grid place-items-center">
+              <div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-xl bg-gray-100">
                 <Package className="text-gray-400" />
               </div>
-              <div className="flex-1 w-full text-center md:text-left">
-                <div className="flex justify-between items-center mb-1">
+              <div className="w-full flex-1 text-center md:text-left">
+                <div className="mb-1 flex items-center justify-between">
                   {/*<h4 className="font-bold text-lg">Order #{order.id.slice(-6)}</h4>*/}
                   {order.items.map((item) => (
                     <h4
@@ -44,17 +44,17 @@ export function AccountOrders() {
                     </h4>
                   ))}
                   <span
-                    className={`text-xs font-bold px-2 py-1 rounded-full ${order.status === "DELIVERED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                    className={`rounded-full px-2 py-1 font-bold text-xs ${order.status === "DELIVERED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
                   >
                     {order.status}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 mb-2">
+                <p className="mb-2 text-gray-500 text-sm">
                   Placed on {new Date(order.createdAt).toLocaleDateString()}
                 </p>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="font-medium">{formatCurrency(Number(order.totalAmount))}</span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                  <span className="h-1 w-1 rounded-full bg-gray-300"></span>
                   <span>{order.items.length} Items</span>
                 </div>
               </div>

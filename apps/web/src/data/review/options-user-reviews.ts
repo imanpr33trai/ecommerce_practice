@@ -1,11 +1,11 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { reviewKeys } from "@/data/review/keys";
-import type {
-    GetReviewProductUserListRequest,
-    GetReviewProductUserListResponse,
-} from "@/data/review/types";
 import { client } from "@/lib/hono-client";
+import type {
+  GetReviewProductUserListRequest,
+  GetReviewProductUserListResponse,
+} from "@/data/review/types";
 
 const fetchUserReviewsFn = async (query: GetReviewProductUserListRequest["query"]) => {
   const res = await client.review.me.$get({

@@ -48,46 +48,46 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
   };
 
   return (
-    <div className="lg:col-span-4 flex flex-col gap-4">
-      <BentoCard className="p-6 bg-white flex flex-col justify-center gap-2">
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500 uppercase tracking-widest">
+    <div className="flex flex-col gap-4 lg:col-span-4">
+      <BentoCard className="flex flex-col justify-center gap-2 bg-white p-6">
+        <div className="flex items-center justify-between">
+          <span className="text-gray-500 text-sm uppercase tracking-widest">
             {product.category?.name}
           </span>
-          <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+          <div className="flex items-center gap-1 rounded-lg bg-yellow-50 px-2 py-1">
             <Star
               size={14}
-              className="text-yellow-500 fill-yellow-500"
+              className="fill-yellow-500 text-yellow-500"
             />
-            <span className="text-sm font-bold">
+            <span className="font-bold text-sm">
               {product.rating}{" "}
-              <span className="text-gray-400 font-normal">
+              <span className="font-normal text-gray-400">
                 ({productReviews?.data.items.length || 0})
               </span>
             </span>
           </div>
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-5xl font-light tracking-tighter">${product.price}</span>
+          <span className="font-light text-5xl tracking-tighter">${product.price}</span>
           {product.isOnSale && (
-            <span className="text-xl text-gray-400 line-through">
+            <span className="text-gray-400 text-xl line-through">
               ${Math.round(product.price * 1.5)}
             </span>
           )}
         </div>
-        <p className="text-gray-600 mt-2 leading-relaxed">{product.description}</p>
+        <p className="mt-2 text-gray-600 leading-relaxed">{product.description}</p>
       </BentoCard>
 
-      <BentoCard className="p-6 bg-white">
-        <h3 className="font-bold mb-4">Select Color</h3>
-        <div className="flex gap-3 mb-8">
+      <BentoCard className="bg-white p-6">
+        <h3 className="mb-4 font-bold">Select Color</h3>
+        <div className="mb-8 flex gap-3">
           {(product.colors || ["#D9D9D9", "#3A3A3A", "#8C7A6B"]).map((color, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => setActiveColor(color)}
-              className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${
-                activeColor === color ? "border-black scale-110" : "border-transparent"
+              className={`h-10 w-10 rounded-full border-2 transition-all duration-200 ${
+                activeColor === color ? "scale-110 border-black" : "border-transparent"
               }`}
               style={{ backgroundColor: color }}
               title={color}
@@ -112,24 +112,24 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
         </div>
       </BentoCard>
 
-      <BentoCard className="flex-1 p-6 flex flex-col justify-center gap-4 bg-[#E8E8E6]">
+      <BentoCard className="flex flex-1 flex-col justify-center gap-4 bg-[#E8E8E6] p-6">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
             <Truck size={18} />
           </div>
           <div>
             <h4 className="font-bold text-sm">Free Shipping</h4>
-            <p className="text-xs text-gray-500">On orders over $200</p>
+            <p className="text-gray-500 text-xs">On orders over $200</p>
           </div>
         </div>
-        <div className="w-full h-px bg-gray-300" />
+        <div className="h-px w-full bg-gray-300" />
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
             <ShieldCheck size={18} />
           </div>
           <div>
             <h4 className="font-bold text-sm">2 Year Warranty</h4>
-            <p className="text-xs text-gray-500">Full coverage included</p>
+            <p className="text-gray-500 text-xs">Full coverage included</p>
           </div>
         </div>
       </BentoCard>

@@ -1,13 +1,13 @@
-import type { HonoEnv } from "@ecomerceNextjs/api";
 import { api } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
-
+import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import { timing } from "hono/timing";
+import type { HonoEnv } from "@ecomerceNextjs/api";
 
 const app = new Hono<HonoEnv>()
   .use(
@@ -41,6 +41,11 @@ const app = new Hono<HonoEnv>()
     }),
   )
   .get("/", (c) => c.text("OK"));
+
+serve({
+  fetch: app.fetch,
+  port: 3000,
+});
 
 /* ------------------------------------------------------------------ */
 /* EXPORTS — Node.js runtime handler for Vercel                       */

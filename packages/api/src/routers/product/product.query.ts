@@ -51,7 +51,7 @@ export const productQueries = {
       case "rating":
         orderBy = [{ reviews: { _count: "desc" } }];
         break;
-      case "newest":
+
       default:
         orderBy = [{ createdAt: "desc" }];
         break;

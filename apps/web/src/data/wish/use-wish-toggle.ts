@@ -1,14 +1,14 @@
 import {
-    mutationOptions,
-    type QueryClient,
-    useMutation,
-    useQueryClient,
+  mutationOptions,
+  type QueryClient,
+  useMutation,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { wishKeys } from "@/data/wish/keys";
-import type { GetWishListIDsResponse, GetWishToggleResponse } from "@/data/wish/types";
 import { client } from "@/lib/hono-client";
+import type { GetWishListIDsResponse, GetWishToggleResponse } from "@/data/wish/types";
 
 /**
  * 1. Standalone Function

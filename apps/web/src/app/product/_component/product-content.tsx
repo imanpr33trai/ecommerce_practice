@@ -80,8 +80,8 @@ export function ProductContent() {
   if (isError || !PRODUCTS) {
     console.error("Product Load Error:", error);
     return (
-      <div className="p-4 md:px-8 max-w-400 mx-auto min-h-screen flex flex-col items-center justify-center text-red-500">
-        <h2 className="text-xl font-bold">Unable to load products</h2>
+      <div className="mx-auto flex min-h-screen max-w-400 flex-col items-center justify-center p-4 text-red-500 md:px-8">
+        <h2 className="font-bold text-xl">Unable to load products</h2>
         <p className="mb-4 text-gray-500">{error?.message || "Unknown error occurred"}</p>
         <Button onClick={() => window.location.reload()}>Retry</Button>
       </div>
@@ -92,10 +92,10 @@ export function ProductContent() {
 
   // --- 5. SUCCESS RENDER ---
   return (
-    <div className="p-4 md:px-8 max-w-[1600px] mx-auto animate-fade-in relative">
-      <div className="flex justify-between items-end mb-8 relative z-[200]">
+    <div className="relative mx-auto max-w-[1600px] animate-fade-in p-4 md:px-8">
+      <div className="relative z-[200] mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-5xl font-light mb-2">
+          <h1 className="mb-2 font-light text-5xl">
             {filters.categories.length === 1
               ? filters.categories[0]
               : categoryParam === "All"
@@ -105,11 +105,11 @@ export function ProductContent() {
           </h1>
           <p className="text-gray-500">Curated specifically for modern living.</p>
         </div>
-        <div className="flex gap-2 relative">
+        <div className="relative flex gap-2">
           {compareList.length > 0 && (
             <Button
               onClick={() => setCompareOpen(true)}
-              className="rounded-full !px-4 bg-black text-white animate-fade-in"
+              className="!px-4 animate-fade-in rounded-full bg-black text-white"
             >
               <ArrowLeftRight
                 size={16}
@@ -126,7 +126,7 @@ export function ProductContent() {
           >
             <Button
               variant="outline"
-              className={`rounded-full !px-4 transition-all duration-300 ${showFilters ? "bg-black text-white border-black" : ""}`}
+              className={`!px-4 rounded-full transition-all duration-300 ${showFilters ? "border-black bg-black text-white" : ""}`}
             >
               <Filter
                 size={16}
@@ -136,10 +136,10 @@ export function ProductContent() {
             </Button>
 
             <div
-              className={`absolute top-full right-0 mt-2 z-[150] origin-top-right transition-all duration-300 ease-premium transform ${
+              className={`absolute top-full right-0 z-[150] mt-2 origin-top-right transform transition-all duration-300 ease-premium ${
                 showFilters
-                  ? "opacity-100 scale-100 translate-y-0 pointer-events-auto visible"
-                  : "opacity-0 scale-95 -translate-y-2 pointer-events-none invisible"
+                  ? "pointer-events-auto visible translate-y-0 scale-100 opacity-100"
+                  : "pointer-events-none invisible -translate-y-2 scale-95 opacity-0"
               }`}
             >
               <ModalFilter
@@ -151,7 +151,7 @@ export function ProductContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {PRODUCTS.data.items.map((product) => (
           <ProductCard
             key={product.id}
@@ -159,12 +159,12 @@ export function ProductContent() {
           />
         ))}
 
-        <BentoCard className="bg-black text-white p-8 flex flex-col justify-center items-center text-center col-span-1 lg:col-span-1 row-span-1 border border-gray-800 h-[440px]">
-          <h3 className="text-3xl font-light mb-4">
+        <BentoCard className="col-span-1 row-span-1 flex h-[440px] flex-col items-center justify-center border border-gray-800 bg-black p-8 text-center text-white lg:col-span-1">
+          <h3 className="mb-4 font-light text-3xl">
             Summer <br />
             Clearance
           </h3>
-          <p className="text-gray-400 text-sm mb-6">Up to 60% off on selected items.</p>
+          <p className="mb-6 text-gray-400 text-sm">Up to 60% off on selected items.</p>
           <Button className="bg-white text-black hover:bg-gray-200">View Sale</Button>
         </BentoCard>
       </div>

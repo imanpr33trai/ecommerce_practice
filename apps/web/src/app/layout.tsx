@@ -36,9 +36,9 @@ export default function RootLayout({
     >
       <body className={`${jakartaSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <div className="flex flex-col min-h-screen bg-nest-bg text-nest-text font-sans selection:bg-black selection:text-white">
+          <div className="flex min-h-screen flex-col bg-nest-bg font-sans text-nest-text selection:bg-black selection:text-white">
             <Navbar />
-            <main className="flex-1 w-full relative">
+            <main className="relative w-full flex-1">
               {modal}
               {children}
             </main>

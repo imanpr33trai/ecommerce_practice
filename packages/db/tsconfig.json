@@ -1,6 +1,6 @@
 {
   "extends": "../config/node.json",
-  "include": ["src/**/*.ts", "prisma/**/*.ts", "../../packages/env/src/env.d.ts"],
+  "include": ["src/**/*.ts", "prisma/**/*.ts", "../../packages/env/src/env.d.ts", "prisma/seed.ts"],
   "compilerOptions": {
     "composite": false,
     "outDir": "./dist",

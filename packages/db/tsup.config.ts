@@ -18,7 +18,7 @@ export default defineConfig({
     "@prisma/client",
     "@prisma/adapter-pg",
     "@prisma/client-runtime-utils",
-    "../prisma/generated/client",
+    "dotenv",
     "pg",
     "fs",
     "path",
