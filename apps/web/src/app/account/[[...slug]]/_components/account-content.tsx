@@ -23,10 +23,12 @@ import { AccountOrders } from "./account-orders";
 import { AccountOverview } from "./account-overview";
 import { AccountReviews } from "./account-reviews";
 import { AccountSettings } from "./account-settings";
+// import type { User } from "better-auth";
+import type { Session } from "@ecomerceNextjs/auth";
 
 interface Props {
   activeTab: string;
-  user: { name: string; email: string; image?: string | null };
+  user: Session["user"];
 }
 
 export function AccountContent({ activeTab, user }: Props) {

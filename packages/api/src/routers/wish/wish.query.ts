@@ -1,4 +1,4 @@
-import prisma from "@ecomerceNextjs/db";
+import { prisma } from "@ecomerceNextjs/db";
 
 // Selector for the "My Wishlist" Page
 

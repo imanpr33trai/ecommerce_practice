@@ -19,8 +19,6 @@
     "lint": "biome check ."
   },
   "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*",
-
     "@types/node": "^20",
     "typescript": "^5.8.2"
   },
@@ -29,6 +27,7 @@
   },
   "dependencies": {
     "@ecomerceNextjs/auth": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
     "hono": "^4.11.3",

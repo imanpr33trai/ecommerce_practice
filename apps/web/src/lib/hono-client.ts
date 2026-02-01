@@ -1,6 +1,6 @@
 import { type ClientResponse, hc } from "hono/client";
 
-import type { AppType } from "@ecomerceNextjs/api";
+import { type AppType } from "@ecomerceNextjs/api";
 
 export const client = hc<AppType>(process.env.NEXT_PUBLIC_SERVER_URL!, {
   init: {

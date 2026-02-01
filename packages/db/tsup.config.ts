@@ -4,12 +4,24 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: ["src/index.ts"],
   format: ["esm"],
-  // tsconfig: "./tsconfig.json",
+  platform: "node",
+  target: "node18",
+
   dts: true,
   clean: true,
-  splitting: true,
-  // Ensure the generated client is NOT bundled into the output,
-  // but let tsup know where to find the types for .d.ts generation.
-  external: [/^\.prisma\/client/],
-  minify: true,
+
+  // 🔥 CRITICAL: do NOT bundle or minify Prisma
+  splitting: false,
+  minify: false,
+
+  external: [
+    "@prisma/client",
+    "@prisma/adapter-pg",
+    "@prisma/client-runtime-utils",
+    "../prisma/generated/client",
+    "pg",
+    "fs",
+    "path",
+    "os",
+  ],
 });

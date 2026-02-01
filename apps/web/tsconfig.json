@@ -1,24 +1,14 @@
 {
-  "extends": "../../packages/config/nextjs.json",
+  "extends": "@ecomerceNextjs/config/nextjs.json",
   "compilerOptions": {
-    "composite": true,
-    "allowImportingTsExtensions": false,
     "baseUrl": ".",
+    "allowImportingTsExtensions": false,
     "paths": {
       "@/*": ["src/*"],
       "@comp/*": ["../../packages/ui/src/components/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../../packages/env/src/env.d.ts",
-    "../../packages/ui/src/**/*.ts",
-    "../../packages/auth/src/**/*.ts",
-    "../../packages/ui/src/**/*.tsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

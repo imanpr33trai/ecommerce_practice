@@ -1,4 +1,4 @@
-import prisma from "@ecomerceNextjs/db";
+import { prisma } from "@ecomerceNextjs/db";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 

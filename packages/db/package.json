@@ -4,11 +4,10 @@
     "@prisma/client": "^7.2.0",
     "@prisma/client-runtime-utils": "^7.2.0",
     "pg": "^8.16.3",
+    "@ecomerceNextjs/config": "workspace:*",
     "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*",
-
     "@types/node": "^20",
     "@types/pg": "^8.11.11",
     "prisma": "^7.2.0",
@@ -32,6 +31,7 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
+    "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:seed": "node prisma/seed.js",
     "db:start": "docker compose up -d",

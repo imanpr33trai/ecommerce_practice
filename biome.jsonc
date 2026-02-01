@@ -39,7 +39,7 @@
       },
 
       "suspicious": {
-        "noConsole": "warn"
+        "noConsole": "off"
       }
     }
   },
