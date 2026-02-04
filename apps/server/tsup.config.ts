@@ -1,11 +1,11 @@
 // apps/server/tsup.config.ts
 import { defineConfig } from "tsup";
 
-export default defineConfig({
+export default defineConfig((options) => ({
   entry: ["src/index.ts"],
   format: ["esm"], // Modern APIs should generally use ESM
   target: "node20", // Match your server environment
-  clean: true,
+  clean: !options.watch,
   minify: true,
   dts: true,
   sourcemap: true,
@@ -14,4 +14,4 @@ export default defineConfig({
   noExternal: [/^@repo\/.*/],
   // If using @hono/node-server, you might want to keep it external
   external: ["@hono/node-server"],
-});
+}));

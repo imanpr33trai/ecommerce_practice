@@ -32,7 +32,7 @@ export function reviewsUserOptions(
   query: GetReviewProductUserListRequest["query"],
 ) {
   return queryOptions({
-    queryKey: reviewKeys.user(),
+    queryKey: reviewKeys.userList(),
     queryFn: () => fetchUserReviewsFn(query),
     enabled: isAuth,
     staleTime: 1000 * 60 * 5, // 5 mins

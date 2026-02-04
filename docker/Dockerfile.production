@@ -1,0 +1,138 @@
+# syntax=docker/dockerfile:1.4
+
+# ==========================================
+# Multi-stage production Dockerfile for monorepo
+# Optimized for Vercel serverless + Docker compatibility
+# ==========================================
+
+ARG APP_NAME=web
+ARG NODE_VERSION=22-alpine
+ARG PNPM_VERSION=9.15.4
+
+# ==========================================
+# Base stage with security and optimizations
+# ==========================================
+FROM node:${NODE_VERSION} AS base
+
+# Install security and build dependencies
+RUN apk add --no-cache \
+    libc6-compat \
+    dumb-init \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+# Install pnpm globally
+RUN npm install -g pnpm@${PNPM_VERSION}
+
+# Create app directory with proper permissions
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --shell /bin/bash nextjs
+
+# ==========================================
+# Dependency installation with caching
+# ==========================================
+FROM base AS deps
+
+ARG APP_NAME
+
+# Copy package files for dependency caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/${APP_NAME}/package.json ./apps/${APP_NAME}/
+COPY packages/*/package.json ./packages/*/
+
+# Install dependencies
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile --prefer-frozen-lockfile
+
+# ==========================================
+# Build stage
+# ==========================================
+FROM base AS builder
+
+ARG APP_NAME
+ARG NODE_ENV=production
+
+ENV NODE_ENV=${NODE_ENV}
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy installed dependencies
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/${APP_NAME}/node_modules ./apps/${APP_NAME}/node_modules
+COPY --from=deps /app/packages/*/node_modules ./packages/*/node_modules
+
+# Copy source code
+COPY . .
+
+# Generate Prisma client
+RUN pnpm --filter @ecomerceNextjs/db db:generate
+
+# Build the application
+RUN pnpm --filter ${APP_NAME} build
+
+# ==========================================
+# Production dependencies only
+# ==========================================
+FROM base AS deps-production
+
+ARG APP_NAME
+
+# Copy package files for production dependencies only
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/${APP_NAME}/package.json ./apps/${APP_NAME}/
+COPY packages/*/package.json ./packages/*/
+
+# Install production dependencies only
+RUN --mount=type=cache,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile --prod --ignore-scripts
+
+# ==========================================
+# Production runner
+# ==========================================
+FROM base AS runner
+
+ARG APP_NAME
+ARG NODE_ENV=production
+ARG PORT=3000
+
+# Environment variables
+ENV NODE_ENV=${NODE_ENV}
+ENV PORT=${PORT}
+ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create app directories
+RUN mkdir -p /app/logs /app/tmp && \
+    chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Copy production dependencies
+COPY --from=deps-production --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=deps-production --chown=nextjs:nodejs /app/apps/${APP_NAME}/node_modules ./apps/${APP_NAME}/node_modules
+COPY --from=deps-production --chown=nextjs:nodejs /app/packages/*/node_modules ./packages/*/node_modules
+
+# Copy Prisma artifacts
+COPY --from=builder --chown=nextjs:nodejs /app/packages/db/prisma ./packages/db/prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+
+# Copy built application
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${APP_NAME}/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${APP_NAME}/public ./apps/${APP_NAME}/public
+
+# Expose port
+EXPOSE ${PORT}
+
+# Health check with proper endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/api/health || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "apps/web/server.js"]

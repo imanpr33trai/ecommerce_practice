@@ -21,10 +21,14 @@ export const useReviewDeleteMutation = (productId?: string) => {
       }
       return result;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       if (productId) {
-        queryClient.invalidateQueries({ queryKey: reviewKeys.byProduct(productId) });
-        queryClient.invalidateQueries({ queryKey: reviewKeys.summary(productId) });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: reviewKeys.byProduct(productId),
+          }),
+          queryClient.invalidateQueries({ queryKey: reviewKeys.summary(productId) }),
+        ]);
       }
 
       toast.success("Review Deleted successfully");

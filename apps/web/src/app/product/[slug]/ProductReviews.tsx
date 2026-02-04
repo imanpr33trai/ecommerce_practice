@@ -52,10 +52,6 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
     sort,
   });
 
-  if (!product || !productReviews) {
-    return null;
-  }
-
   const handlePostReview = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -147,7 +143,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
                   placeholder="What did you love about this piece?"
-                  className="min-h-[120px] w-full resize-none rounded-2xl bg-gray-50 px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-black/5"
+                  className="min-h-30 w-full resize-none rounded-2xl bg-gray-50 px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-black/5"
                   required
                 />
               </div>

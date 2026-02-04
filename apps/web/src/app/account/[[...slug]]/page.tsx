@@ -4,14 +4,14 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+// import { auth } from "../../../../../../packages/auth/src/index";
+import { auth } from "@ecomerceNextjs/auth";
 // import { auth } from "@ecomerceNextjs/auth";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
-import { authClient } from "@/lib/auth-client";
 import { createQueryClient } from "@/lib/query-client";
 
-// import { auth } from "../../../../../../packages/auth/src/index";
 import { AccountContent } from "./_components/account-content";
 
 interface PageProps {
@@ -29,9 +29,9 @@ export default async function AccountPage({ params }: PageProps) {
   const queryClient = createQueryClient();
 
   // 1. Server-Side Auth Check
-  const session = await authClient.getSession({});
+  const session = await auth.api.getSession({ headers: await headers() });
 
-  if (!session.data) {
+  if (!session) {
     redirect("/log-in");
   }
 
@@ -46,7 +46,7 @@ export default async function AccountPage({ params }: PageProps) {
       <Suspense fallback={<LoadingSkeleton type="account" />}>
         <AccountContent
           activeTab={activeTab}
-          user={session.data.user}
+          user={session.user}
         />
       </Suspense>
     </HydrationBoundary>

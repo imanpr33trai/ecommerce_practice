@@ -28,7 +28,7 @@ export const reviewListOptions = (
 ) => {
   return queryOptions({
     queryFn: () => fetchProductReviews(productId, query),
-    queryKey: reviewKeys.byProduct(productId),
+    queryKey: reviewKeys.list(productId, query),
     enabled: !!productId,
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,

@@ -7,24 +7,13 @@ import { useContext, useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import { Input } from "@comp/input";
-import {
-  Clock,
-  X as CloseIcon,
-  Heart,
-  Loader2,
-  LogIn,
-  Menu,
-  Search,
-  ShoppingBag,
-  UserIcon,
-  X,
-} from "lucide-react";
+import { Clock, Heart, Loader2, LogIn, Menu, Search, ShoppingBag, UserIcon, X } from "lucide-react";
 
 import { useCartListItemsQuery } from "@/data/cart";
 import { useProductSuggestionQuery } from "@/data/product";
+import { useSessionQuery } from "@/data/user/session-query";
 import { useWishListCountQuery } from "@/data/wish";
 import { useDebounce } from "@/hooks/useDebounce";
-import { authClient } from "@/lib/auth-client";
 
 import { LayoutContext } from "../context/LayoutContext";
 import Button from "./Button";
@@ -93,7 +82,7 @@ const Navbar: React.FC = () => {
   };
 
   // --- DATA FETCHING (Non-Blocking) ---
-  const { data: isAuthenticated } = authClient.useSession();
+  const { data: isAuthenticated } = useSessionQuery();
   const {
     data: wishCount,
     isLoading: isWishListCountLoading,
@@ -106,13 +95,35 @@ const Navbar: React.FC = () => {
 
   const isActive = (path: string) => location === path;
 
-  if (isWishListCountLoading) {
-    return <div>wishCount is loading</div>;
-  }
-  if (!wishCount) {
-    return <div>wishcount is undefined</div>;
-  }
-  console.log("error wishcoutn", errorWishListCount);
+  // if (isWishListCountLoading) {
+  //   return <div>wishCount is loading</div>;
+  // }
+
+  // const renderWishlistBadge = () => {
+  //   if (isWishListCountLoading) {
+  //     return (
+  //       <Loader2
+  //         className="animate-spin text-gray-400"
+  //         size={16}
+  //       />
+  //     );
+  //   }
+  //   if (!wishCount) {
+  //     return <span>!</span>;
+  //   }
+  //
+  //   const count = wishCount.data.length;
+  //   if (count > 0) {
+  //     return (
+  //       <span className="absolute -top-1 -right-1 rounded-full bg-black px-1.5 py-0.5 text-[10px] text-white">
+  //         {count}
+  //       </span>
+  //     );
+  //   }
+  //   return null;
+  // };
+  //
+  // console.log("error wishcoutn", errorWishListCount);
 
   // Calculate count safely (default to 0 if loading/error/guest)
   const cartItemCount = cart?.data.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
@@ -257,15 +268,65 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {isAuthenticated?.session ? (
-              <Link href={{ pathname: "/account" }}>
+              <>
+                <Link href={{ pathname: "/account" }}>
+                  <Button
+                    variant="icon"
+                    className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex"
+                    active={isActive("/account")}
+                  >
+                    <UserIcon size={20} />
+                  </Button>
+                </Link>
+                <Link href="/wish">
+                  <Button
+                    variant="icon"
+                    className="group relative hidden sm:flex"
+                    active={isActive("/wishlist")}
+                  >
+                    <Heart
+                      size={20}
+                      className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
+                    />
+                    {isWishListCountLoading ? (
+                      <div className="flex h-64 items-center justify-center">
+                        <Loader2
+                          className="animate-spin text-gray-400"
+                          size={32}
+                        />
+                      </div>
+                    ) : !wishCount ? (
+                      <div>!</div>
+                    ) : (
+                      wishCount.data.length > 0 && (
+                        <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 place-items-center rounded-full border border-white bg-black text-[10px] text-white">
+                          {wishCount.data.length}
+                        </span>
+                      )
+                    )}
+                  </Button>
+                </Link>
                 <Button
                   variant="icon"
-                  className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex"
-                  active={isActive("/account")}
+                  className="relative transition-colors hover:bg-black hover:text-white"
+                  onClick={toggleCart}
                 >
-                  <UserIcon size={20} />
+                  <ShoppingBag size={20} />
+                  {cartItemCount > 0 && (
+                    <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 animate-fade-in place-items-center rounded-full border border-white bg-red-500 text-[10px] text-white">
+                      {cartItemCount}
+                    </span>
+                  )}
                 </Button>
-              </Link>
+
+                <Button
+                  variant="icon"
+                  className="md:hidden"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  {isOpen ? <X size={20} /> : <Menu size={20} />}
+                </Button>
+              </>
             ) : (
               <Link href="/log-in">
                 <Button
@@ -281,45 +342,6 @@ const Navbar: React.FC = () => {
                 </Button>
               </Link>
             )}
-
-            <Link href="/wish">
-              <Button
-                variant="icon"
-                className="group relative hidden sm:flex"
-                active={isActive("/wishlist")}
-              >
-                <Heart
-                  size={20}
-                  className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
-                />
-                {wishCount.data.length > 0 && (
-                  <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 place-items-center rounded-full border border-white bg-black text-[10px] text-white">
-                    {wishCount.data.length ?? 0}
-                  </span>
-                )}
-              </Button>
-            </Link>
-
-            <Button
-              variant="icon"
-              className="relative transition-colors hover:bg-black hover:text-white"
-              onClick={toggleCart}
-            >
-              <ShoppingBag size={20} />
-              {cartItemCount > 0 && (
-                <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 animate-fade-in place-items-center rounded-full border border-white bg-red-500 text-[10px] text-white">
-                  {cartItemCount}
-                </span>
-              )}
-            </Button>
-
-            <Button
-              variant="icon"
-              className="md:hidden"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <CloseIcon size={20} /> : <Menu size={20} />}
-            </Button>
           </div>
         </div>
       </div>
@@ -365,10 +387,21 @@ const Navbar: React.FC = () => {
             className="flex justify-between rounded-2xl bg-white p-4 font-medium"
           >
             Wishlist
-            {wishCount.data.length > 0 && (
-              <span className="rounded-full bg-black px-2 py-1 text-white text-xs">
-                {wishCount.data.length}
-              </span>
+            {isWishListCountLoading ? (
+              <div className="flex h-64 items-center justify-center">
+                <Loader2
+                  className="animate-spin text-gray-400"
+                  size={32}
+                />
+              </div>
+            ) : !wishCount ? (
+              <div>!</div>
+            ) : (
+              wishCount.data.length > 0 && (
+                <span className="rounded-full bg-black px-2 py-1 text-white text-xs">
+                  {wishCount.data.length}
+                </span>
+              )
             )}
           </Link>
 

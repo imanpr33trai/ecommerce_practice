@@ -1,14 +1,14 @@
 // packages/db/tsup.config.ts
 import { defineConfig } from "tsup";
 
-export default defineConfig({
+export default defineConfig((options) => ({
   entry: ["src/index.ts"],
   format: ["esm"],
   platform: "node",
   target: "node18",
 
   dts: true,
-  clean: true,
+  clean: !options.watch,
 
   // 🔥 CRITICAL: do NOT bundle or minify Prisma
   splitting: false,
@@ -24,4 +24,4 @@ export default defineConfig({
     "path",
     "os",
   ],
-});
+}));
