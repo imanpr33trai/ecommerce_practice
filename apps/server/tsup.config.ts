@@ -11,7 +11,6 @@ export default defineConfig((options) => ({
   sourcemap: true,
   // Bundle internal workspace packages (@repo/api, @repo/db)
   // but keep external npm packages as dependencies
-  noExternal: [/^@repo\/.*/],
   // If using @hono/node-server, you might want to keep it external
   external: ["@hono/node-server"],
 }));

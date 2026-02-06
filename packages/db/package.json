@@ -11,16 +11,13 @@
     "@types/node": "^20.19.30",
     "@types/pg": "^8.11.11",
     "prisma": "^7.2.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "tsx": "^4.21.0"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "name": "@ecomerceNextjs/db",
-  "peerDependencies": {
-    "typescript": "^5.8.2"
-  },
+
   "scripts": {
     "build": "prisma generate && tsup ",
     "build:types": "tsc --emitDeclarationOnly",

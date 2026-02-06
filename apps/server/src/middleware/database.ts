@@ -3,8 +3,7 @@ import type { MiddlewareHandler } from "hono";
 
 export const databaseMiddleware: MiddlewareHandler = async (c, next) => {
   try {
-    const db = ();
-    c.set("db", db);
+    c.set("db", prisma);
     await next();
   } catch (error) {
     return c.json(

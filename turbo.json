@@ -11,6 +11,10 @@
       "outputLogs": "new-only",
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
+    "build:server": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
     "docker-build": {
       "dependsOn": ["build"],
       "outputs": []
@@ -28,9 +32,21 @@
       "outputs": []
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+
+      "interruptible": true
     },
+
+    "dev:server": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+
+      "interruptible": true
+    },
+
     "db:push": {
       "cache": false,
       "persistent": true

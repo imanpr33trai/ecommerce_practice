@@ -1,4 +1,4 @@
-import { keepPreviousData, queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query";
 
 import { reviewKeys } from "@/data/review/keys";
 import { client } from "@/lib/hono-client";
@@ -39,5 +39,5 @@ export const useReviewListQuery = (
   productId: string,
   query: GetReviewProductListRequest["query"],
 ) => {
-  return useSuspenseQuery(reviewListOptions(productId, query));
+  return useQuery(reviewListOptions(productId, query));
 };

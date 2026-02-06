@@ -1,4 +1,4 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { reviewKeys } from "@/data/review/keys";
 import { client } from "@/lib/hono-client";
@@ -24,5 +24,5 @@ export function reviewSummaryOptions(productId: string) {
 }
 
 export const useReviewSummaryQuery = (productId: string) => {
-  return useSuspenseQuery(reviewSummaryOptions(productId));
+  return useQuery(reviewSummaryOptions(productId));
 };

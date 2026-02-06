@@ -1,51 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../../ && pnpm run build:server",
-  "outputDirectory": "dist",
-  "installCommand": "cd ../../ && pnpm install --frozen-lockfile",
-  "functions": {
-    "src/index.ts": {
-      "runtime": "nodejs20.x",
-      "maxDuration": 30
-    }
-  },
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=(), payment=()"
-        }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "s-maxage=300, stale-while-revalidate=30"
-        }
-      ]
-    }
-  ],
+  "version": 2,
+  "buildCommand": "cd ../.. && pnpm turbo run build --filter=server",
+  "installCommand": "cd ../.. && pnpm install",
+  "framework": "hono",
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/src/index.ts"
+      "destination": "/api/index"
     }
-  ],
-  "regions": ["iad1"]
+  ]
 }

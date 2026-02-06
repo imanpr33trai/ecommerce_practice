@@ -19,12 +19,9 @@
     "lint": "biome check ."
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "typescript": "^5.8.2"
+    "@types/node": "^20"
   },
-  "peerDependencies": {
-    "typescript": "^5.8.2"
-  },
+
   "dependencies": {
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/config": "workspace:*",

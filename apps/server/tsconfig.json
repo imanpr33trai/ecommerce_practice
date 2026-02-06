@@ -1,6 +1,6 @@
 {
   "extends": "../../packages/config/node.json",
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "composite": true,

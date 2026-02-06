@@ -220,7 +220,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
           <h3 className="font-bold text-xl">
             Reviews
             <span className="ml-2 font-normal text-muted-foreground text-sm">
-              ({productReviews.data.pagination.total ?? 0})
+              ({productReviews && (productReviews.data.pagination.total ?? 0)})
             </span>
           </h3>
 
@@ -262,7 +262,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
             [1, 2, 3].map((i) => (
               <Skeleton
                 key={i}
-                className="h-48 w-full rounded-[2rem]"
+                className="h-48 w-full rounded-[2rem] bg-[#e8e8e6]"
               />
             ))
           ) : productReviews && productReviews.data.items.length > 0 ? (
