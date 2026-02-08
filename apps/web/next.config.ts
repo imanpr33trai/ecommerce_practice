@@ -1,11 +1,14 @@
 import type { NextConfig } from "next";
 
+import { nextEnv } from "src/env";
+
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@workspace/ui",
     "@ecomerceNextjs/api",
     "@ecomerceNextjs/auth",
     "@ecomerceNextjs/db",
+    "@ecomerceNextjs/env",
   ],
   typedRoutes: true,
   reactCompiler: true,
@@ -20,11 +23,10 @@ const nextConfig: NextConfig = {
   // Enable proper build mode for containers
   poweredByHeader: false,
   // Optimize for containerized environments
-  experimental: {typedEnv:true,
-  },
-    serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
+  experimental: { typedEnv: true },
+  serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
   // Production Docker optimizations
-  ...(process.env.NODE_ENV === "production" && {
+  ...(nextEnv.NODE_ENV === "production" && {
     output: "standalone",
   }),
 };

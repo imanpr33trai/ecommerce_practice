@@ -1,3 +1,4 @@
+import { env } from "@ecomerceNextjs/env";
 import type { MiddlewareHandler } from "hono";
 
 // Simple rate limiting implementation for Vercel
@@ -5,7 +6,7 @@ const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 export const rateLimit = (): MiddlewareHandler => {
   return async (c, next) => {
-    if (process.env.NODE_ENV === "production") {
+    if (env.NODE_ENV === "production") {
       const identifier = c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
       const key = `rate-limit:${identifier}`;
       const now = Date.now();

@@ -1,14 +1,10 @@
+import { env } from "@ecomerceNextjs/env";
 import { PrismaPg } from "@prisma/adapter-pg";
-import dotenv from "dotenv";
 
 import { PrismaClient } from "../prisma/generated/client";
 
-dotenv.config({
-  path: "../../.env.development",
-});
-
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: env.DATABASE_URL,
 });
 
 // Use globalThis for broader environment compatibility
@@ -23,6 +19,6 @@ export const prisma: PrismaClient =
     adapter,
   });
 
-if (process.env.NODE_ENV !== "production") {
+if (env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }

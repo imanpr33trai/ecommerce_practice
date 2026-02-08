@@ -24,7 +24,7 @@
 
   "dependencies": {
     "@ecomerceNextjs/auth": "workspace:*",
-    "@ecomerceNextjs/config": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*","@ecomerceNextjs/env": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
     "hono": "^4.11.3",

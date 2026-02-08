@@ -1,0 +1,12 @@
+{
+  "name": "@ecomerceNextjs/env",
+  "version": "0.0.0",
+  "private": true,"main": "env.ts",
+  "dependencies": {
+    "@t3-oss/env-core": "^0.13.10",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1"
+  }
+}

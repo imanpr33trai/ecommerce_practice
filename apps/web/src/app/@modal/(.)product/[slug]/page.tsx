@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import Button from "@/components/Button";
 import { useCartAddItemMutation } from "@/data/cart";
 import { useProudctDetailQuery } from "@/data/product";
-import { useWishToggleMutation } from "@/data/wish";
+import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { authClient } from "@/lib/auth-client";
 
 // Next.js 15+ Params are Promises
@@ -80,15 +80,15 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
   };
 
   // --- RENDER ---
-
-  if (isLoading) {
-    return null; // Or a transparent spinner
-  }
-  if (!product) {
-    return null;
-  }
-  // const isWishlisted = useWishQueries.useIsWishlisted(product.id);
-  const isWishlisted = true;
+  //
+  // if (isLoading) {
+  //   return null; // Or a transparent spinner
+  // }
+  // if (!product) {
+  //   return null;
+  // }
+  const isWishlisted = useWishListedQuery(!!session, product.id);
+  // const isWishlisted = true;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
@@ -105,6 +105,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
       >
         <button
           onClick={onDismiss}
+          type="button"
           className="absolute top-3 right-3 z-20 rounded-full bg-white/80 p-2 backdrop-blur-md transition-all duration-300 hover:bg-black hover:text-white"
         >
           <X size={24} />
@@ -205,6 +206,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
               </Button>
 
               <button
+                type="button"
                 onClick={handleWishlist}
                 className={`flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 transition-all ${isWishlisted ? "border-red-200 bg-red-50" : "hover:bg-gray-50"}`}
               >

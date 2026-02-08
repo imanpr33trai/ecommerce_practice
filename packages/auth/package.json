@@ -21,7 +21,7 @@
 
   "dependencies": {
     "better-auth": "^1.4.0",
-    "@ecomerceNextjs/config": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*","@ecomerceNextjs/env": "workspace:*",
     "zod": "^4.3.5",
     "@ecomerceNextjs/db": "workspace:*"
   }

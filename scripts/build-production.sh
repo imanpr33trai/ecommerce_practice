@@ -54,7 +54,8 @@ fi
 
 # Install dependencies first
 echo "📦 Installing dependencies..."
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --prefer-offline || true
+
 
 # Type checking and linting
 echo "🔍 Running type checks..."
@@ -81,7 +82,7 @@ fi
 echo "🔨 Building Docker image..."
 docker build \
     --file docker/Dockerfile.production \
-    $(grep -v '^#' .env.development | xargs -I {} echo "--build-arg {}") \
+    $(grep -v '^#' ../.env.production | xargs -I {} echo "--build-arg {}") \
     --build-arg APP_NAME="${APP_NAME}" \
     --build-arg NODE_VERSION="${NODE_VERSION}" \
     --target "${TARGET}" \

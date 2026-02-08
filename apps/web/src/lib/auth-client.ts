@@ -1,10 +1,11 @@
+import { env } from "@ecomerceNextjs/env";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import type { auth } from "@ecomerceNextjs/auth";
 import "dotenv/config";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+  baseURL: env.NEXT_PUBLIC_API_URL,
   plugins: [inferAdditionalFields<typeof auth>()],
 });
 

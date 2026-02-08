@@ -289,12 +289,12 @@ const Navbar: React.FC = () => {
                       className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
                     />
                     {isWishListCountLoading ? (
-                      <div className="flex h-64 items-center justify-center">
+                      <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 place-items-center rounded-full border border-white bg-black text-[10px] text-white">
                         <Loader2
-                          className="animate-spin text-gray-400"
-                          size={32}
+                          className="animate-spin text-white-400"
+                          size={10}
                         />
-                      </div>
+                      </span>
                     ) : !wishCount ? (
                       <div>!</div>
                     ) : (
