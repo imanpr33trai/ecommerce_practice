@@ -41,7 +41,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@ecomerceNextjs/config": "workspace:*",
-    "eslint": "^9.32.0",
+    "eslint": "^10.0.0",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.2"
   },
