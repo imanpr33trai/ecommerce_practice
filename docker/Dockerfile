@@ -6,7 +6,7 @@ ARG NODE_VERSION=22-alpine
 # ================================
 # Base Image
 # ================================
-FROM oven/bun:1.3.3-alpine AS base
+FROM oven/bun:1.3.9-alpine AS base
 RUN apk add --no-cache libc6-compat openssl && \
     rm -rf /var/cache/apk/*
 WORKDIR /app
@@ -92,7 +92,7 @@ CMD ["node", "apps/web/server.js"]
 # ================================
 # Runner for "server" app
 # ================================
-FROM oven/bun:1.3.3-alpine AS runner-server
+FROM oven/bun:1.3.9-alpine AS runner-server
 WORKDIR /app
 
 ENV NODE_ENV=production
