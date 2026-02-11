@@ -1,0 +1,129 @@
+# syntax=docker/dockerfile:1.4
+
+# ==========================================
+# Production Dockerfile for Next.js Web App
+# Multi-stage build optimized for production
+# Standalone output with health checks
+# ==========================================
+
+ARG NODE_VERSION=22-alpine
+ARG PNPM_VERSION=9.15.4
+
+# ==========================================
+# Base stage with security and optimizations
+# ==========================================
+FROM node:${NODE_VERSION} AS base
+
+# Install security and build dependencies
+RUN apk add --no-cache \
+    libc6-compat \
+    dumb-init \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+# Create app directory with proper permissions
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --shell /bin/bash nextjs
+
+# ==========================================
+# Dependency installation with caching
+# ==========================================
+FROM base AS deps
+
+# Copy only dependency manifests first (max cache reuse)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy workspace package.json files only
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/auth/package.json ./packages/auth/package.json
+COPY packages/db/package.json ./packages/db/package.json
+COPY packages/api/package.json ./packages/api/package.json
+COPY packages/ui/package.json ./packages/ui/package.json
+COPY packages/config/package.json ./packages/config/package.json
+COPY packages/env/package.json ./packages/env/package.json
+
+# Install dependencies with correct pnpm cache
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile --prefer-offline
+
+# ==========================================
+# Builder stage - Build Next.js application
+# ==========================================
+FROM deps AS builder
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy installed dependencies
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages/*/node_modules ./packages/*/node_modules
+
+# Copy source code
+COPY . .
+
+# Build packages first (web depends on these)
+RUN pnpm --filter @ecomerceNextjs/config build
+RUN pnpm --filter @ecomerceNextjs/env build
+RUN pnpm --filter @ecomerceNextjs/api build
+RUN pnpm --filter @ecomerceNextjs/auth build
+RUN pnpm --filter @ecomerceNextjs/ui build
+RUN pnpm --filter @ecomerceNextjs/db build
+
+# Generate Prisma client
+# RUN pnpm --filter @ecomerceNextjs/db db:generate
+
+# RUN pnpm --filter @ecomerceNextjs/db db:push
+
+# Build the Next.js application with standalone output
+RUN pnpm --filter @ecomerceNextjs/web build
+# ==========================================
+# Production runner for Web App
+# ==========================================
+FROM base AS runner
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create app directories
+RUN mkdir -p /app/logs /app/tmp && \
+    chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Copy production node_modules from builder
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/packages/*/node_modules ./packages/*/node_modules
+
+# Copy Prisma artifacts
+COPY --from=builder --chown=nextjs:nodejs /app/packages/db/prisma ./packages/db/prisma
+COPY --from=builder --chown=hono:nodejs /app/packages/db/prisma.config.ts ./packages/db/prisma.config.ts
+# COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+
+# Copy built application (standalone output)
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+
+# Expose port
+EXPOSE 3001
+
+# Health check with proper endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3001/api/health || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "apps/web/server.js"]

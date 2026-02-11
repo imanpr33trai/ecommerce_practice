@@ -1,7 +1,25 @@
 {
   "name": "@ecomerceNextjs/env",
   "version": "0.0.0",
-  "private": true,"main": "env.ts",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/env.d.ts",
+
+      "default": "./dist/env.js"
+    }
+  },
+  "main": "./dist/env.js",
+  "module": "./dist/env.mjs",
+  "types": "./dist/env.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "build:types": "tsc --emitDeclarationOnly",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check ."
+  },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.10",
     "zod": "^4.3.6"

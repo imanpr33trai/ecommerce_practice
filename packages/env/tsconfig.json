@@ -1,0 +1,17 @@
+{
+  "extends": "../config/node.json",
+  "include": ["src/**/*.ts", "../env/src/env.d.ts"],
+  "compilerOptions": {
+    "composite": false,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "allowImportingTsExtensions": false,
+    "exactOptionalPropertyTypes": false,
+    "noEmit": false,
+    "sourceMap": true
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

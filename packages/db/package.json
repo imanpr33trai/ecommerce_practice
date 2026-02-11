@@ -31,7 +31,7 @@
     "db:pull": "prisma db pull",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
-    "db:seed": "node prisma/seed.js",
+    "db:seed": "ts-node prisma/seed.ts",
     "db:start": "docker compose up -d",
     "db:watch": "docker compose up",
     "db:stop": "docker compose stop",

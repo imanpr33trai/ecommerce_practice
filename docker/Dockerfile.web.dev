@@ -1,0 +1,54 @@
+# syntax=docker/dockerfile:1.4
+
+# ==========================================
+# Development Dockerfile for Next.js Web App
+# Hot reload enabled with volume mounts
+# Workspace-aware development setup
+# ==========================================
+
+ARG NODE_VERSION=22-alpine
+ARG PNPM_VERSION=9.15.4
+
+FROM node:${NODE_VERSION}
+
+# Install dependencies for development
+RUN apk add --no-cache \
+    libc6-compat \
+    curl \
+    git \
+    && rm -rf /var/cache/apk/*
+
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+# Set working directory
+WORKDIR /app
+
+# Environment variables for development
+ENV NODE_ENV=development
+ENV PORT=3001
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME="0.0.0.0"
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHPACK_POLLING=true
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --shell /bin/bash nextjs
+
+# Create app directories
+RUN mkdir -p /app/logs /app/tmp && \
+    chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3001
+
+# Health check for development
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3001/api/health || exit 1
+
+# Start with development server
+CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm --filter web dev"]

@@ -7,19 +7,27 @@ CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'C
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED');
 
+-- CreateEnum
+CREATE TYPE "AddressType" AS ENUM ('SHIPPING', 'BILLING');
+
 -- CreateTable
-CREATE TABLE "address" (
+CREATE TABLE "addresses" (
     "_id" TEXT NOT NULL,
-    "street" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "phone" TEXT,
+    "streetLine1" TEXT NOT NULL,
+    "streetLine2" TEXT,
     "city" TEXT NOT NULL,
     "state" TEXT NOT NULL,
     "postalCode" TEXT NOT NULL,
     "country" TEXT NOT NULL,
+    "type" "AddressType" NOT NULL DEFAULT 'SHIPPING',
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "address_pkey" PRIMARY KEY ("_id")
+    CONSTRAINT "addresses_pkey" PRIMARY KEY ("_id")
 );
 
 -- CreateTable
@@ -96,6 +104,7 @@ CREATE TABLE "CartItem" (
     "quantity" INTEGER NOT NULL DEFAULT 1,
     "cartId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "color" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "productId" TEXT NOT NULL,
 
@@ -226,13 +235,16 @@ CREATE TABLE "Wish" (
 );
 
 -- CreateIndex
+CREATE INDEX "addresses_userId_idx" ON "addresses"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
-CREATE INDEX "session_userId_idx" ON "session"("userId");
+CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "session_token_key" ON "session"("token");
+CREATE INDEX "session_userId_idx" ON "session"("userId");
 
 -- CreateIndex
 CREATE INDEX "account_userId_idx" ON "account"("userId");
@@ -244,7 +256,7 @@ CREATE INDEX "verification_identifier_idx" ON "verification"("identifier");
 CREATE UNIQUE INDEX "Cart_userId_key" ON "Cart"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CartItem_cartId_productId_key" ON "CartItem"("cartId", "productId");
+CREATE UNIQUE INDEX "CartItem_cartId_productId_color_key" ON "CartItem"("cartId", "productId", "color");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
@@ -262,7 +274,7 @@ CREATE UNIQUE INDEX "Product_slug_key" ON "Product"("slug");
 CREATE UNIQUE INDEX "Wish_userId_productId_key" ON "Wish"("userId", "productId");
 
 -- AddForeignKey
-ALTER TABLE "address" ADD CONSTRAINT "address_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "addresses" ADD CONSTRAINT "addresses_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -307,7 +319,7 @@ ALTER TABLE "Review" ADD CONSTRAINT "Review_productId_fkey" FOREIGN KEY ("produc
 ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Wish" ADD CONSTRAINT "Wish_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Wish" ADD CONSTRAINT "Wish_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Wish" ADD CONSTRAINT "Wish_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Wish" ADD CONSTRAINT "Wish_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,0 +1,162 @@
+# ================================
+# Development Docker Compose
+# Hot reload with volume mounts
+# Workspace-aware development
+# ================================
+
+version: "3.8"
+
+# ================================
+# Environment Variables
+# ================================
+
+# ================================
+# Services
+# ================================
+services:
+  # ================================
+  # PostgreSQL Database for Development
+  # ================================
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: ecommerce-postgres-dev
+  #   restart: unless-stopped
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: ecommerce_dev
+  #     PGDATA: /var/lib/postgresql/data/pgdata
+  #   volumes:
+  #     - postgres_dev_data:/var/lib/postgresql/data
+  #     - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+  #   networks:
+  #     - ecommerce-dev-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres -d ecommerce_dev"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
+
+  # ================================
+  # Hono Backend Server (Development)
+  # ================================
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server.dev
+    container_name: ecommerce-server-dev
+    restart: unless-stopped
+    env_file: ".env"
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ecommerce_dev?schema=public
+      JWT_SECRET: dev-secret-do-not-use-in-production
+      CORS_ORIGIN: http://localhost:3001
+      LOG_LEVEL: debug
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+
+    networks:
+      - ecommerce-dev-network
+    volumes:
+      - ./apps/server:/app/apps/server
+      - ./packages:/app/packages
+      - /app/node_modules
+      - /app/apps/server/node_modules
+      - /app/packages/auth/node_modules
+      - /app/packages/db/node_modules
+      - /app/packages/api/node_modules
+      - /app/packages/config/node_modules
+      - /app/packages/env/node_modules
+      - server_logs:/app/logs
+      - server_tmp:/app/tmp
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ================================
+  # Next.js Frontend (Development)
+  # ================================
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web.dev
+    container_name: ecommerce-web-dev
+    restart: unless-stopped
+    env_file: ".env"
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: http://server:3000
+      DATABASE_URL: postgresql://postgres:12345@postgres:5432/ecommerce_dev?schema=public
+      LOG_LEVEL: debug
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+      NEXT_TELEMETRY_DISABLED: 1
+    depends_on:
+      server:
+        condition: service_started
+    networks:
+      - ecommerce-dev-network
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/ui/node_modules
+      - /app/packages/api/node_modules
+      - /app/packages/auth/node_modules
+      - /app/packages/db/node_modules
+      - /app/packages/config/node_modules
+      - /app/packages/env/node_modules
+      - web_logs:/app/logs
+      - web_tmp:/app/tmp
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ================================
+# Networks
+# ================================
+networks:
+  ecommerce-dev-network:
+    driver: bridge
+    name: ecommerce-dev-network
+
+# ================================
+# Volumes
+# ================================
+volumes:
+  server_logs:
+    driver: local
+    name: ecommerce-server-dev-logs
+  web_logs:
+    driver: local
+    name: ecommerce-web-dev-logs
+  server_tmp:
+    driver: local
+    name: ecommerce-server-dev-tmp
+  web_tmp:
+    driver: local
+    name: ecommerce-web-dev-tmp

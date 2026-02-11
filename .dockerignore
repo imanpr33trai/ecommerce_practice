@@ -3,21 +3,16 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 bun.lockb
-
-# Build outputs
-.next
-.nuxt
-.vuepress
-dist
-build
-.turbo
 
 # Environment variables
 .env
 .env.local
+.env.development
 .env.development.local
 .env.test.local
+.env.production
 .env.production.local
 
 # IDE
@@ -25,6 +20,9 @@ build
 .idea
 *.swp
 *.swo
+*.swn
+*.bak
+*.tmp
 
 # OS
 .DS_Store
@@ -34,14 +32,10 @@ Thumbs.db
 .git
 .gitignore
 
-# Docker
-Dockerfile*
-docker-compose*
-.dockerignore
-
 # Logs
 logs
 *.log
+*.log.*
 
 # Runtime data
 pids
@@ -49,13 +43,253 @@ pids
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
+# Coverage
 coverage
 .nyc_output
 
 # Temporary folders
 tmp
 temp
+*.tmp
+
+# Cache directories
+.npm
+.yarn
+.pnp
+.eslintcache
+.stylelintcache
+.parcel-cache
+.cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.fusebox/
+
+# Package manager files
+bun.lockb
+yarn.lock
+package-lock.json
+
+# Prisma
+prisma/migrations/
+
+# Turbo
+.turbo
+
+# Local development
+.local
+.envrc
+
+# Documentation
+*.md
+docs/
+README.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+.circleci
+
+# Testing
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+__tests__
+__mocks__
+
+# Development tools
+.husky
+.lintstagedrc
+.prettierrc
+.eslint*
+biome.json
+tslib.json
+
+# TypeScript
+*.tsbuildinfo
+*.js.map
+.d.ts
+
+# Next.js
+.next
+out
+
+# Hono
+.hono
+
+# Configuration files
+*.config.js
+*.config.ts
+*.config.json
+
+# Security
+*.pem
+*.key
+*.crt
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker files (don't ignore in build context)
+# Dockerfile*
+# docker-compose*
+# .dockerignore
+
+# Local environment
+.env.local
+.env.development.local
+.env.production.local
+
+# Build artifacts
+*.tgz
+*.tar.gz
+*.zip
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Logs and reports
+*.log
+*.log.*
+reports/
+coverage/
+.nyc_output/
+
+# Cache and temporary
+dist/
+build/
+out/
+.cache/
+.parcel-cache/
+.rollup/
+.vite/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Development dependencies
+*.dev
+*.development
+*.test
+
+# Environment-specific
+.env.example
+.env.template
+
+# Security
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Large files
+*.csv
+*.xlsx
+*.xls
+*.pdf
+*.docx
+*.doc
+
+# Media files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+*.ico
+*.mp4
+*.mov
+*.avi
+*.mp3
+*.wav
+
+# Fonts
+*.ttf
+*.otf
+*.woff
+*.woff2
+*.eot
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Node.js
+node_modules/
+npm-debug.log
+.yarn-integrity
+.pnp
+.pnp.js
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript v1 declaration files
+typings/
 
 # Optional npm cache directory
 .npm
@@ -64,10 +298,7 @@ temp
 .eslintcache
 
 # Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
+.microbundle
 
 # Optional REPL history
 .node_repl_history
@@ -78,7 +309,11 @@ temp
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache (https://parceljs.org/)
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache
 .cache
 .parcel-cache
 
@@ -100,11 +335,8 @@ temp
 # DynamoDB Local files
 .dynamodb/
 
-# Prisma
-prisma/migrations/
+# TernJS port file
+.tern-port
 
-# Turbo
-.turbo
-
-# Local development
-.local
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-testpnpm-lock.yaml

@@ -1,17 +1,21 @@
 // import { Prisma.Decimal } from "./generated/";
 
-import { env } from "@ecomerceNextjs/env";
 import { PrismaPg } from "@prisma/adapter-pg";
-// import dotenv from "dotenv";
+import "dotenv/config";
+
 import { Pool } from "pg";
+import { env } from "prisma/config";
 
 import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "./generated/client"; // path may differ
 
 // dotenv.config({
-//   path: "../../../apps/server/.env", quiet: true, override: true, debug: true
+//   path: "../../../apps/server/.env",
+//   quiet: true,
+//   override: true,
+//   debug: true,
 // });
 
-const pool = new Pool({ connectionString: env.DATABASE_URL || "" });
+const pool = new Pool({ connectionString: env("DATABASE_URL") });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 // Initialize Prisma Client
