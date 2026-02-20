@@ -16,6 +16,15 @@ import {
   Truck,
 } from "lucide-react";
 
+/** Wrap a DOM update in a View Transition when the browser supports it. */
+function withViewTransition(callback: () => void) {
+  if (typeof document !== "undefined" && "startViewTransition" in document) {
+    (document as any).startViewTransition(callback);
+  } else {
+    callback();
+  }
+}
+
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
@@ -34,6 +43,7 @@ interface ProductSliderProps {
   subtitle: string;
   products: ProductSingleResponse[];
   categoryLink: string;
+  viewTransitionName?: string;
 }
 
 const ProductSlider: React.FC<ProductSliderProps> = ({
@@ -41,6 +51,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
   subtitle,
   products,
   categoryLink,
+  viewTransitionName,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
@@ -67,6 +78,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
       className="group relative animate-slide-up space-y-6"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      style={viewTransitionName ? { viewTransitionName } : undefined}
     >
       <div className="flex items-end justify-between px-2">
         <div>
@@ -168,16 +180,23 @@ export default function LandingPage() {
     return;
   }
 
-  const nextSlide = () => setCurrentSlide((p) => (p + 1) % data.length);
-  const prevSlide = () => setCurrentSlide((p) => (p - 1 + data.length) % data.length);
+  const nextSlide = () => withViewTransition(() => setCurrentSlide((p) => (p + 1) % data.length));
+  const prevSlide = () =>
+    withViewTransition(() => setCurrentSlide((p) => (p - 1 + data.length) % data.length));
 
   // Subtle parallax offsets
   const parallaxText = scrollPos * 0.15;
   const parallaxImage = scrollPos * 0.05;
 
   return (
-    <div className="mx-auto max-w-[1600px] animate-fade-in space-y-16 p-4 pb-8 md:px-8">
-      <div className="grid h-auto grid-cols-1 gap-4 lg:h-[600px] lg:grid-cols-12">
+    <div
+      className="mx-auto max-w-[1600px] animate-fade-in space-y-16 p-4 pb-8 md:px-8"
+      style={{ viewTransitionName: "landing-page" }}
+    >
+      <div
+        className="grid h-auto grid-cols-1 gap-4 lg:h-[600px] lg:grid-cols-12"
+        style={{ viewTransitionName: "hero-grid" }}
+      >
         <BentoCard className="group relative flex flex-col justify-center overflow-hidden bg-[#F2F2F0] lg:col-span-8">
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-bold text-[12vw] text-white uppercase leading-none tracking-tighter transition-transform duration-150 ease-out"
@@ -195,12 +214,20 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <h1 className="font-light text-4xl leading-[1.1] tracking-tight md:text-6xl">
+              <h1
+                className="font-light text-4xl leading-[1.1] tracking-tight md:text-6xl"
+                style={{ viewTransitionName: "hero-title" }}
+              >
                 {featuredProduct.name}
               </h1>
 
               <div className="flex items-center gap-4">
-                <span className="font-medium text-2xl">${featuredProduct.price}</span>
+                <span
+                  className="font-medium text-2xl"
+                  style={{ viewTransitionName: "hero-price" }}
+                >
+                  ${featuredProduct.price}
+                </span>
                 <div className="h-4 w-px bg-gray-300"></div>
                 <div className="flex items-center gap-1 text-yellow-500">
                   <Star
@@ -242,6 +269,7 @@ export default function LandingPage() {
                 src={"/images/caroline.jpg"}
                 alt={featuredProduct.name}
                 className="relative h-full w-full object-contain drop-shadow-2xl transition-transform duration-700 ease-out group-hover:scale-105"
+                style={{ viewTransitionName: "hero-image" }}
               />
             </div>
           </div>
@@ -264,7 +292,10 @@ export default function LandingPage() {
           </div>
         </BentoCard>
 
-        <BentoCard className="group relative flex flex-col justify-between overflow-hidden bg-black p-8 text-white lg:col-span-4">
+        <BentoCard
+          className="group relative flex flex-col justify-between overflow-hidden bg-black p-8 text-white lg:col-span-4"
+          style={{ viewTransitionName: "summer-sale" }}
+        >
           <div className="relative z-10">
             <span className="font-bold text-gray-400 text-xs uppercase tracking-wider">
               Limited Offer
@@ -294,7 +325,10 @@ export default function LandingPage() {
         </BentoCard>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div
+        className="grid grid-cols-1 gap-4 md:grid-cols-3"
+        style={{ viewTransitionName: "trust-badges" }}
+      >
         {[
           { icon: Truck, id: 1, title: "Free Shipping", desc: "On all orders over $200" },
           {
@@ -329,10 +363,14 @@ export default function LandingPage() {
           subtitle="Pick up where you left off."
           products={recentlyViewed}
           categoryLink="/product"
+          viewTransitionName="slider-recently-viewed"
         />
       )}
 
-      <div className="grid min-h-100 grid-cols-1 gap-4 md:grid-cols-3">
+      <div
+        className="grid min-h-100 grid-cols-1 gap-4 md:grid-cols-3"
+        style={{ viewTransitionName: "category-grid" }}
+      >
         <BentoCard className="group relative overflow-hidden bg-[#E8E8E6] md:col-span-2">
           <Image
             alt="Modern sofas"
@@ -402,15 +440,20 @@ export default function LandingPage() {
         subtitle="Relax in style with our premium sofas and chairs."
         products={data}
         categoryLink="/products?category=Sofa"
+        viewTransitionName="slider-living-room"
       />
       <ProductSlider
         title="Workspace & Lighting"
         subtitle="Illuminate your ideas with our curated collection."
         products={data}
         categoryLink="/products?category=Table"
+        viewTransitionName="slider-workspace"
       />
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+      <div
+        className="grid grid-cols-1 gap-4 md:grid-cols-12"
+        style={{ viewTransitionName: "reviews-section" }}
+      >
         <BentoCard className="flex flex-col justify-center bg-white p-8 md:col-span-8">
           <h3 className="mb-8 font-light text-2xl">What our customers say</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -447,7 +490,10 @@ export default function LandingPage() {
             ))}
           </div>
         </BentoCard>
-        <BentoCard className="group relative flex cursor-pointer flex-col justify-between overflow-hidden bg-[#C6BAA8] p-8 text-black md:col-span-4">
+        <BentoCard
+          className="group relative flex cursor-pointer flex-col justify-between overflow-hidden bg-[#C6BAA8] p-8 text-black md:col-span-4"
+          style={{ viewTransitionName: "careers-card" }}
+        >
           <div className="relative z-10">
             <span className="rounded-full border border-black/20 px-3 py-1 font-bold text-xs uppercase tracking-wider">
               Careers
