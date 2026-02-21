@@ -1,0 +1,112 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Image version tag to deploy'
+        required: true
+        type: string
+        default: 'latest'
+
+jobs:
+  # ==========================================
+  # Deploy to Environment
+  # ==========================================
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: ${{ vars.ENVIRONMENT_URL }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Context
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure environment
+        run: |
+          echo "DEPLOY_ENV=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+
+      - name: Pull images
+        run: |
+          docker pull ghcr.io/${{ github.repository }}-web:${{ github.event.inputs.version }}
+          docker pull ghcr.io/${{ github.repository }}-server:${{ github.event.inputs.version }}
+
+      - name: Deploy via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          
+          # Deploy using docker context or SSH
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            set -e
+            cd /opt/app
+            
+            # Update image tags in compose file
+            export WEB_IMAGE=ghcr.io/${{ github.repository }}-web:${{ github.event.inputs.version }}
+            export SERVER_IMAGE=ghcr.io/${{ github.repository }}-server:${{ github.event.inputs.version }}
+            
+            # Pull latest images
+            docker compose pull
+            
+            # Run database migrations
+            docker compose run --rm server bunx prisma migrate deploy
+            
+            # Restart services
+            docker compose up -d --remove-orphans
+            
+            # Health check
+            sleep 10
+            curl -f http://localhost:3001/health || exit 1
+            curl -f http://localhost:3000/api/health || exit 1
+            
+            # Cleanup old images
+            docker image prune -f
+            
+            echo "Deployment completed successfully!"
+          EOF
+
+      - name: Verify deployment
+        run: |
+          echo "Running post-deployment checks..."
+          # Add additional verification steps here
+          # For example, check application health, run smoke tests, etc.
+
+      - name: Rollback on failure
+        if: failure()
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "Deployment failed! Rolling back..."
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            cd /opt/app
+            docker compose down
+            docker compose up -d
+          EOF
+        continue-on-error: true

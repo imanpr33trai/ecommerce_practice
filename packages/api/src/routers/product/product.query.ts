@@ -1,4 +1,4 @@
-import prisma, { type Prisma } from "@ecomerceNextjs/db";
+import { type Prisma, prisma } from "@ecomerceNextjs/db";
 
 import type { ProductFilters } from "./product.type";
 
@@ -51,7 +51,7 @@ export const productQueries = {
       case "rating":
         orderBy = [{ reviews: { _count: "desc" } }];
         break;
-      case "newest":
+
       default:
         orderBy = [{ createdAt: "desc" }];
         break;

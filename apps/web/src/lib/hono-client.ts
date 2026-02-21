@@ -1,8 +1,8 @@
+import { env } from "@ecomerceNextjs/env/web";
 import { type ClientResponse, hc } from "hono/client";
+import type { AppType } from "@ecomerceNextjs/api";
 
-import type { AppType } from "../../../server/src";
-
-export const client = hc<AppType>(process.env.NEXT_PUBLIC_SERVER_URL, {
+export const client = hc<AppType>(`${env.NEXT_PUBLIC_API_URL}/api`, {
   init: {
     credentials: "include",
   },

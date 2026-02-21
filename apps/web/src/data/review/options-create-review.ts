@@ -9,7 +9,7 @@ export const useReviewCreateMutation = (productId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (json: GetReviewProductCreateRequest["json"]) => {
-      const res = await client.api.review.$post({ json });
+      const res = await client.review.$post({ json });
 
       const result = await res.json();
 

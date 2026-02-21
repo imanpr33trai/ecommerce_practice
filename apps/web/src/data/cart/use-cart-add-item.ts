@@ -13,7 +13,7 @@ import { cartKeys } from "./keys";
 import type { GetCartAddItemRequest } from "./types";
 
 const cartAddItemFn = async (json: GetCartAddItemRequest["json"]) => {
-  const res = await client.api.cart.$post({ json });
+  const res = await client.cart.$post({ json });
 
   if (!res.ok) {
     const error = await res.json();

@@ -14,7 +14,7 @@ import type { GetWishListIDsResponse, GetWishToggleResponse } from "@/data/wish/
  * 1. Standalone Function
  */
 const toggleWishFn = async (productId: string): Promise<GetWishToggleResponse> => {
-  const res = await client.api.wish.toggle.$post({
+  const res = await client.wish.toggle.$post({
     json: { productId },
   });
 

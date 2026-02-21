@@ -1,0 +1,16 @@
+# Global code owners
+* @your-github-username
+
+# Docker files
+docker/ @your-github-username
+Dockerfile* @your-github-username
+docker-compose*.yml @your-github-username
+
+# CI/CD workflows
+.github/workflows/ @your-github-username
+
+# Infrastructure
+Makefile @your-github-username
+
+# Documentation
+*.md @your-github-username

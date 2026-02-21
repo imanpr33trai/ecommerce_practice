@@ -8,7 +8,7 @@ import type { GetCartUserListResponse } from "./types";
 
 // 1. Independent Fetcher (Safe)
 const cartRemoveItemFn = async (productId: string) => {
-  const res = await client.api.cart[":productId"].$delete({ param: { productId } });
+  const res = await client.cart[":productId"].$delete({ param: { productId } });
 
   // Use standard Error on client-side instead of server-side HTTPException
   if (!res.ok) {

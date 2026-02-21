@@ -20,7 +20,7 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
     <div className={`relative overflow-hidden bg-gray-200/80 ${containerClassName}`}>
       {/* Skeleton Shimmer Overlay */}
       {!isLoaded && (
-        <div className="absolute inset-0 pointer-events-none z-10">
+        <div className="pointer-events-none absolute inset-0 z-10">
           <div
             className="absolute inset-0 -translate-x-full animate-[luxury-shimmer_2.5s_infinite_ease-in-out]"
             style={{
@@ -35,7 +35,7 @@ const ImageWithSkeleton: React.FC<ImageWithSkeletonProps> = ({
       <img
         src={src}
         alt={alt}
-        className={`w-full h-full object-cover transition-opacity duration-1000 ease-premium ${isLoaded ? "opacity-100" : "opacity-0"} ${className}`}
+        className={`h-full w-full object-cover transition-opacity duration-1000 ease-premium ${isLoaded ? "opacity-100" : "opacity-0"} ${className}`}
         onLoad={() => setIsLoaded(true)}
       />
     </div>

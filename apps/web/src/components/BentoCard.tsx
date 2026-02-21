@@ -18,9 +18,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
   return (
     <div
       className={cn(
-        `
-        bg-nest-card rounded-bento overflow-hidden relative shadow-sm transition-all duration-500 ease-out
-        ${hoverEffect ? "hover:shadow-lg hover:-translate-y-1" : ""}
+        `relative overflow-hidden rounded-bento bg-nest-card shadow-sm transition-all duration-500 ease-out ${hoverEffect ? "hover:-translate-y-1 hover:shadow-lg" : ""}
       `,
         className,
       )}

@@ -10,7 +10,7 @@ import { wishKeys } from "@/data/wish/keys";
 import { client } from "@/lib/hono-client";
 
 const deleteWishes = async () => {
-  const res = await client.api.wish.$delete();
+  const res = await client.wish.$delete();
 
   if (!res.ok) {
     throw new Error("Failed to clear wishlist");

@@ -11,7 +11,7 @@ import { client } from "@/lib/hono-client";
 import type { GetSetDefaultResponse } from "@/data/account/types";
 
 const setDefaultAddressFn = async ({ id }: { id: string }) => {
-  const res = await client.api.address[":id"].default.$put({
+  const res = await client.address[":id"].default.$put({
     param: { id },
   });
   const result = (await res.json()) as GetSetDefaultResponse;

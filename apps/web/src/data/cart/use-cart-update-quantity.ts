@@ -12,7 +12,7 @@ export const useCartUpdateItemQuantityMutation = () => {
 
   return useMutation({
     mutationFn: async ({ quantity, productId }: { quantity: number; productId: string }) => {
-      const res = await client.api.cart[":productId"].$put({
+      const res = await client.cart[":productId"].$put({
         json: { quantity },
         param: { productId },
       });

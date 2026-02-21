@@ -6,7 +6,7 @@ import { client } from "@/lib/hono-client";
 import type { GetDeleteAddressResponse } from "@/data/account/types";
 
 const deleteAddressFn = async ({ id }: { id: string }) => {
-  const res = await client.api.address[":id"].$delete({
+  const res = await client.address[":id"].$delete({
     param: { id },
   });
 

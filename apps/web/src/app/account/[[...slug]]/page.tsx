@@ -4,7 +4,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+// import { auth } from "../../../../../../packages/auth/src/index";
 import { auth } from "@ecomerceNextjs/auth";
+// import { auth } from "@ecomerceNextjs/auth";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
@@ -27,9 +29,7 @@ export default async function AccountPage({ params }: PageProps) {
   const queryClient = createQueryClient();
 
   // 1. Server-Side Auth Check
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
     redirect("/log-in");

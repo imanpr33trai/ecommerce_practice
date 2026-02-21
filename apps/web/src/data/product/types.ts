@@ -20,9 +20,9 @@ export type ProductFilters = {
 };
 // 2. Constants
 
-const $getProductsList = client.api.product.$get;
-const $getProductDetail = client.api.product[":slug"].$get;
-const $getProductFilter = client.api.product.filters.$get;
+const $getProductsList = client.product.$get;
+const $getProductDetail = client.product[":slug"].$get;
+const $getProductFilter = client.product.filters.$get;
 
 export type GetProductListRequest = InferRequestType<typeof $getProductsList>;
 export type GetProductsListResponse = InferResponseType<typeof $getProductsList>;
@@ -49,3 +49,4 @@ export const INITIAL_FILTERS: ProductFilters = {
   rating: undefined,
 };
 
+export type GetProductListResponseWithOnlyData = Pick<GetProductsListResponse, "data">;

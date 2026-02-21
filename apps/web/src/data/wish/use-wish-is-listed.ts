@@ -5,7 +5,7 @@ import { client } from "@/lib/hono-client";
 import type { GetWishListIDsResponse } from "@/data/wish/types";
 
 const fetchWishListIDs = async (): Promise<GetWishListIDsResponse | null> => {
-  const res = await client.api.wish.ids.$get();
+  const res = await client.wish.ids.$get();
 
   if (res.status === 401) {
     return null;

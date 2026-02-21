@@ -6,7 +6,8 @@
     "./packages/config/biome/next/biome.jsonc"
   ],
   "css": {
-    "parser": { "tailwindDirectives": true }
+    "parser": { "tailwindDirectives": true },
+    "formatter": {}
   },
 
   "vcs": {
@@ -37,9 +38,16 @@
         },
         "useUnifiedTypeSignatures": "off"
       },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "safe",
+          "options": { "functions": ["clsx", "cva", "twMerge"] }
+        }
+      },
 
       "suspicious": {
-        "noConsole": "warn"
+        "noConsole": "off"
       }
     }
   },
@@ -174,7 +182,7 @@
       "linter": {
         "rules": {
           "style": {
-            "noProcessEnv": null
+            "noProcessEnv": "error"
           }
         }
       }
@@ -194,7 +202,7 @@
       "linter": {
         "rules": {
           "style": {
-            "noProcessEnv": "off"
+            "noProcessEnv": "error"
           }
         }
       }

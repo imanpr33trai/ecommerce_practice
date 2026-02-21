@@ -1,10 +1,25 @@
 {
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "clean": "rimraf .next out",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
+  },
   "dependencies": {
     "@ecomerceNextjs/api": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
-
+    "@t3-oss/env-nextjs": "^0.13.10",
     "@tanstack/react-form": "^1.12.3",
     "@tanstack/react-query": "^5.90.12",
     "@workspace/ui": "workspace:*",
@@ -27,24 +42,14 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.10",
     "@tanstack/react-query-devtools": "^5.85.5",
     "@types/node": "^20",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
-    "tailwindcss": "^4.1.10",
-    "typescript": "^5"
+    "tailwindcss": "^4.1.10"
   },
-  "name": "web",
-  "private": true,
-  "scripts": {
-    "dev": "bun --env-file=../../.env.development --bun next dev -p 3001",
-    "build": "bun --env-file=../../.env.production --bun next build",
-    "start": "bun --bun next start -p 3001",
-    "type-check": "tsc --noEmit",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write ."
-  },
-  "version": "0.1.0"
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

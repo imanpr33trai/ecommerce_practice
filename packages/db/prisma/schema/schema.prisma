@@ -1,9 +1,6 @@
 generator client {
-  provider   = "prisma-client-js"
-  output     = "../generated"
-
-  engineType = "library"   // BEST for Bun
-  previewFeatures = []
+  provider = "prisma-client"
+  output   = "../generated"
 }
 
 datasource db {

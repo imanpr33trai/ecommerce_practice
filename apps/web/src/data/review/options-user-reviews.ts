@@ -1,4 +1,4 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 
 import { reviewKeys } from "@/data/review/keys";
 import { client } from "@/lib/hono-client";
@@ -8,7 +8,7 @@ import type {
 } from "@/data/review/types";
 
 const fetchUserReviewsFn = async (query: GetReviewProductUserListRequest["query"]) => {
-  const res = await client.api.review.me.$get({
+  const res = await client.review.me.$get({
     query,
   });
 
@@ -32,7 +32,7 @@ export function reviewsUserOptions(
   query: GetReviewProductUserListRequest["query"],
 ) {
   return queryOptions({
-    queryKey: reviewKeys.user(),
+    queryKey: reviewKeys.userList(),
     queryFn: () => fetchUserReviewsFn(query),
     enabled: isAuth,
     staleTime: 1000 * 60 * 5, // 5 mins
@@ -43,5 +43,5 @@ export const useReviewsUserQuery = (
   isAuth: boolean,
   query: GetReviewProductUserListRequest["query"],
 ) => {
-  return useSuspenseQuery(reviewsUserOptions(isAuth, query));
+  return useQuery(reviewsUserOptions(isAuth, query));
 };

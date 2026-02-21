@@ -5,7 +5,7 @@ import { client } from "@/lib/hono-client";
 import type { GetOrderSingleRespose } from "@/data/order/type";
 
 const getOrderDetailFn = async (id: string) => {
-  const res = await client.api.order[":id"].$get({
+  const res = await client.order[":id"].$get({
     param: { id },
   });
   const result = (await res.json().catch(() => ({

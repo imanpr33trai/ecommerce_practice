@@ -185,3 +185,137 @@ body {
     transform: translateY(0);
   }
 }
+
+/* ── View Transition API ─────────────────────────────────── */
+
+/* Opt-in to cross-document view transitions (MPA) */
+@view-transition {
+  navigation: auto;
+}
+
+/* Default page fade – applies to the root snapshot */
+::view-transition-old(root) {
+  animation: vt-fade-out 0.25s ease-out both;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 0.35s ease-in both;
+}
+
+/* Landing page wrapper – slide + fade */
+::view-transition-old(landing-page) {
+  animation: vt-slide-out 0.3s ease-out both;
+}
+::view-transition-new(landing-page) {
+  animation: vt-slide-in 0.4s ease-in both;
+}
+
+/* Hero carousel cross-fade (title, price, image) */
+::view-transition-old(hero-title),
+::view-transition-old(hero-price),
+::view-transition-old(hero-image) {
+  animation: vt-fade-out 0.2s ease-out both;
+}
+::view-transition-new(hero-title),
+::view-transition-new(hero-price),
+::view-transition-new(hero-image) {
+  animation: vt-fade-in 0.3s 0.1s ease-in both;
+}
+
+/* Hero image gets a subtle scale morph */
+::view-transition-old(hero-image) {
+  animation: vt-scale-out 0.25s ease-out both;
+}
+::view-transition-new(hero-image) {
+  animation: vt-scale-in 0.35s ease-in both;
+}
+
+/* Section-level transitions (grid, sliders, reviews) */
+::view-transition-old(hero-grid),
+::view-transition-old(trust-badges),
+::view-transition-old(category-grid),
+::view-transition-old(reviews-section),
+::view-transition-old(summer-sale),
+::view-transition-old(careers-card),
+::view-transition-old(slider-recently-viewed),
+::view-transition-old(slider-living-room),
+::view-transition-old(slider-workspace) {
+  animation: vt-fade-out 0.2s ease-out both;
+}
+::view-transition-new(hero-grid),
+::view-transition-new(trust-badges),
+::view-transition-new(category-grid),
+::view-transition-new(reviews-section),
+::view-transition-new(summer-sale),
+::view-transition-new(careers-card),
+::view-transition-new(slider-recently-viewed),
+::view-transition-new(slider-living-room),
+::view-transition-new(slider-workspace) {
+  animation: vt-fade-in 0.35s ease-in both;
+}
+
+/* ── View Transition Keyframes ───────────────────────────── */
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vt-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+@keyframes vt-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes vt-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+@keyframes vt-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Disable view-transition animations when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -266,7 +266,7 @@
         "useConsistentGraphqlDescriptions": "error",
         "useDeprecatedDate": "error",
         "useMaxParams": "error",
-        "useUniqueGraphqlOperationName": "error",
+        // "useUniqueGraphqlOperationName": "error",
 
         "noContinue": "off",
         "noForIn": "off",

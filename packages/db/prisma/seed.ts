@@ -1,16 +1,21 @@
 // import { Prisma.Decimal } from "./generated/";
 
 import { PrismaPg } from "@prisma/adapter-pg";
-// import dotenv from "dotenv";
-import { Pool } from "pg";
+import "dotenv/config";
 
-import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "../prisma/generated/client"; // path may differ
+import { Pool } from "pg";
+import { env } from "prisma/config";
+
+import { OrderStatus, PaymentStatus, Prisma, PrismaClient } from "./generated/client"; // path may differ
 
 // dotenv.config({
-//   path: "../../../apps/server/.env", quiet: true, override: true, debug: true
+//   path: "../../../apps/server/.env",
+//   quiet: true,
+//   override: true,
+//   debug: true,
 // });
 
-const pool = new Pool({ connectionString: import.meta.env.DATABASE_URL || "" });
+const pool = new Pool({ connectionString: env("DATABASE_URL") });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 // Initialize Prisma Client

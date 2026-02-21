@@ -12,7 +12,7 @@ import { client } from "@/lib/hono-client";
 import type { GetCreateOrderRequest, GetCreateOrderResponse } from "@/data/order/type";
 
 const createOrderFn = async (json: GetCreateOrderRequest) => {
-  const res = await client.api.order.$post({
+  const res = await client.order.$post({
     json,
   });
 

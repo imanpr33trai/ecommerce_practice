@@ -1,37 +1,54 @@
 {
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "check-types": "tsc -b",
+    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.mjs",
+
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:watch": "tsc -p tsconfig.build.json --watch",
+
+    "type-check": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "clean": "rimraf dist",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
+  },
   "dependencies": {
     "@ecomerceNextjs/api": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
-    "@ecomerceNextjs/env": "workspace:*",
     "@hono/node-server": "^1.19.9",
     "@hono/zod-validator": "^0.7.6",
-    "better-auth": "^1.4.0",
-    "dotenv": "^16.4.7",
-    "hono": "^4.11.3",
-    "zod": "^4.3.5"
+    "@ecomerceNextjs/env": "workspace:*",
+
+    "@ecomerceNextjs/config": "workspace:*",
+
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "hono": "^4.8.2",
+    "zod": "catalog:"
   },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "tsdown": "^0.16.5",
+    "tsx": "^4.19.2",
+    "typescript": "catalog:"
+  },
+  "main": "dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },
-  "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*",
-    "@types/node": "^25.0.9",
-    "esbuild": "^0.27.2",
-    "typescript": "^5.8.2"
-  },
-  "main": "dist/index.js",
-  "name": "server",
-  "scripts": {
-    "dev": "bun --env-file=../../.env.development run --hot src/index.ts",
-    "type-check": "tsc --noEmit",
-    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
-    "build:watch": "tsc -p tsconfig.build.json --watch",
-    "build:tsc": "tsc -p tsconfig.build.json",
-    "start": "bun --env-file=../../.env.development dist/index.js"
-  },
-  "type": "module"
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

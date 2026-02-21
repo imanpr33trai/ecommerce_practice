@@ -52,10 +52,6 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
     sort,
   });
 
-  if (!product || !productReviews) {
-    return null;
-  }
-
   const handlePostReview = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -89,18 +85,18 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-24 animate-fade-in">
+    <div className="mb-24 grid animate-fade-in grid-cols-1 gap-8 lg:grid-cols-12">
       {/* LEFT COLUMN: Form & Stats */}
-      <div className="lg:col-span-4 space-y-6">
+      <div className="space-y-6 lg:col-span-4">
         {/* Review Form */}
-        <BentoCard className="p-8 bg-white h-fit">
-          <h2 className="text-3xl font-light mb-6 flex items-center gap-3">
+        <BentoCard className="h-fit bg-white p-8">
+          <h2 className="mb-6 flex items-center gap-3 font-light text-3xl">
             <MessageSquare size={24} /> Feedback
           </h2>
 
           {!session ? (
-            <div className="text-center p-6 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-              <p className="text-sm text-gray-500 mb-4">
+            <div className="rounded-3xl border border-gray-200 border-dashed bg-gray-50 p-6 text-center">
+              <p className="mb-4 text-gray-500 text-sm">
                 Login to share your experience with this product.
               </p>
               <Link href="/log-in">
@@ -118,7 +114,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
               className="space-y-4"
             >
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+                <label className="mb-3 block font-bold text-gray-400 text-xs uppercase tracking-wider">
                   Your Rating
                 </label>
                 <div className="flex gap-2">
@@ -127,12 +123,12 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                       type="button"
                       key={star}
                       onClick={() => setReviewRating(star)}
-                      className="transition-transform hover:scale-110 active:scale-95 focus:outline-none"
+                      className="transition-transform hover:scale-110 focus:outline-none active:scale-95"
                     >
                       <Star
                         size={24}
                         className={
-                          star <= reviewRating ? "text-yellow-500 fill-yellow-500" : "text-gray-200"
+                          star <= reviewRating ? "fill-yellow-500 text-yellow-500" : "text-gray-200"
                         }
                       />
                     </button>
@@ -140,14 +136,14 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                <label className="mb-2 block font-bold text-gray-400 text-xs uppercase tracking-wider">
                   Comment
                 </label>
                 <textarea
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
                   placeholder="What did you love about this piece?"
-                  className="w-full bg-gray-50 rounded-2xl px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-black/5 min-h-[120px] resize-none"
+                  className="min-h-30 w-full resize-none rounded-2xl bg-gray-50 px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-black/5"
                   required
                 />
               </div>
@@ -167,11 +163,11 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
         </BentoCard>
 
         {/* Rating Summary (Histogram) */}
-        <BentoCard className="p-6 bg-gray-50 border border-gray-100">
-          <div className="flex items-end justify-between mb-4">
+        <BentoCard className="border border-gray-100 bg-gray-50 p-6">
+          <div className="mb-4 flex items-end justify-between">
             <h4 className="font-bold">Rating Summary</h4>
             {summary && (
-              <span className="text-xs text-gray-500 font-medium">
+              <span className="font-medium text-gray-500 text-xs">
                 {summary.data.average.toFixed(1)} / 5.0 ({summary.data.total})
               </span>
             )}
@@ -198,18 +194,18 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                     key={r}
                     className="flex items-center gap-3"
                   >
-                    <span className="text-xs font-bold w-4">{r}</span>
+                    <span className="w-4 font-bold text-xs">{r}</span>
                     <Star
                       size={12}
-                      className="text-yellow-500 fill-yellow-500 shrink-0"
+                      className="shrink-0 fill-yellow-500 text-yellow-500"
                     />
-                    <div className="flex-1 h-1.5 bg-white rounded-full overflow-hidden">
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white">
                       <div
                         className="h-full bg-black transition-all duration-1000 ease-out"
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
-                    <span className="text-xs text-gray-400 w-8 text-right">{count}</span>
+                    <span className="w-8 text-right text-gray-400 text-xs">{count}</span>
                   </div>
                 );
               })}
@@ -220,11 +216,11 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
 
       {/* RIGHT COLUMN: Review List */}
       <div className="lg:col-span-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <h3 className="font-bold text-xl">
             Reviews
-            <span className="text-muted-foreground text-sm font-normal ml-2">
-              ({productReviews.data.pagination.total ?? 0})
+            <span className="ml-2 font-normal text-muted-foreground text-sm">
+              ({productReviews && (productReviews.data.pagination.total ?? 0)})
             </span>
           </h3>
 
@@ -266,16 +262,16 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
             [1, 2, 3].map((i) => (
               <Skeleton
                 key={i}
-                className="h-48 w-full rounded-[2rem]"
+                className="h-48 w-full rounded-[2rem] bg-[#e8e8e6]"
               />
             ))
           ) : productReviews && productReviews.data.items.length > 0 ? (
             productReviews.data.items.map((review) => (
               <BentoCard
                 key={review.id}
-                className="p-8 bg-white group/rev transition-all hover:shadow-md"
+                className="group/rev bg-white p-8 transition-all hover:shadow-md"
               >
-                <div className="flex justify-between items-start mb-6">
+                <div className="mb-6 flex items-start justify-between">
                   <div className="flex items-center gap-4">
                     <div className="relative h-12 w-12">
                       <Image
@@ -295,13 +291,13 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                               size={12}
                               className={
                                 i < review.rating
-                                  ? "text-yellow-500 fill-yellow-500"
+                                  ? "fill-yellow-500 text-yellow-500"
                                   : "text-gray-200"
                               }
                             />
                           ))}
                         </div>
-                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                        <span className="font-bold text-[10px] text-gray-400 uppercase tracking-widest">
                           • {new Date(review.createdAt).toLocaleDateString()}
                         </span>
                       </div>
@@ -312,7 +308,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                     <button
                       type="button"
                       onClick={() => deleteReview(review.id)}
-                      className="p-2 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover/rev:opacity-100 bg-gray-50 rounded-full"
+                      className="rounded-full bg-gray-50 p-2 text-gray-300 opacity-0 transition-colors hover:text-red-500 group-hover/rev:opacity-100"
                       title="Delete Review"
                     >
                       <Trash2 size={18} />
@@ -320,20 +316,20 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                   )}
                 </div>
 
-                <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 font-bold text-[10px] text-green-700 uppercase tracking-widest">
                   <ShieldCheck size={12} /> Verified Purchase
                 </div>
 
-                <p className="text-gray-600 leading-relaxed text-lg italic">"{review.comment}"</p>
+                <p className="text-gray-600 text-lg italic leading-relaxed">"{review.comment}"</p>
               </BentoCard>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] text-center border border-dashed border-gray-100">
+            <div className="flex flex-col items-center justify-center rounded-[2rem] border border-gray-100 border-dashed bg-white py-20 text-center">
               <MessageSquare
                 size={48}
-                className="text-gray-200 mb-4"
+                className="mb-4 text-gray-200"
               />
-              <h3 className="text-xl font-bold mb-2">No reviews yet</h3>
+              <h3 className="mb-2 font-bold text-xl">No reviews yet</h3>
               <p className="text-gray-500">Be the first to share your thoughts!</p>
             </div>
           )}
@@ -341,7 +337,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
 
         {/* Pagination Controls */}
         {productReviews && productReviews.data.pagination.totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-8">
+          <div className="mt-8 flex items-center justify-center gap-4">
             <Button
               variant="outline"
               size="icon"
@@ -351,7 +347,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
             >
               <ChevronLeft size={20} />
             </Button>
-            <span className="text-sm font-medium text-gray-500">
+            <span className="font-medium text-gray-500 text-sm">
               Page {page} of {productReviews.data.pagination.totalPages}
             </span>
             <Button

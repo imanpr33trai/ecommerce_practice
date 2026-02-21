@@ -13,7 +13,7 @@ import type { GetUpdateProfileRequest, GetUpdateProfileResponse } from "@/data/a
  * 1. Standalone Function (Fetcher)
  */
 const updateProfileFn = async (json: GetUpdateProfileRequest) => {
-  const res = await client.api.user.me.$put({
+  const res = await client.user.me.$put({
     json,
   });
 

@@ -6,7 +6,7 @@ import { client } from "@/lib/hono-client";
 import { productKeys } from "./keys";
 
 const fetchFilters = async () => {
-  const res = await client.api.product.filters.$get();
+  const res = await client.product.filters.$get();
   if (!res.ok) {
     throw new HTTPException(404, { message: "Fetching failed filters" });
   }

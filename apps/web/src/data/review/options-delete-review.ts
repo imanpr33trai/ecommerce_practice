@@ -8,7 +8,7 @@ export const useReviewDeleteMutation = (productId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reviewId: string) => {
-      const res = await client.api.review[":id"].$delete({
+      const res = await client.review[":id"].$delete({
         param: { id: reviewId },
       });
 
@@ -21,10 +21,14 @@ export const useReviewDeleteMutation = (productId?: string) => {
       }
       return result;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       if (productId) {
-        queryClient.invalidateQueries({ queryKey: reviewKeys.byProduct(productId) });
-        queryClient.invalidateQueries({ queryKey: reviewKeys.summary(productId) });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: reviewKeys.byProduct(productId),
+          }),
+          queryClient.invalidateQueries({ queryKey: reviewKeys.summary(productId) }),
+        ]);
       }
 
       toast.success("Review Deleted successfully");

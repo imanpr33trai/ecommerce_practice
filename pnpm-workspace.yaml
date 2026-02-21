@@ -1,0 +1,39 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+catalog:
+  dotenv: ^17.2.2
+  zod: ^4.1.13
+  typescript: ^5
+  better-auth: ^1.4.18
+  "@prisma/client": ^7.2.0
+
+# Optimizations for monorepo
+catalogs:
+  # Shared dependencies catalog for version alignment
+  react18:
+    react: "^18.2.0"
+    "react-dom": "^18.2.0"
+    "@types/react": "^18.2.0"
+    "@types/react-dom": "^18.2.0"
+
+  react19:
+    react: "^19.2.3"
+    "react-dom": "^19.2.3"
+    "@types/react": "^19.2.2"
+    "@types/react-dom": "^19.2.2"
+
+  typescript:
+    typescript: "^5.8.2"
+    "@types/node": "^20.11.17"
+
+# Link shared packages to reduce duplication
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+
+# Enable shamefully-hoist for compatibility with tools that expect node_modules structure
+shamefullyHoist: false
+
+# Store node_modules in root to reduce duplication
+# Remove comment to enable: node-linker: isolataed
+nodeLinker: isolated

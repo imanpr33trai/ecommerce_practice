@@ -26,25 +26,25 @@ export function SearchContent() {
   const products = searchResults?.data.items || [];
 
   return (
-    <div className="p-4 md:px-8 max-w-400 mx-auto animate-fade-in min-h-[80vh]">
-      <div className="mb-8 pt-4 border-b border-gray-100 pb-6">
-        <h1 className="text-3xl font-light mb-2">Search Results</h1>
+    <div className="mx-auto min-h-[80vh] max-w-400 animate-fade-in p-4 md:px-8">
+      <div className="mb-8 border-gray-100 border-b pt-4 pb-6">
+        <h1 className="mb-2 font-light text-3xl">Search Results</h1>
         <p className="text-gray-500">
           Showing results for <span className="font-bold text-black">"{query}"</span>
         </p>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <Loader2
             className="animate-spin text-gray-400"
             size={32}
           />
         </div>
       ) : isError ? (
-        <div className="text-center text-red-500 py-20">Something went wrong while searching.</div>
+        <div className="py-20 text-center text-red-500">Something went wrong while searching.</div>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -54,15 +54,15 @@ export function SearchContent() {
         </div>
       ) : (
         // Empty State
-        <div className="flex flex-col items-center justify-center py-24 bg-gray-50 rounded-3xl text-center border border-dashed border-gray-200">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-gray-200 border-dashed bg-gray-50 py-24 text-center">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm">
             <Search
               size={32}
               className="text-gray-300"
             />
           </div>
-          <h2 className="text-2xl font-bold mb-2">No results found</h2>
-          <p className="text-gray-500 mb-8 max-w-md">
+          <h2 className="mb-2 font-bold text-2xl">No results found</h2>
+          <p className="mb-8 max-w-md text-gray-500">
             We couldn't find any products matching "{query}". Try different keywords or browse our
             catalog.
           </p>

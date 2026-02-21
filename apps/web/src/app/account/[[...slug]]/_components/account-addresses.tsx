@@ -16,9 +16,9 @@ export function AccountAddresses() {
   const { mutate: deleteAddress } = useAddressDeleteMutation();
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex justify-between items-end mb-4">
-        <h2 className="text-3xl font-light">Saved Addresses</h2>
+    <div className="animate-fade-in space-y-6">
+      <div className="mb-4 flex items-end justify-between">
+        <h2 className="font-light text-3xl">Saved Addresses</h2>
         <Button
           size="sm"
           onClick={() => setIsAddressModalOpen(true)}
@@ -30,26 +30,26 @@ export function AccountAddresses() {
       {addressLoading ? (
         <Skeleton className="h-40 w-full" />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {addresses?.data.map((addr) => (
             <BentoCard
               key={addr.id}
-              className={`p-6 bg-white border-2 relative ${addr.isDefault ? "border-black" : "border-transparent"}`}
+              className={`relative border-2 bg-white p-6 ${addr.isDefault ? "border-black" : "border-transparent"}`}
             >
               {addr.isDefault && (
-                <span className="absolute top-4 right-4 text-[10px] font-bold bg-black text-white px-2 py-1 rounded-full">
+                <span className="absolute top-4 right-4 rounded-full bg-black px-2 py-1 font-bold text-[10px] text-white">
                   DEFAULT
                 </span>
               )}
-              <h3 className="font-bold mb-2">{addr.fullName}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+              <h3 className="mb-2 font-bold">{addr.fullName}</h3>
+              <p className="mb-4 text-gray-600 text-sm leading-relaxed">
                 {addr.streetLine1} {addr.streetLine2} <br />
                 {addr.city}, {addr.state} {addr.postalCode} <br />
                 {addr.country}
               </p>
               <div className="flex gap-2">
                 <button
-                  className="text-xs font-bold underline"
+                  className="font-bold text-xs underline"
                   onClick={() => {
                     /* Edit Logic */
                   }}
@@ -58,7 +58,7 @@ export function AccountAddresses() {
                   Edit
                 </button>
                 <button
-                  className="text-xs font-bold text-red-500 underline"
+                  className="font-bold text-red-500 text-xs underline"
                   onClick={() => deleteAddress({ id: addr.id })}
                   type="button"
                 >
@@ -69,14 +69,14 @@ export function AccountAddresses() {
           ))}
 
           <BentoCard
-            className="p-6 bg-gray-50 border border-dashed border-gray-300 flex items-center justify-center min-h-50 cursor-pointer hover:bg-gray-100 transition-colors"
+            className="flex min-h-50 cursor-pointer items-center justify-center border border-gray-300 border-dashed bg-gray-50 p-6 transition-colors hover:bg-gray-100"
             onClick={() => setIsAddressModalOpen(true)}
           >
             <div className="text-center">
-              <div className="w-10 h-10 rounded-full bg-white mx-auto mb-2 flex items-center justify-center shadow-sm">
+              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
                 +
               </div>
-              <span className="font-bold text-sm text-gray-500">Add Address</span>
+              <span className="font-bold text-gray-500 text-sm">Add Address</span>
             </div>
           </BentoCard>
         </div>

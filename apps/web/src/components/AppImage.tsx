@@ -11,7 +11,7 @@ function Img({ className, ...props }: ImageProps) {
   return (
     <div className="relative overflow-hidden">
       {!loaded && (
-        <div className="absolute inset-0 grid place-items-center z-10">
+        <div className="absolute inset-0 z-10 grid place-items-center">
           <Spinner variant="bars" />
         </div>
       )}

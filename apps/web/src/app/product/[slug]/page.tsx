@@ -13,10 +13,10 @@ export default async function ProductDetail({ params }: { params: Promise<{ slug
 
   return (
     <Suspense fallback={<LoadingSkeleton type="detail" />}>
-      <div className="p-4 md:px-8 max-w-400 mx-auto pb-12 animate-fade-in">
+      <div className="mx-auto max-w-400 animate-fade-in p-4 pb-12 md:px-8">
         <Breadcrumbs />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-16">
+        <div className="mb-16 grid grid-cols-1 gap-4 lg:grid-cols-12">
           <ProductGallery slug={slug} />
           <ProductInfo slug={slug} />
         </div>

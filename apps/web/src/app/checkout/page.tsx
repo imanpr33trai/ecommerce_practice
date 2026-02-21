@@ -136,35 +136,35 @@ export default function CheckoutPage() {
   }, [isCartLoading, cartItems, router]);
 
   if (isCartLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading Checkout...</div>;
+    return <div className="flex min-h-screen items-center justify-center">Loading Checkout...</div>;
   }
 
   if (cartItems.length === 0) {
     return null; // Avoid flash of content before redirect
   }
   return (
-    <div className="p-4 md:px-8 max-w-[1400px] mx-auto animate-fade-in pb-12">
+    <div className="mx-auto max-w-[1400px] animate-fade-in p-4 pb-12 md:px-8">
       <Breadcrumbs />
-      <h1 className="text-4xl font-light mb-8">Checkout</h1>
+      <h1 className="mb-8 font-light text-4xl">Checkout</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 space-y-6">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div className="space-y-6 lg:col-span-8">
           {/* STEP 1: SHIPPING */}
           <BentoCard
-            className={`p-8 bg-white transition-opacity duration-300 ${step === 2 ? "opacity-50 pointer-events-none grayscale" : "opacity-100"}`}
+            className={`bg-white p-8 transition-opacity duration-300 ${step === 2 ? "pointer-events-none opacity-50 grayscale" : "opacity-100"}`}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black font-bold text-sm text-white">
                   1
                 </div>
-                <h2 className="text-xl font-bold">Shipping Information</h2>
+                <h2 className="font-bold text-xl">Shipping Information</h2>
               </div>
               {step === 2 && (
                 <button
                   onClick={() => setStep(1)}
                   type="button"
-                  className="text-sm font-bold underline"
+                  className="font-bold text-sm underline"
                 >
                   Edit
                 </button>
@@ -173,19 +173,19 @@ export default function CheckoutPage() {
 
             {/* Existing Addresses Quick Select */}
             {addresses && addresses.length > 0 && step === 1 && (
-              <div className="flex gap-4 overflow-x-auto pb-4 mb-4">
+              <div className="mb-4 flex gap-4 overflow-x-auto pb-4">
                 {addresses.map((addr) => (
                   <div
                     key={addr.id}
                     onClick={() => handleSelectAddress(addr.id)}
-                    className={`min-w-[200px] p-4 border rounded-xl cursor-pointer transition-all ${selectedAddressId === addr.id ? "border-black bg-gray-50 ring-1 ring-black" : "border-gray-200 hover:border-gray-300"}`}
+                    className={`min-w-[200px] cursor-pointer rounded-xl border p-4 transition-all ${selectedAddressId === addr.id ? "border-black bg-gray-50 ring-1 ring-black" : "border-gray-200 hover:border-gray-300"}`}
                   >
                     <div className="flex justify-between">
                       <span className="font-bold text-sm">{addr.fullName}</span>
                       {selectedAddressId === addr.id && <CheckCircle size={16} />}
                     </div>
-                    <p className="text-xs text-gray-500 mt-2 truncate">{addr.streetLine1}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="mt-2 truncate text-gray-500 text-xs">{addr.streetLine1}</p>
+                    <p className="text-gray-500 text-xs">
                       {addr.city}, {addr.postalCode}
                     </p>
                   </div>
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   type="text"
                   placeholder="First Name"
-                  className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                  className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                 />
                 <input
                   required
@@ -215,7 +215,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   type="text"
                   placeholder="Last Name"
-                  className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                  className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                 />
               </div>
               <input
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
                 onChange={handleInputChange}
                 type="text"
                 placeholder="Street Address"
-                className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
               />
               <div className="grid grid-cols-2 gap-4">
                 <input
@@ -235,7 +235,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   type="text"
                   placeholder="City"
-                  className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                  className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                 />
                 <input
                   required
@@ -244,7 +244,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   type="text"
                   placeholder="Postal Code"
-                  className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                  className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                 />
               </div>
               <input
@@ -254,7 +254,7 @@ export default function CheckoutPage() {
                 onChange={handleInputChange}
                 type="email"
                 placeholder="Email for receipt"
-                className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
               />
 
               {step === 1 && (
@@ -267,25 +267,25 @@ export default function CheckoutPage() {
 
           {/* STEP 2: PAYMENT */}
           <BentoCard
-            className={`p-8 bg-white transition-all duration-300 ${step === 1 ? "opacity-50 pointer-events-none" : "opacity-100 ring-2 ring-black"}`}
+            className={`bg-white p-8 transition-all duration-300 ${step === 1 ? "pointer-events-none opacity-50" : "opacity-100 ring-2 ring-black"}`}
           >
-            <div className="flex items-center gap-3 mb-6">
+            <div className="mb-6 flex items-center gap-3">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step === 2 ? "bg-black text-white" : "bg-gray-200 text-gray-500"}`}
+                className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm ${step === 2 ? "bg-black text-white" : "bg-gray-200 text-gray-500"}`}
               >
                 2
               </div>
-              <h2 className="text-xl font-bold">Payment Details</h2>
+              <h2 className="font-bold text-xl">Payment Details</h2>
             </div>
 
             <div className="space-y-4">
-              <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm text-gray-800">
+              <div className="flex gap-4 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-gray-800 shadow-sm">
                   <CreditCard size={20} />
                 </div>
                 <div>
                   <h3 className="font-bold text-sm">Credit Card</h3>
-                  <p className="text-xs text-gray-500">Secure 256-bit SSL encryption</p>
+                  <p className="text-gray-500 text-xs">Secure 256-bit SSL encryption</p>
                 </div>
                 <div className="ml-auto">
                   <Lock
@@ -307,7 +307,7 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   type="text"
                   placeholder="Card Number (Mock)"
-                  className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                  className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                 />
                 <div className="grid grid-cols-2 gap-4">
                   <input
@@ -317,7 +317,7 @@ export default function CheckoutPage() {
                     onChange={handleInputChange}
                     type="text"
                     placeholder="MM/YY"
-                    className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                    className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                   />
                   <input
                     required
@@ -326,7 +326,7 @@ export default function CheckoutPage() {
                     onChange={handleInputChange}
                     type="text"
                     placeholder="CVC"
-                    className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                    className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                   />
                 </div>
                 <input
@@ -336,13 +336,13 @@ export default function CheckoutPage() {
                   onChange={handleInputChange}
                   type="text"
                   placeholder="Cardholder Name"
-                  className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm border border-transparent focus:border-black/10 outline-none"
+                  className="w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3 text-sm outline-none focus:border-black/10"
                 />
               </form>
             </div>
           </BentoCard>
 
-          <div className="flex items-center justify-center gap-2 text-gray-400 text-xs mt-6">
+          <div className="mt-6 flex items-center justify-center gap-2 text-gray-400 text-xs">
             <ShieldCheck size={14} />
             <span>Payments are secure and encrypted</span>
           </div>
@@ -350,16 +350,16 @@ export default function CheckoutPage() {
 
         {/* ORDER SUMMARY */}
         <div className="lg:col-span-4">
-          <BentoCard className="p-6 bg-gray-50 border border-gray-100 sticky top-24">
-            <h3 className="font-bold text-lg mb-6">Order Summary</h3>
+          <BentoCard className="sticky top-24 border border-gray-100 bg-gray-50 p-6">
+            <h3 className="mb-6 font-bold text-lg">Order Summary</h3>
 
-            <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2">
+            <div className="mb-6 max-h-[300px] space-y-4 overflow-y-auto pr-2">
               {cartItems.map((item) => (
                 <div
                   key={item.id}
                   className="flex gap-4"
                 >
-                  <div className="w-16 h-16 rounded-lg bg-white overflow-hidden shrink-0 border border-gray-100 relative">
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-white">
                     <Image
                       src={item.product.images[0]?.url || "/placeholder.jpg"}
                       alt={item.product.name}
@@ -369,19 +369,19 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between">
-                      <h4 className="font-bold text-sm line-clamp-1">{item.product.name}</h4>
-                      <span className="text-sm font-medium">${Number(item.product.price)}</span>
+                      <h4 className="line-clamp-1 font-bold text-sm">{item.product.name}</h4>
+                      <span className="font-medium text-sm">${Number(item.product.price)}</span>
                     </div>
-                    <p className="text-xs text-gray-500">{item.product.category?.name}</p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    <p className="text-gray-500 text-xs">{item.product.category?.name}</p>
+                    <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="h-px bg-gray-200 my-4"></div>
+            <div className="my-4 h-px bg-gray-200"></div>
 
-            <div className="space-y-2 mb-6 text-sm">
+            <div className="mb-6 space-y-2 text-sm">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
                 <span>{formatCurrency(subtotal)}</span>
@@ -394,7 +394,7 @@ export default function CheckoutPage() {
                 <span>Tax (8%)</span>
                 <span>{formatCurrency(tax)}</span>
               </div>
-              <div className="flex justify-between font-bold text-lg pt-2 text-black">
+              <div className="flex justify-between pt-2 font-bold text-black text-lg">
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
               </div>
@@ -403,13 +403,13 @@ export default function CheckoutPage() {
             <Button
               onClick={handlePlaceOrder}
               disabled={step === 1 || isProcessing}
-              className={`w-full justify-between group ${step === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`group w-full justify-between ${step === 1 ? "cursor-not-allowed opacity-50" : ""}`}
             >
               {isProcessing ? "Processing..." : `Pay ${formatCurrency(total)}`}
               {!isProcessing && (
                 <ArrowRight
                   size={16}
-                  className="group-hover:translate-x-1 transition-transform"
+                  className="transition-transform group-hover:translate-x-1"
                 />
               )}
             </Button>

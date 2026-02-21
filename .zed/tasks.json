@@ -1,12 +1,12 @@
 [
   {
     "label": "Dev (Next.js)",
-    "command": "bun dev:web",
+    "command": "pnpm dev:web",
     "cwd": "apps/web"
   },
   {
     "label": "Dev (Hono API)",
-    "command": "bun dev:server",
+    "command": "pnpm dev:server",
     "cwd": "apps/server"
   }
 ]

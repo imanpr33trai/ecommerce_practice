@@ -2,27 +2,24 @@
   "name": "@ecomerceNextjs/api",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "default": "./src/index.ts"
     }
   },
+  "main": "./src/index.ts",
+
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
-    "build:types": "tsc --emitDeclarationOnly",
-    "dev": "tsc -p tsconfig.build.json --watch",
     "type-check": "tsc --noEmit",
     "lint": "biome check ."
   },
   "devDependencies": {
-    "@ecomerceNextjs/config": "workspace:*",
-    "typescript": "^5.0.0"
+    "@types/node": "^20"
   },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
+
   "dependencies": {
     "@ecomerceNextjs/auth": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*",
+    "@ecomerceNextjs/env": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
     "hono": "^4.11.3",

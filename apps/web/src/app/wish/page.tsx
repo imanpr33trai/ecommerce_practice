@@ -24,15 +24,15 @@ export default function WishlistPage() {
   }
 
   return (
-    <div className="p-4 md:px-8 max-w-[1600px] mx-auto animate-slide-up min-h-[80vh]">
+    <div className="mx-auto min-h-[80vh] max-w-[1600px] animate-slide-up p-4 md:px-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-light mb-2">
-          My Wishlist <span className="text-gray-400 text-2xl">({wishlist.data.length})</span>
+        <h1 className="mb-2 font-light text-4xl">
+          My Wishlist <span className="text-2xl text-gray-400">({wishlist.data.length})</span>
         </h1>
         <p className="text-gray-500">Items you've saved for later.</p>
       </div>
       {wishlist.data.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {wishlist.data.map((product) => (
             <ProductCard
               key={product.id}
@@ -41,15 +41,15 @@ export default function WishlistPage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] text-center border border-dashed border-gray-200">
-          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-gray-200 border-dashed bg-white py-20 text-center">
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-50">
             <Heart
               size={32}
               className="text-gray-400"
             />
           </div>
-          <h2 className="text-2xl font-bold mb-4">Your wishlist is empty</h2>
-          <p className="text-gray-500 mb-8 max-w-md">
+          <h2 className="mb-4 font-bold text-2xl">Your wishlist is empty</h2>
+          <p className="mb-8 max-w-md text-gray-500">
             Browse our collection and find something you love.
           </p>
           <Link href="/product">

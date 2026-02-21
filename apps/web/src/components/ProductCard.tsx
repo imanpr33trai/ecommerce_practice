@@ -224,7 +224,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
   return (
     <>
       <div
-        className={`fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium pointer-events-none ${isExpanded ? "opacity-100 z-100" : "opacity-0 z-[-1]"}`}
+        className={`pointer-events-none fixed inset-0 bg-white/80 backdrop-blur-md transition-opacity duration-1000 ease-premium ${isExpanded ? "z-100 opacity-100" : "z-[-1] opacity-0"}`}
       />
 
       <div
@@ -234,21 +234,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
         onMouseLeave={handleMouseLeave}
       >
         <div
-          className={`
-                absolute top-0 bg-white rounded-4xl shadow-sm overflow-hidden ring-1 ring-black/5
-                transition-all duration-1000 ease-premium origin-top will-change-transform
-                ${isHovering ? "shadow-xl scale-[1.02] ring-black/10" : ""}
-                ${isExpanded ? "w-[185%] h-110 shadow-2xl ring-black/0" : "w-full h-full"}
+          className={`absolute top-0 origin-top overflow-hidden rounded-4xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-1000 ease-premium will-change-transform ${isHovering ? "scale-[1.02] shadow-xl ring-black/10" : ""}
+                ${isExpanded ? "h-110 w-[185%] shadow-2xl ring-black/0" : "h-full w-full"}
               `}
           style={containerStyle}
         >
           <Link
             href={`/product/${product.slug}`}
             onClick={handleClick}
-            className="block w-full h-full relative group"
+            className="group relative block h-full w-full"
           >
             <div
-              className={`absolute top-0 bg-[#F9F9F9] overflow-hidden transition-all duration-1000 ease-premium ${isExpanded ? "w-[54%] h-full" : "w-full h-70"}`}
+              className={`absolute top-0 overflow-hidden bg-[#F9F9F9] transition-all duration-1000 ease-premium ${isExpanded ? "h-full w-[54%]" : "h-70 w-full"}`}
               style={imageStyle}
             >
               {product.images.map((image) => (
@@ -256,15 +253,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                   key={image.id}
                   src={image.url || "/images/caroline.jpg"}
                   alt={image.altText || product.name}
-                  className={`w-full h-full transition-transform duration-1000 ease-premium ${hoverState !== "idle" ? "scale-105" : ""}`}
+                  className={`h-full w-full transition-transform duration-1000 ease-premium ${hoverState !== "idle" ? "scale-105" : ""}`}
                 />
               ))}
 
-              <div className="absolute top-5 left-5 flex flex-col gap-2 z-10 pointer-events-none">
+              <div className="pointer-events-none absolute top-5 left-5 z-10 flex flex-col gap-2">
                 {badges.map((badge, idx) => (
                   <span
                     key={idx}
-                    className={`${badge.color} px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase shadow-sm animate-fade-in`}
+                    className={`${badge.color} animate-fade-in rounded-full px-3 py-1.5 font-bold text-[10px] uppercase tracking-widest shadow-sm`}
                   >
                     {badge.text}
                   </span>
@@ -275,7 +272,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 onClick={handleWishlist}
                 type="button"
                 style={wishlistButtonStyle}
-                className="absolute z-20 w-11 h-11 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm hover:bg-white hover:scale-110 active:scale-95 transition-all duration-1000 ease-premium"
+                className="absolute z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all duration-1000 ease-premium hover:scale-110 hover:bg-white active:scale-95"
               >
                 <Heart
                   size={20}
@@ -284,12 +281,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
               </button>
 
               <div
-                className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20 transition-all duration-300 ${isHovering && !isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}
+                className={`absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
               >
                 <Button
                   variant="icon"
                   size="icon"
-                  className="rounded-full w-10 h-10"
+                  className="h-10 w-10 rounded-full"
                   onClick={handleQuickView}
                   title="Quick View"
                 >
@@ -298,7 +295,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 <Button
                   variant="icon"
                   size="icon"
-                  className={`rounded-full w-10 h-10 ${isInCompare ? "bg-black! text-white!" : ""}`}
+                  className={`h-10 w-10 rounded-full ${isInCompare ? "bg-black! text-white!" : ""}`}
                   onClick={handleCompare}
                   title="Compare"
                 >
@@ -308,31 +305,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
             </div>
 
             <div
-              className={`absolute bg-white transition-all duration-1000 ease-premium overflow-hidden ${isExpanded ? "top-0 w-[46%] h-full" : "top-70 w-full h-40"}`}
+              className={`absolute overflow-hidden bg-white transition-all duration-1000 ease-premium ${isExpanded ? "top-0 h-full w-[46%]" : "top-70 h-40 w-full"}`}
               style={contentStyle}
             >
               <div
-                className={`h-full flex flex-col justify-between relative transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}
+                className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}
               >
                 <div className="relative z-10">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1 min-w-0 pr-2">
+                  <div className="mb-2 flex items-start justify-between">
+                    <div className="min-w-0 flex-1 pr-2">
                       <p
-                        className={`text-xs text-gray-400 font-bold uppercase tracking-widest mb-1.5 transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}
+                        className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}
                       >
                         {product.category?.name}
                       </p>
                       <h3
-                        className={`font-bold text-gray-900 leading-tight truncate transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}
+                        className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}
                       >
                         {product.name}
                       </h3>
                     </div>
-                    <div className="text-right shrink-0">
-                      <span className="text-lg font-bold block text-gray-900 transition-all duration-300">
+                    <div className="shrink-0 text-right">
+                      <span className="block font-bold text-gray-900 text-lg transition-all duration-300">
                         ${product.price}
                       </span>
-                      <div className="flex items-center gap-1 text-[10px] font-bold bg-yellow-50 text-yellow-600 px-2 py-1 rounded-md mt-1 w-fit ml-auto">
+                      <div className="mt-1 ml-auto flex w-fit items-center gap-1 rounded-md bg-yellow-50 px-2 py-1 font-bold text-[10px] text-yellow-600">
                         <Star
                           size={10}
                           fill="currentColor"
@@ -357,9 +354,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 />
 
                 <div
-                  className={`absolute bottom-6 right-6 transition-all duration-300 ease-out ${isExpanded ? "opacity-0 scale-50 pointer-events-none translate-y-4" : "opacity-100 scale-100 translate-y-0"}`}
+                  className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}
                 >
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-black shadow-sm hover:bg-gray-200">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-black shadow-sm hover:bg-gray-200">
                     <ShoppingBag size={20} />
                   </div>
                 </div>

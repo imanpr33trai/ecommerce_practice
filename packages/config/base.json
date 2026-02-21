@@ -1,6 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Base",
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
@@ -8,11 +7,8 @@
     "moduleDetection": "force",
     "strict": true,
     "noUncheckedIndexedAccess": true,
-
     "noImplicitOverride": true,
-
     "noFallthroughCasesInSwitch": true,
-
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,7 +16,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true,
     "verbatimModuleSyntax": true,
     "allowArbitraryExtensions": true
   }

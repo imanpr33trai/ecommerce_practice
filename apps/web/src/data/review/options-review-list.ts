@@ -1,4 +1,4 @@
-import { keepPreviousData, queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query";
 
 import { reviewKeys } from "@/data/review/keys";
 import { client } from "@/lib/hono-client";
@@ -11,7 +11,7 @@ const fetchProductReviews = async (
   productId: string,
   query: GetReviewProductListRequest["query"],
 ): Promise<GetReviewProductListResponse> => {
-  const res = await client.api.review[":productId"].$get({
+  const res = await client.review[":productId"].$get({
     param: { productId },
     query,
   });
@@ -28,7 +28,7 @@ export const reviewListOptions = (
 ) => {
   return queryOptions({
     queryFn: () => fetchProductReviews(productId, query),
-    queryKey: reviewKeys.byProduct(productId),
+    queryKey: reviewKeys.list(productId, query),
     enabled: !!productId,
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
@@ -39,5 +39,5 @@ export const useReviewListQuery = (
   productId: string,
   query: GetReviewProductListRequest["query"],
 ) => {
-  return useSuspenseQuery(reviewListOptions(productId, query));
+  return useQuery(reviewListOptions(productId, query));
 };
