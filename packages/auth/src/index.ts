@@ -1,5 +1,5 @@
 import { prisma } from "@ecomerceNextjs/db";
-import { env } from "@ecomerceNextjs/env";
+import { env } from "@ecomerceNextjs/env/server";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { openAPI } from "better-auth/plugins";

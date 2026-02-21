@@ -1,4 +1,4 @@
-import { env } from "@ecomerceNextjs/env";
+import { env } from "@ecomerceNextjs/env/web";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import type { auth } from "@ecomerceNextjs/auth";

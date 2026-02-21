@@ -1,7 +1,5 @@
 import type { NextConfig } from "next";
 
-import { nextEnv } from "src/env";
-
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@workspace/ui",
@@ -26,9 +24,6 @@ const nextConfig: NextConfig = {
   experimental: { typedEnv: true, viewTransition: true },
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
   // Production Docker optimizations
-  ...(nextEnv.NODE_ENV === "production" && {
-    output: "standalone",
-  }),
 };
 
 export default nextConfig;

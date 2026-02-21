@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type React from "react";
@@ -24,6 +23,8 @@ function withViewTransition(callback: () => void) {
     callback();
   }
 }
+
+import Image from "next/image";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";

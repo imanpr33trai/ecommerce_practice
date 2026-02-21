@@ -1,11 +1,16 @@
-import { env } from "@ecomerceNextjs/env";
+import { env } from "@ecomerceNextjs/env/server";
 import { PrismaPg } from "@prisma/adapter-pg";
+import dotenv from "dotenv";
 
 import { PrismaClient } from "../prisma/generated/client";
+
+dotenv.config({ path: "../.env", debug: true });
 
 const adapter = new PrismaPg({
   connectionString: env.DATABASE_URL,
 });
+
+console.log(env.DATABASE_URL || "No Database url");
 
 // Use globalThis for broader environment compatibility
 const globalForPrisma = globalThis as typeof globalThis & {

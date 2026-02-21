@@ -1,4 +1,4 @@
-import { env } from "@ecomerceNextjs/env";
+import { env } from "@ecomerceNextjs/env/web";
 import { type ClientResponse, hc } from "hono/client";
 import type { AppType } from "@ecomerceNextjs/api";
 

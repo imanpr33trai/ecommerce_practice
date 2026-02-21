@@ -48,3 +48,5 @@ export const INITIAL_FILTERS: ProductFilters = {
   inStock: undefined,
   rating: undefined,
 };
+
+export type GetProductListResponseWithOnlyData = Pick<GetProductsListResponse, "data">;

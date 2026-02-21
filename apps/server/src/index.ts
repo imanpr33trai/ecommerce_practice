@@ -1,6 +1,6 @@
 import { api, type HonoEnv } from "@ecomerceNextjs/api";
 import { auth } from "@ecomerceNextjs/auth";
-import { env } from "@ecomerceNextjs/env";
+import { env } from "@ecomerceNextjs/env/server";
 import { serve } from "@hono/node-server";
 import { handle } from "@hono/node-server/vercel";
 import { Hono } from "hono";
@@ -36,7 +36,7 @@ const app = new Hono<HonoEnv>()
   .route("/", api)
   .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
 
-  .get("/", (c) => c.text("OK"));
+  .get("/", (c) => c.text(env.DATABASE_URL || "No DATABASE_URL"));
 
 serve({
   fetch: app.fetch,

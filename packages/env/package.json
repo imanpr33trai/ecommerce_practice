@@ -1,30 +1,21 @@
 {
-  "name": "@ecomerceNextjs/env",
+  "name": "@ecommerceNextjs/env",
   "version": "0.0.0",
   "private": true,
-  "exports": {
-    ".": {
-      "types": "./dist/env.d.ts",
-
-      "default": "./dist/env.js"
-    }
-  },
-  "main": "./dist/env.js",
-  "module": "./dist/env.mjs",
-  "types": "./dist/env.d.ts",
   "type": "module",
-  "scripts": {
-    "build": "tsup",
-    "build:types": "tsc --emitDeclarationOnly",
-    "dev": "tsup --watch",
-    "type-check": "tsc --noEmit",
-    "lint": "biome check ."
+  "exports": {
+    "./server": "./src/server.ts",
+    "./web": "./src/web.ts"
   },
   "dependencies": {
-    "@t3-oss/env-core": "^0.13.10",
-    "zod": "^4.3.6"
+    "@t3-oss/env-core": "^0.13.1",
+    "@t3-oss/env-nextjs": "^0.13.1",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^25.2.1"
+    "@ecommerce/config": "workspace:*",
+    "@types/node": "^22.13.14",
+    "typescript": "catalog:"
   }
 }
