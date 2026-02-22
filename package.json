@@ -40,6 +40,7 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "nuke": " pnpm run clean:build && pnpm -r exec rimraf .turbo && pnpm run clean:deps ",
+    "prepare": "husky",
     "start": "concurrently \"pnpm start:server\" \"pnpm start:web\"",
     "start:server": "pnpm --filter server run start",
     "start:web": "pnpm --filter web run start",
@@ -62,6 +63,8 @@
     "eslint-plugin-perfectionist": "^5.6.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-unused-imports": "^4.4.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^16.2.7",
     "oxfmt": "^0.34.0",
     "oxlint": "^1.49.0",
     "oxlint-tsgolint": "^0.14.2",
@@ -72,6 +75,9 @@
     "turbo": "^2.8.3",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.56.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "oxlint"
   },
   "engines": {
     "node": ">=20.0.0",

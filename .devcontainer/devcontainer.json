@@ -8,5 +8,6 @@
       "version": "latest"
     }
   },
+  "customizations": { "vscode": { "extensions": [] } },
   "name": "Ecommerce_Practice"
 }
