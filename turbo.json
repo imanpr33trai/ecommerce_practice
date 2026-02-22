@@ -32,21 +32,18 @@
       "outputs": []
     },
     "dev": {
-      "dependsOn": ["^build"],
+      "dependsOn": [],
       "cache": false,
       "persistent": true,
-
       "interruptible": true
     },
-
     "dev:server": {
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true,
-
       "interruptible": true
     },
-"db:seed": {
+    "db:seed": {
       "cache": false,
       "persistent": true
     },
@@ -82,6 +79,10 @@
     "db:down": {
       "cache": false,
       "persistent": true
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
     }
   }
 }

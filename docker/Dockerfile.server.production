@@ -88,8 +88,7 @@ RUN pnpm --filter @ecomerceNextjs/api build
 RUN pnpm --filter @ecomerceNextjs/config build
 
 # Generate Prisma client
-# RUN pnpm --filter @ecomerceNextjs/db db:generate
- # RUN pnpm --filter @ecomerceNextjs/db db:push
+RUN pnpm --filter @ecomerceNextjs/db db:generate
 
 # Build the server application
 RUN pnpm --filter server build
@@ -149,10 +148,10 @@ EXPOSE 3000
 
 # Health check with proper endpoint
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3000/api || exit 1
+    CMD curl -f http://localhost:3000/health || exit 1
 
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application
-CMD ["node", "apps/server/dist/index.js"]
+CMD ["node", "apps/server/dist/index.mjs"]

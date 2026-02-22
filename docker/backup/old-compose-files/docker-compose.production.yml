@@ -2,7 +2,7 @@
 # Production Docker Compose for local testing
 # ==========================================
 
-version: '3.8'
+version: "3.8"
 
 services:
   # Application

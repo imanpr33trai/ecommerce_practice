@@ -1,0 +1,334 @@
+# ==========================================
+# Unified Docker Compose for E-commerce Platform
+# Supports development and production with profiles
+# ==========================================
+
+name: ecommerce
+
+# ==========================================
+# Services
+# ==========================================
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-12345}
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ecommerce}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================
+  # Redis Cache
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================
+  # Hono Backend Server (Development)
+  # ==========================================
+  server-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server.dev
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-server-dev
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    env_file: ".env"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-ecommerce_dev_password}@postgres:5432/${POSTGRES_DB:-ecommerce}?schema=public
+      JWT_SECRET: dev-secret-do-not-use-in-production
+      CORS_ORIGIN: http://localhost:3001
+      LOG_LEVEL: debug
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./apps/server:/app/apps/server:cached
+      - ./packages:/app/packages:cached
+      - /app/node_modules
+      - /app/apps/server/node_modules
+      - /app/packages/*/node_modules
+      - server_dev_logs:/app/logs
+      - server_dev_tmp:/app/tmp
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    profiles:
+      - dev
+
+  # ==========================================
+  # Next.js Frontend (Development)
+  # ==========================================
+  web-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web.dev
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-web-dev
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3001}:3001"
+    env_file: ".env"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: http://server-dev:3000
+      NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-ecommerce_dev_password}@postgres:5432/${POSTGRES_DB:-ecommerce}?schema=public
+      LOG_LEVEL: debug
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+      NEXT_TELEMETRY_DISABLED: 1
+    depends_on:
+      server-dev:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - ./apps/web:/app/apps/web:cached
+      - ./packages:/app/packages:cached
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/*/node_modules
+      - web_dev_logs:/app/logs
+      - web_dev_tmp:/app/tmp
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    profiles:
+      - dev
+
+  # ==========================================
+  # Hono Backend Server (Production)
+  # ==========================================
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server.production
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-server
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    env_file: ".env"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ecommerce}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3001}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-false}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - server_logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
+        reservations:
+          memory: 256M
+          cpus: "0.25"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    profiles:
+      - production
+
+  # ==========================================
+  # Next.js Frontend (Production)
+  # ==========================================
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web.production
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3001}:3001"
+    env_file: ".env"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: http://server:3000
+      NEXT_PUBLIC_BETTER_AUTH_URL: ${NEXT_PUBLIC_BETTER_AUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3001}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ecommerce}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      NEXT_TELEMETRY_DISABLED: 1
+    depends_on:
+      server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ecommerce-network
+    volumes:
+      - web_logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    profiles:
+      - production
+
+  # ==========================================
+  # Nginx Reverse Proxy (Production Only)
+  # ==========================================
+  nginx:
+    image: nginx:alpine
+    container_name: ${COMPOSE_PROJECT_NAME:-ecommerce}-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - web
+      - server
+    networks:
+      - ecommerce-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - production
+      - nginx
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  ecommerce-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres_data:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-postgres-data
+  redis_data:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-redis-data
+  server_logs:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-server-logs
+  web_logs:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-web-logs
+  server_dev_logs:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-server-dev-logs
+  web_dev_logs:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-web-dev-logs
+  server_dev_tmp:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-server-dev-tmp
+  web_dev_tmp:
+    driver: local
+    name: ${COMPOSE_PROJECT_NAME:-ecommerce}-web-dev-tmp
