@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Package } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -27,8 +26,7 @@ export function AccountOrders() {
           {orders?.data.map((order) => (
             <BentoCard
               key={order.id}
-              className="flex flex-col items-center gap-6 bg-white p-6 md:flex-row"
-            >
+              className="flex flex-col items-center gap-6 bg-white p-6 md:flex-row">
               <div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-xl bg-gray-100">
                 <Package className="text-gray-400" />
               </div>
@@ -36,16 +34,12 @@ export function AccountOrders() {
                 <div className="mb-1 flex items-center justify-between">
                   {/*<h4 className="font-bold text-lg">Order #{order.id.slice(-6)}</h4>*/}
                   {order.items.map((item) => (
-                    <h4
-                      className="font-bold text-lg"
-                      key={item.id}
-                    >
+                    <h4 className="font-bold text-lg" key={item.id}>
                       Order #{item.product.name}
                     </h4>
                   ))}
                   <span
-                    className={`rounded-full px-2 py-1 font-bold text-xs ${order.status === "DELIVERED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
-                  >
+                    className={`rounded-full px-2 py-1 font-bold text-xs ${order.status === "DELIVERED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
                     {order.status}
                   </span>
                 </div>
@@ -58,10 +52,7 @@ export function AccountOrders() {
                   <span>{order.items.length} Items</span>
                 </div>
               </div>
-              <Button
-                variant="secondary"
-                onClick={() => router.push("/product")}
-              >
+              <Button variant="secondary" onClick={() => router.push("/product")}>
                 View Details
               </Button>
             </BentoCard>

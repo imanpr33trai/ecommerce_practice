@@ -4,8 +4,9 @@ import { HTTPException } from "hono/http-exception";
 import { authClient } from "@/lib/auth-client";
 import { client } from "@/lib/hono-client";
 
-import { cartKeys } from "./keys";
 import type { GetCartUserListResponse } from "./types";
+
+import { cartKeys } from "./keys";
 
 export const fetchUserCart = async (): Promise<GetCartUserListResponse | null> => {
   const res = await client.cart.$get();

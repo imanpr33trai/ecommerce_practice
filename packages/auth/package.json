@@ -1,22 +1,38 @@
 {
   "name": "@ecomerceNextjs/auth",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./src/index.ts",
-      "default": "./src/index.ts"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
-  "type": "module",
-
-  "devDependencies": {
-    "@types/node": "^20"
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rimraf dist",
+    "dev": "tsup --watch",
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit"
   },
-
   "dependencies": {
-    "better-auth": "^1.4.0",
     "@ecomerceNextjs/config": "workspace:*",
+    "@ecomerceNextjs/db": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
-    "zod": "^4.3.5",
-    "@ecomerceNextjs/db": "workspace:*"
+    "better-auth": "^1.4.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsup": "^8.5.1"
   }
 }

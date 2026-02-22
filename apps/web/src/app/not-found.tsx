@@ -1,5 +1,6 @@
-import Link from "next/link";
 import type React from "react";
+
+import Link from "next/link";
 
 import BentoCard from "../components/BentoCard";
 import Button from "../components/Button";

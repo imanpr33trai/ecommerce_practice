@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-
 import { Heart } from "lucide-react";
+import Link from "next/link";
 
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
@@ -34,19 +33,13 @@ export default function WishlistPage() {
       {wishlist.data.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {wishlist.data.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-[2rem] border border-gray-200 border-dashed bg-white py-20 text-center">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gray-50">
-            <Heart
-              size={32}
-              className="text-gray-400"
-            />
+            <Heart size={32} className="text-gray-400" />
           </div>
           <h2 className="mb-4 font-bold text-2xl">Your wishlist is empty</h2>
           <p className="mb-8 max-w-md text-gray-500">

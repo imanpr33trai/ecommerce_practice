@@ -26,8 +26,7 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
           <h3 className="font-bold text-xl">Add New Address</h3>
           <button
             onClick={onClose}
-            className="rounded-full p-2 transition-colors hover:bg-gray-100"
-          >
+            className="rounded-full p-2 transition-colors hover:bg-gray-100">
             <X size={20} />
           </button>
         </div>
@@ -126,26 +125,16 @@ const ModalAddress: React.FC<ModalAddressProps> = ({ isOpen, onClose }) => {
           </div>
 
           <label className="flex cursor-pointer items-center gap-3 pt-2">
-            <input
-              type="checkbox"
-              className="h-4 w-4 rounded accent-black"
-            />
+            <input type="checkbox" className="h-4 w-4 rounded accent-black" />
             <span className="font-medium text-gray-600 text-sm">Set as default address</span>
           </label>
         </div>
 
         <div className="flex gap-3 border-gray-100 border-t bg-gray-50 p-6">
-          <Button
-            variant="secondary"
-            className="flex-1"
-            onClick={onClose}
-          >
+          <Button variant="secondary" className="flex-1" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            className="flex-1"
-            onClick={onClose}
-          >
+          <Button className="flex-1" onClick={onClose}>
             Save Address
           </Button>
         </div>

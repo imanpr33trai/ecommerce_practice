@@ -30,10 +30,7 @@ const LoadingSkeleton: React.FC<SkeletonProps> = ({ type = "generic" }) => {
         <div className="h-8 w-48 rounded-lg bg-gray-200" />
         <div className="flex gap-4 overflow-hidden">
           {[1, 2, 3, 4].map((i) => (
-            <SkeletonItem
-              key={i}
-              className="h-[400px] min-w-[300px] shrink-0"
-            />
+            <SkeletonItem key={i} className="h-[400px] min-w-[300px] shrink-0" />
           ))}
         </div>
       </div>
@@ -51,10 +48,7 @@ const LoadingSkeleton: React.FC<SkeletonProps> = ({ type = "generic" }) => {
       </div>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="space-y-4"
-          >
+          <div key={i} className="space-y-4">
             <SkeletonItem className="aspect-[4/5]" />
             <div className="space-y-2 px-2">
               <div className="h-5 w-3/4 rounded bg-gray-200" />
@@ -92,10 +86,7 @@ const LoadingSkeleton: React.FC<SkeletonProps> = ({ type = "generic" }) => {
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="w-full space-y-4 md:w-64">
           {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="h-12 rounded-2xl bg-gray-200/40"
-            />
+            <div key={i} className="h-12 rounded-2xl bg-gray-200/40" />
           ))}
         </div>
         <div className="grid flex-1 grid-cols-1 gap-6 md:grid-cols-2">

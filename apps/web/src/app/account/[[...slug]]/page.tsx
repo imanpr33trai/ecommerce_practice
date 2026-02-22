@@ -1,13 +1,12 @@
 // app/account/[[...slug]]/page.tsx
 
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
-
 // import { auth } from "../../../../../../packages/auth/src/index";
 import { auth } from "@ecomerceNextjs/auth";
 // import { auth } from "@ecomerceNextjs/auth";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { createQueryClient } from "@/lib/query-client";
@@ -44,10 +43,7 @@ export default async function AccountPage({ params }: PageProps) {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingSkeleton type="account" />}>
-        <AccountContent
-          activeTab={activeTab}
-          user={session.user}
-        />
+        <AccountContent activeTab={activeTab} user={session.user} />
       </Suspense>
     </HydrationBoundary>
   );

@@ -1,8 +1,9 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
+import type { GetProfileResponse } from "@/data/account/types";
+
 import { accountKeys } from "@/data/account/keys";
 import { client } from "@/lib/hono-client";
-import type { GetProfileResponse } from "@/data/account/types";
 
 /**
  * Type inference for the Profile response

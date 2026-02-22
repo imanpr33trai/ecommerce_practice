@@ -3,33 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsdown",
-    "check-types": "tsc -b",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.mjs",
-
     "build:types": "tsc --emitDeclarationOnly",
     "build:watch": "tsc -p tsconfig.build.json --watch",
-
-    "type-check": "tsc --noEmit",
+    "check-types": "tsc -b",
+    "clean": "rimraf dist",
+    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel",
+    "dev": "tsx watch src/index.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "clean": "rimraf dist",
-    "deploy": "vercel --prod",
-    "deploy:preview": "vercel"
+    "start": "node dist/index.mjs",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@ecomerceNextjs/api": "workspace:*",
     "@ecomerceNextjs/auth": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
+    "@ecomerceNextjs/env": "workspace:*",
     "@hono/node-server": "^1.19.9",
     "@hono/zod-validator": "^0.7.6",
-    "@ecomerceNextjs/env": "workspace:*",
-
-    "@ecomerceNextjs/config": "workspace:*",
-
     "better-auth": "catalog:",
     "dotenv": "catalog:",
     "hono": "^4.8.2",
@@ -40,13 +43,6 @@
     "tsdown": "^0.16.5",
     "tsx": "^4.19.2",
     "typescript": "catalog:"
-  },
-  "main": "dist/index.js",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
   },
   "engines": {
     "node": ">=20.0.0"

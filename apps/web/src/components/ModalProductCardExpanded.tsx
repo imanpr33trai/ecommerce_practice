@@ -32,8 +32,7 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({
   isExpanded,
 }) => (
   <div
-    className={`flex flex-1 flex-col justify-center space-y-4 transition-all duration-1000 ease-premium ${isExpanded ? "translate-y-0 opacity-100 delay-75" : "pointer-events-none absolute bottom-0 left-0 w-full translate-y-8 p-6 opacity-0"}`}
-  >
+    className={`flex flex-1 flex-col justify-center space-y-4 transition-all duration-1000 ease-premium ${isExpanded ? "translate-y-0 opacity-100 delay-75" : "pointer-events-none absolute bottom-0 left-0 w-full translate-y-8 p-6 opacity-0"}`}>
     <p className="line-clamp-2 text-gray-500 text-sm leading-relaxed">
       {product.description} Crafted with precision to elevate your living space.
     </p>
@@ -55,13 +54,8 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({
         className={`h-10 flex-1 border-none font-bold text-xs uppercase tracking-wider ${isInCompare ? "bg-black text-white hover:bg-gray-800" : "bg-gray-50 hover:bg-gray-100"}`}
         onClick={onCompare}
         size="sm"
-        variant="secondary"
-      >
-        <ArrowLeftRight
-          className="mr-2"
-          size={14}
-        />{" "}
-        Compare
+        variant="secondary">
+        <ArrowLeftRight className="mr-2" size={14} /> Compare
       </Button>
     </div>
 
@@ -75,13 +69,9 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({
             className={`flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 transition-all duration-300 hover:scale-110 hover:shadow-md ${selectedColor === color ? "scale-105 ring-2 ring-black ring-offset-2" : ""}`}
             key={color}
             onClick={(e) => onSelectColor(e, color)}
-            style={{ backgroundColor: color }}
-          >
+            style={{ backgroundColor: color }}>
             {selectedColor === color && (
-              <Check
-                className="text-white mix-blend-difference"
-                size={14}
-              />
+              <Check className="text-white mix-blend-difference" size={14} />
             )}
           </Button>
         ))}
@@ -91,19 +81,13 @@ const ModalProductCardExpanded: React.FC<ModalProductCardExpandedProps> = ({
     <div className="mt-auto flex gap-3 pt-2">
       <Button
         className={`h-12 flex-1 font-bold text-sm shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${isAdding ? "bg-green-600" : "bg-black text-white hover:bg-gray-800"}`}
-        onClick={onAddToCart}
-      >
+        onClick={onAddToCart}>
         {isAdding ? "Added" : "Add to Cart"}
       </Button>
       <Button
         className="h-12 border border-gray-100 px-5 hover:border-gray-300 hover:bg-gray-50"
-        variant="secondary"
-      >
-        Details{" "}
-        <ArrowRight
-          className="ml-2"
-          size={16}
-        />
+        variant="secondary">
+        Details <ArrowRight className="ml-2" size={16} />
       </Button>
     </div>
   </div>

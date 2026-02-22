@@ -1,28 +1,40 @@
 {
   "name": "@ecomerceNextjs/api",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "default": "./src/index.ts"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
-  "main": "./src/index.ts",
-
-  "type": "module",
   "scripts": {
-    "type-check": "tsc --noEmit",
-    "lint": "biome check ."
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rimraf dist",
+    "dev": "tsup --watch",
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit"
   },
-  "devDependencies": {
-    "@types/node": "^20"
-  },
-
   "dependencies": {
     "@ecomerceNextjs/auth": "workspace:*",
     "@ecomerceNextjs/config": "workspace:*",
-    "@ecomerceNextjs/env": "workspace:*",
     "@ecomerceNextjs/db": "workspace:*",
+    "@ecomerceNextjs/env": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
     "hono": "^4.11.3",
     "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsup": "^8.5.1"
   }
 }

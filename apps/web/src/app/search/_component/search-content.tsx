@@ -1,9 +1,8 @@
 "use client";
 
+import { Loader2, Search } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
-import { Loader2, Search } from "lucide-react";
 
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard"; // Your complex card
@@ -36,30 +35,21 @@ export function SearchContent() {
 
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
-          <Loader2
-            className="animate-spin text-gray-400"
-            size={32}
-          />
+          <Loader2 className="animate-spin text-gray-400" size={32} />
         </div>
       ) : isError ? (
         <div className="py-20 text-center text-red-500">Something went wrong while searching.</div>
       ) : products.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (
         // Empty State
         <div className="flex flex-col items-center justify-center rounded-3xl border border-gray-200 border-dashed bg-gray-50 py-24 text-center">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm">
-            <Search
-              size={32}
-              className="text-gray-300"
-            />
+            <Search size={32} className="text-gray-300" />
           </div>
           <h2 className="mb-2 font-bold text-2xl">No results found</h2>
           <p className="mb-8 max-w-md text-gray-500">
@@ -67,10 +57,7 @@ export function SearchContent() {
             catalog.
           </p>
           <Link href="/product">
-            <Button
-              size="lg"
-              className="rounded-full px-8"
-            >
+            <Button size="lg" className="rounded-full px-8">
               Browse All Products
             </Button>
           </Link>

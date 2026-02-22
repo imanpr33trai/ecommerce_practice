@@ -1,8 +1,9 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
+import type { GetWishListResponse } from "@/data/wish/types";
+
 import { wishKeys } from "@/data/wish/keys";
 import { client } from "@/lib/hono-client";
-import type { GetWishListResponse } from "@/data/wish/types";
 
 const fetchWishList = async (): Promise<GetWishListResponse | null> => {
   const res = await client.wish.$get();

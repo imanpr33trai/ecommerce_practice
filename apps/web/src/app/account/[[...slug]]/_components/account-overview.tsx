@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
-
 import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Bell, Heart, Package } from "lucide-react";
+import Link from "next/link";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -32,10 +31,7 @@ export function AccountOverview() {
         </BentoCard>
         <BentoCard className="flex items-center gap-4 bg-white p-6">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50 text-purple-500">
-            <Heart
-              size={24}
-              fill="currentColor"
-            />
+            <Heart size={24} fill="currentColor" />
           </div>
           <div>
             <span className="block font-bold text-2xl">{profile?._count?.wishList ?? 0}</span>
@@ -57,10 +53,7 @@ export function AccountOverview() {
       <div>
         <div className="mb-4 flex items-end justify-between">
           <h3 className="font-bold text-xl">Recent Order</h3>
-          <Link
-            href="/account/orders"
-            className="text-gray-500 text-sm hover:text-black"
-          >
+          <Link href="/account/orders" className="text-gray-500 text-sm hover:text-black">
             View All
           </Link>
         </div>
@@ -91,10 +84,7 @@ export function AccountOverview() {
                   </p>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                className="w-full md:w-auto"
-              >
+              <Button variant="outline" className="w-full md:w-auto">
                 Track Order
               </Button>
             </div>

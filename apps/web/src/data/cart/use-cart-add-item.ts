@@ -9,8 +9,9 @@ import { toast } from "sonner";
 
 import { client } from "@/lib/hono-client";
 
-import { cartKeys } from "./keys";
 import type { GetCartAddItemRequest } from "./types";
+
+import { cartKeys } from "./keys";
 
 const cartAddItemFn = async (json: GetCartAddItemRequest["json"]) => {
   const res = await client.cart.$post({ json });

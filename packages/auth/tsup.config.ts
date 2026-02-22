@@ -6,6 +6,12 @@ export default defineConfig((options) => ({
   format: ["esm"],
   dts: true,
   clean: !options.watch,
-  splitting: true,
-  external: ["@ecomerceNextjs/db"], // Don't bundle the DB into the Auth package
+  splitting: false,
+  sourcemap: options.watch ? "inline" : true,
+  minify: false,
+
+  external: ["@ecomerceNextjs/db", "better-auth", "zod"],
+
+  // Reduce rebuild frequency
+  ignoreWatch: ["**/*.test.ts", "**/*.spec.ts", "dist/**"],
 }));

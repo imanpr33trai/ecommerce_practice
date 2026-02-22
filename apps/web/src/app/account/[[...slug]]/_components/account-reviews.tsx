@@ -1,9 +1,8 @@
 "use client";
 
+import { ExternalLink, MessageSquare, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-import { ExternalLink, MessageSquare, Star, Trash2 } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -22,10 +21,7 @@ export function AccountReviews() {
         <div className="space-y-4">
           {userReviews.items.map((review) => {
             return (
-              <BentoCard
-                key={review.id}
-                className="group/item bg-white p-6"
-              >
+              <BentoCard key={review.id} className="group/item bg-white p-6">
                 <div className="flex flex-col gap-6 md:flex-row">
                   <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
                     {review.product.images.length === 0 ? (
@@ -64,8 +60,7 @@ export function AccountReviews() {
                       <button
                         onClick={() => deleteReview(review.id)}
                         className="p-2 text-gray-300 transition-colors hover:text-red-500 group-hover/item:opacity-100 md:opacity-0"
-                        type="button"
-                      >
+                        type="button">
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -78,8 +73,7 @@ export function AccountReviews() {
                       </span>
                       <Link
                         href={`/product/${review.product.slug}`}
-                        className="flex items-center gap-1 font-bold text-black text-xs hover:underline"
-                      >
+                        className="flex items-center gap-1 font-bold text-black text-xs hover:underline">
                         View Product <ExternalLink size={12} />
                       </Link>
                     </div>
@@ -91,19 +85,10 @@ export function AccountReviews() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-[2rem] border border-gray-200 border-dashed bg-white py-20 text-center">
-          <MessageSquare
-            size={48}
-            className="mb-4 text-gray-200"
-          />
+          <MessageSquare size={48} className="mb-4 text-gray-200" />
           <p className="text-gray-500">You haven't written any reviews yet.</p>
-          <Link
-            href="/product"
-            className="mt-4"
-          >
-            <Button
-              variant="outline"
-              size="sm"
-            >
+          <Link href="/product" className="mt-4">
+            <Button variant="outline" size="sm">
               Go Shop & Review
             </Button>
           </Link>

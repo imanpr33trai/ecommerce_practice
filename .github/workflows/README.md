@@ -19,6 +19,7 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 **Trigger:** Push to `main` or `develop`, pull requests, manual dispatch
 
 **Jobs:**
+
 - **Quality Checks**: Runs linting, type checking, and format checking
 - **Security Scan**: Runs dependency audit and Trivy vulnerability scanning
 - **Build Docker**: Builds and pushes Docker images to GitHub Container Registry
@@ -27,6 +28,7 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 - **Deploy Production**: Deploys to production environment (main branch)
 
 **Docker Images:**
+
 - `ghcr.io/<owner>/<repo>-web`
 - `ghcr.io/<owner>/<repo>-server`
 
@@ -35,6 +37,7 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 **Trigger:** Pull requests to `main` or `develop`
 
 **Jobs:**
+
 - **Check Size**: Warns if PR is too large
 - **Check Commits**: Validates conventional commit format
 - **Lint Dockerfile**: Validates Dockerfile using Hadolint
@@ -46,6 +49,7 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 **Trigger:** Weekly on Sundays at 2 AM UTC, manual dispatch
 
 **Jobs:**
+
 - **Check Updates**: Checks for outdated dependencies
 - **Security Audit**: Runs comprehensive security audit
 - **Check Base Images**: Checks for Docker base image updates
@@ -53,9 +57,10 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 
 ### 4. Release
 
-**Trigger:** Push of version tags (v*), manual dispatch
+**Trigger:** Push of version tags (v\*), manual dispatch
 
 **Jobs:**
+
 - **Create Release**: Generates release notes and creates GitHub release
 - **Build Production**: Builds and pushes production images with version tags
 - **Deploy Production**: Deploys to production environment
@@ -66,10 +71,12 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 **Trigger:** Manual dispatch only
 
 **Parameters:**
+
 - Environment: staging or production
 - Version: Image tag to deploy
 
 **Process:**
+
 1. Pulls specified image versions
 2. Deploys via SSH to target server
 3. Runs database migrations
@@ -81,23 +88,29 @@ The project uses a comprehensive CI/CD pipeline with multiple workflows for diff
 Configure these secrets in your GitHub repository settings:
 
 ### For CI/CD
+
 - `GITHUB_TOKEN`: Automatically provided by GitHub
 
 ### For Deployment
+
 - `SSH_PRIVATE_KEY`: SSH key for server access
 - `SSH_HOST`: Target server hostname/IP
 - `SSH_USER`: SSH username
 
 ### For Notifications (Optional)
+
 - `SLACK_WEBHOOK_URL`: Slack webhook for notifications
 
 ### For Environment Variables
+
 Configure these in your repository's Environment settings:
 
 **Staging Environment:**
+
 - `ENVIRONMENT_URL`: Staging application URL
 
 **Production Environment:**
+
 - `ENVIRONMENT_URL`: Production application URL
 
 ## Usage
@@ -105,6 +118,7 @@ Configure these in your repository's Environment settings:
 ### Making a Release
 
 1. Create and push a version tag:
+
    ```bash
    git tag -a v1.0.0 -m "Release version 1.0.0"
    git push origin v1.0.0
@@ -127,6 +141,7 @@ Configure these in your repository's Environment settings:
 ### Checking PR Status
 
 All PRs automatically run:
+
 - Code quality checks
 - Security scans
 - Dockerfile linting
@@ -137,6 +152,7 @@ Checks must pass before merging is allowed.
 ## Docker Image Tags
 
 Images are tagged with:
+
 - `latest` - Always points to the most recent main branch build
 - `main` - Latest build from main branch
 - `develop` - Latest build from develop branch

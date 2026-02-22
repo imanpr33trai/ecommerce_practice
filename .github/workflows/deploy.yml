@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
         type: choice
         options:
           - staging
           - production
       version:
-        description: 'Image version tag to deploy'
+        description: "Image version tag to deploy"
         required: true
         type: string
-        default: 'latest'
+        default: "latest"
 
 jobs:
   # ==========================================
@@ -60,7 +60,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          
+
           # Deploy using docker context or SSH
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
             set -e

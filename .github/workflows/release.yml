@@ -3,11 +3,11 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., v1.0.0)'
+        description: "Version to release (e.g., v1.0.0)"
         required: true
         type: string
 
@@ -37,44 +37,44 @@ jobs:
         id: release_notes
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
-          
+
           # Get commits since last tag
           LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          
+
           if [ -z "$LAST_TAG" ]; then
             COMMITS=$(git log --pretty=format:"- %s" --no-merges)
           else
             COMMITS=$(git log --pretty=format:"- %s" --no-merges ${LAST_TAG}..HEAD)
           fi
-          
+
           # Categorize commits
           FEATURES=$(echo "$COMMITS" | grep -E "^-\s*feat" || echo "")
           FIXES=$(echo "$COMMITS" | grep -E "^-\s*fix" || echo "")
           DOCS=$(echo "$COMMITS" | grep -E "^-\s*docs" || echo "")
           OTHER=$(echo "$COMMITS" | grep -v -E "^-\s*(feat|fix|docs)" || echo "")
-          
+
           NOTES="## What's Changed\n\n"
-          
+
           if [ ! -z "$FEATURES" ]; then
             NOTES="${NOTES}### ✨ Features\n${FEATURES}\n\n"
           fi
-          
+
           if [ ! -z "$FIXES" ]; then
             NOTES="${NOTES}### 🐛 Bug Fixes\n${FIXES}\n\n"
           fi
-          
+
           if [ ! -z "$DOCS" ]; then
             NOTES="${NOTES}### 📚 Documentation\n${DOCS}\n\n"
           fi
-          
+
           if [ ! -z "$OTHER" ]; then
             NOTES="${NOTES}### 📝 Other Changes\n${OTHER}\n\n"
           fi
-          
+
           NOTES="${NOTES}## Docker Images\n\n"
           NOTES="${NOTES}- \`ghcr.io/${{ github.repository }}-web:${VERSION}\`\n"
           NOTES="${NOTES}- \`ghcr.io/${{ github.repository }}-server:${VERSION}\`\n"
-          
+
           echo "NOTES<<EOF" >> $GITHUB_OUTPUT
           echo "$NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

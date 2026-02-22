@@ -1,37 +1,56 @@
 {
+  "name": "@ecomerceNextjs/db",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rimraf dist",
+    "db:deploy": "prisma migrate deploy",
+    "db:down": "docker compose down",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:pull": "prisma db pull",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose stop",
+    "db:studio": "prisma studio",
+    "db:watch": "docker compose up",
+    "dev": "tsup --watch",
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit"
+  },
   "dependencies": {
     "@ecomerceNextjs/config": "workspace:*",
     "@ecomerceNextjs/env": "workspace:*",
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^7.4.1",
     "@prisma/client-runtime-utils": "^7.2.0",
-    "pg": "^8.16.3",
     "dotenv": "catalog:",
+    "pg": "^8.16.3",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "^20.19.30",
     "@types/pg": "^8.11.11",
     "prisma": "^7.4.1",
+    "tsup": "^8.5.1",
     "tsx": "^4.21.0",
-
     "typescript": "catalog:"
-  },
-  "main": "./src/index.ts",
-  "name": "@ecomerceNextjs/db",
-  "scripts": {
-    "lint": "biome check .",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:push": "prisma db push",
-    "db:pull": "prisma db pull",
-    "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "db:seed": "prisma db seed",
-    "db:start": "docker compose up -d",
-    "db:watch": "docker compose up",
-    "db:stop": "docker compose stop",
-    "db:down": "docker compose down"
-  },
-  "type": "module"
+  }
 }

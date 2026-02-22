@@ -1,6 +1,5 @@
-import Image from "next/image";
-
 import { ArrowRight, Hammer, Leaf, PenTool } from "lucide-react";
+import Image from "next/image";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -76,20 +75,13 @@ export default function AboutPage() {
             studio.
           </p>
           <Button variant="outline">
-            Join our Team{" "}
-            <ArrowRight
-              size={16}
-              className="ml-2"
-            />
+            Join our Team <ArrowRight size={16} className="ml-2" />
           </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 lg:col-span-8">
           {TEAM.map((member) => (
-            <BentoCard
-              key={member.id}
-              className="group overflow-hidden bg-white"
-            >
+            <BentoCard key={member.id} className="group overflow-hidden bg-white">
               <div className="aspect-[3/4] overflow-hidden bg-gray-100">
                 <Image
                   alt={member.name}

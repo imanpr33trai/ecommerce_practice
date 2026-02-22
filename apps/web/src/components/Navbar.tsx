@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import { Input } from "@comp/input";
 import { Clock, Heart, Loader2, LogIn, Menu, Search, ShoppingBag, UserIcon, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { useCartListItemsQuery } from "@/data/cart";
 import { useProductSuggestionQuery } from "@/data/product";
@@ -133,22 +133,17 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between gap-4">
           <Link
             href="/"
-            className="group flex min-w-max items-center gap-2 rounded-full bg-white px-6 py-3 shadow-sm transition-all hover:shadow-md"
-          >
+            className="group flex min-w-max items-center gap-2 rounded-full bg-white px-6 py-3 shadow-sm transition-all hover:shadow-md">
             <div className="grid h-6 w-6 place-items-center rounded-full bg-black transition-transform group-hover:scale-110">
               <span className="font-bold text-white text-xs">N</span>
             </div>
             <span className="font-bold text-lg tracking-tight">Nestify</span>
           </Link>
 
-          <div
-            ref={searchRef}
-            className="relative z-50 hidden max-w-2xl flex-1 md:block"
-          >
+          <div ref={searchRef} className="relative z-50 hidden max-w-2xl flex-1 md:block">
             <form
               onSubmit={handleFormSubmit}
-              className="relative z-20 flex items-center rounded-full bg-white p-1.5 pl-6 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-black/5 hover:shadow-md"
-            >
+              className="relative z-20 flex items-center rounded-full bg-white p-1.5 pl-6 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-black/5 hover:shadow-md">
               <input
                 type="text"
                 value={searchQuery}
@@ -157,17 +152,9 @@ const Navbar: React.FC = () => {
                 placeholder="Search collection..."
                 className="min-w-0 flex-1 border-none bg-transparent font-medium text-sm outline-none placeholder:text-gray-400"
               />
-              <Button
-                type="submit"
-                size="icon"
-                variant="primary"
-                className="h-10! w-10! shrink-0"
-              >
+              <Button type="submit" size="icon" variant="primary" className="h-10! w-10! shrink-0">
                 {isSuggestionsLoading ? (
-                  <Loader2
-                    className="animate-spin"
-                    size={18}
-                  />
+                  <Loader2 className="animate-spin" size={18} />
                 ) : (
                   <Search size={18} />
                 )}
@@ -193,8 +180,7 @@ const Navbar: React.FC = () => {
                               addToSearchHistory(searchQuery);
                               setIsFocused(false);
                             }}
-                            className="group flex items-center gap-4 px-4 py-3 transition-colors hover:bg-gray-50"
-                          >
+                            className="group flex items-center gap-4 px-4 py-3 transition-colors hover:bg-gray-50">
                             <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-gray-100">
                               <Image
                                 src={product.images.at(0)?.url || "images/caroline.jpg"}
@@ -224,8 +210,7 @@ const Navbar: React.FC = () => {
                     {suggestions && suggestions.data.items.length > 0 && (
                       <div
                         onClick={() => submitSearch(searchQuery)}
-                        className="cursor-pointer border-gray-100 border-t p-3 text-center font-bold text-blue-600 text-xs uppercase tracking-wide hover:bg-gray-50"
-                      >
+                        className="cursor-pointer border-gray-100 border-t p-3 text-center font-bold text-blue-600 text-xs uppercase tracking-wide hover:bg-gray-50">
                         View all results for "{searchQuery}"
                       </div>
                     )}
@@ -244,8 +229,7 @@ const Navbar: React.FC = () => {
                             setSearchQuery(term);
                             submitSearch(term);
                           }}
-                          className="group flex cursor-pointer items-center justify-between px-4 py-3 hover:bg-gray-50"
-                        >
+                          className="group flex cursor-pointer items-center justify-between px-4 py-3 hover:bg-gray-50">
                           <div className="flex items-center gap-3 text-gray-600">
                             <Clock size={14} />
                             <span className="text-sm">{term}</span>
@@ -253,8 +237,7 @@ const Navbar: React.FC = () => {
                           <button
                             type="button"
                             onClick={(e) => removeHistoryItem(e, term)}
-                            className="text-gray-300 opacity-0 transition-all hover:text-red-500 group-hover:opacity-100"
-                          >
+                            className="text-gray-300 opacity-0 transition-all hover:text-red-500 group-hover:opacity-100">
                             <X size={14} />
                           </button>
                         </div>
@@ -273,8 +256,7 @@ const Navbar: React.FC = () => {
                   <Button
                     variant="icon"
                     className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex"
-                    active={isActive("/account")}
-                  >
+                    active={isActive("/account")}>
                     <UserIcon size={20} />
                   </Button>
                 </Link>
@@ -282,18 +264,14 @@ const Navbar: React.FC = () => {
                   <Button
                     variant="icon"
                     className="group relative hidden sm:flex"
-                    active={isActive("/wishlist")}
-                  >
+                    active={isActive("/wishlist")}>
                     <Heart
                       size={20}
                       className={`transition-colors ${isActive("/wishlist") ? "fill-black" : "group-hover:fill-red-500 group-hover:text-red-500"}`}
                     />
                     {isWishListCountLoading ? (
                       <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 place-items-center rounded-full border border-white bg-black text-[10px] text-white">
-                        <Loader2
-                          className="animate-spin text-white-400"
-                          size={10}
-                        />
+                        <Loader2 className="animate-spin text-white-400" size={10} />
                       </span>
                     ) : !wishCount ? (
                       <div>!</div>
@@ -309,8 +287,7 @@ const Navbar: React.FC = () => {
                 <Button
                   variant="icon"
                   className="relative transition-colors hover:bg-black hover:text-white"
-                  onClick={toggleCart}
-                >
+                  onClick={toggleCart}>
                   <ShoppingBag size={20} />
                   {cartItemCount > 0 && (
                     <span className="absolute top-0 right-0 -mt-1 -mr-1 grid h-4 w-4 animate-fade-in place-items-center rounded-full border border-white bg-red-500 text-[10px] text-white">
@@ -319,11 +296,7 @@ const Navbar: React.FC = () => {
                   )}
                 </Button>
 
-                <Button
-                  variant="icon"
-                  className="md:hidden"
-                  onClick={() => setIsOpen(!isOpen)}
-                >
+                <Button variant="icon" className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
                   {isOpen ? <X size={20} /> : <Menu size={20} />}
                 </Button>
               </>
@@ -332,13 +305,8 @@ const Navbar: React.FC = () => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex"
-                >
-                  <LogIn
-                    size={16}
-                    className="mr-2"
-                  />{" "}
-                  Sign In
+                  className="group relative hidden max-h-[46] min-h-[46] sm:flex md:flex">
+                  <LogIn size={16} className="mr-2" /> Sign In
                 </Button>
               </Link>
             )}
@@ -348,10 +316,7 @@ const Navbar: React.FC = () => {
 
       {isOpen && (
         <div className="absolute top-full left-0 z-50 flex w-full animate-slide-up flex-col gap-4 rounded-b-3xl border-gray-200 border-t bg-nest-bg p-4 shadow-xl md:hidden">
-          <form
-            onSubmit={handleFormSubmit}
-            className="flex gap-2"
-          >
+          <form onSubmit={handleFormSubmit} className="flex gap-2">
             <Input
               type="text"
               value={searchQuery}
@@ -359,10 +324,7 @@ const Navbar: React.FC = () => {
               placeholder="Search..."
               className="flex-1 rounded-2xl bg-white px-4 py-3 outline-none"
             />
-            <Button
-              type="submit"
-              variant="primary"
-            >
+            <Button type="submit" variant="primary">
               <Search size={20} />
             </Button>
           </form>
@@ -370,29 +332,23 @@ const Navbar: React.FC = () => {
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
-            className="rounded-2xl bg-white p-4 font-medium"
-          >
+            className="rounded-2xl bg-white p-4 font-medium">
             Home
           </Link>
           <Link
             href="/product"
             onClick={() => setIsOpen(false)}
-            className="rounded-2xl bg-white p-4 font-medium"
-          >
+            className="rounded-2xl bg-white p-4 font-medium">
             Shop Collection
           </Link>
           <Link
             href="/wish"
             onClick={() => setIsOpen(false)}
-            className="flex justify-between rounded-2xl bg-white p-4 font-medium"
-          >
+            className="flex justify-between rounded-2xl bg-white p-4 font-medium">
             Wishlist
             {isWishListCountLoading ? (
               <div className="flex h-64 items-center justify-center">
-                <Loader2
-                  className="animate-spin text-gray-400"
-                  size={32}
-                />
+                <Loader2 className="animate-spin text-gray-400" size={32} />
               </div>
             ) : !wishCount ? (
               <div>!</div>
@@ -409,16 +365,14 @@ const Navbar: React.FC = () => {
             <Link
               href={{ pathname: "/account" }}
               onClick={() => setIsOpen(false)}
-              className="rounded-2xl bg-white p-4 font-medium"
-            >
+              className="rounded-2xl bg-white p-4 font-medium">
               Account
             </Link>
           ) : (
             <Link
               href="/log-in"
               onClick={() => setIsOpen(false)}
-              className="rounded-2xl bg-white p-4 font-medium"
-            >
+              className="rounded-2xl bg-white p-4 font-medium">
               Sign In
             </Link>
           )}

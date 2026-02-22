@@ -1,11 +1,10 @@
 "use client";
 
+import { Button as ShadcnButton } from "@comp/button";
+import { ArrowRight, Heart, ShoppingBag, Star, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
-
-import { Button as ShadcnButton } from "@comp/button";
-import { ArrowRight, Heart, ShoppingBag, Star, X } from "lucide-react";
 import { toast } from "sonner";
 
 import Button from "@/components/Button";
@@ -101,13 +100,11 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
       {/* Modal Content */}
       <div
         className={`relative flex h-[90vh] w-full max-w-6xl transform flex-col overflow-hidden rounded-[2.5rem] bg-white shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] md:h-[800px] md:flex-row ${isAnimating ? "translate-y-0 scale-100 opacity-100" : "translate-y-12 scale-95 opacity-0"}
-        `}
-      >
+        `}>
         <button
           onClick={onDismiss}
           type="button"
-          className="absolute top-3 right-3 z-20 rounded-full bg-white/80 p-2 backdrop-blur-md transition-all duration-300 hover:bg-black hover:text-white"
-        >
+          className="absolute top-3 right-3 z-20 rounded-full bg-white/80 p-2 backdrop-blur-md transition-all duration-300 hover:bg-black hover:text-white">
           <X size={24} />
         </button>
 
@@ -143,10 +140,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
                 {product.category?.name}
               </span>
               <div className="flex items-center gap-1 rounded-lg bg-yellow-50 px-2 py-1 text-yellow-500">
-                <Star
-                  size={14}
-                  fill="currentColor"
-                />
+                <Star size={14} fill="currentColor" />
                 <span className="font-bold text-black text-sm">
                   {product.rating?.toFixed(1) || "New"}
                 </span>
@@ -196,8 +190,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
               <Button
                 className="group h-14 flex-1 bg-black text-lg text-white hover:bg-gray-800"
                 onClick={handleAddToCart}
-                disabled={isAdding || product.stock === 0}
-              >
+                disabled={isAdding || product.stock === 0}>
                 {isAdding ? "Adding..." : product.stock === 0 ? "Out of Stock" : "Add to Cart"}
                 <ShoppingBag
                   size={20}
@@ -208,8 +201,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
               <button
                 type="button"
                 onClick={handleWishlist}
-                className={`flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 transition-all ${isWishlisted ? "border-red-200 bg-red-50" : "hover:bg-gray-50"}`}
-              >
+                className={`flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 transition-all ${isWishlisted ? "border-red-200 bg-red-50" : "hover:bg-gray-50"}`}>
                 <Heart
                   size={24}
                   className={isWishlisted ? "fill-red-500 text-red-500" : "text-black"}
@@ -223,8 +215,7 @@ export default function ModalProduct({ params }: { params: Promise<{ slug: strin
                 // Hard Navigation to bypass modal
                 window.location.href = `/product/${product.slug}`;
               }}
-              className="mx-auto mt-2 flex items-center justify-center gap-1 font-bold text-gray-400 text-xs uppercase tracking-widest hover:text-black"
-            >
+              className="mx-auto mt-2 flex items-center justify-center gap-1 font-bold text-gray-400 text-xs uppercase tracking-widest hover:text-black">
               View Full Details Page <ArrowRight size={12} />
             </ShadcnButton>
           </div>

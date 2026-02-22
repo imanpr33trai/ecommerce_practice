@@ -1,6 +1,7 @@
+import type { Context } from "hono";
+
 import { HTTPException } from "hono/http-exception";
 import z, { ZodError } from "zod"; // Import ZodError directly
-import type { Context } from "hono";
 
 export const errorHandler = (err: Error, c: Context) => {
   // 1. Handle Hono HTTPExceptions (e.g., c.error(), 401 Unauthorized)

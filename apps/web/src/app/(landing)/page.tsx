@@ -1,8 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import { Suspense } from "react";
-
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { productLandingOptions } from "@/data/product";

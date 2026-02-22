@@ -11,8 +11,7 @@ function NativeSelect({
   return (
     <div
       className="group/native-select relative w-fit has-[select:disabled]:opacity-50"
-      data-slot="native-select-wrapper"
-    >
+      data-slot="native-select-wrapper">
       <select
         data-slot="native-select"
         data-size={size}
@@ -34,22 +33,11 @@ function NativeSelect({
 }
 
 function NativeSelectOption({ ...props }: React.ComponentProps<"option">) {
-  return (
-    <option
-      data-slot="native-select-option"
-      {...props}
-    />
-  );
+  return <option data-slot="native-select-option" {...props} />;
 }
 
 function NativeSelectOptGroup({ className, ...props }: React.ComponentProps<"optgroup">) {
-  return (
-    <optgroup
-      data-slot="native-select-optgroup"
-      className={cn(className)}
-      {...props}
-    />
-  );
+  return <optgroup data-slot="native-select-optgroup" className={cn(className)} {...props} />;
 }
 
 export { NativeSelect, NativeSelectOptGroup, NativeSelectOption };

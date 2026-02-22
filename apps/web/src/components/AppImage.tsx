@@ -1,9 +1,8 @@
 "use client";
 
+import { Spinner } from "@comp/Spinner";
 import Image, { type ImageProps } from "next/image";
 import { useState } from "react";
-
-import { Spinner } from "@comp/Spinner";
 
 function Img({ className, ...props }: ImageProps) {
   const [loaded, setLoaded] = useState(false);

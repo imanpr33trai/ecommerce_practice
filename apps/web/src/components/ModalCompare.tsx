@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import type React from "react";
 
 import { Trash2, X } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 
 import { useShop } from "../context/ShopContext";
@@ -30,8 +30,7 @@ const ModalCompare: React.FC = () => {
           <button
             onClick={() => setCompareOpen(false)}
             type="button"
-            className="rounded-full p-2 transition-colors hover:bg-gray-100"
-          >
+            className="rounded-full p-2 transition-colors hover:bg-gray-100">
             <X size={20} />
           </button>
         </div>
@@ -62,17 +61,12 @@ const ModalCompare: React.FC = () => {
               {compareList.map((product) => (
                 <div
                   key={product.id}
-                  className="group relative col-span-1 border-gray-100 border-l px-6 first:border-l-0"
-                >
+                  className="group relative col-span-1 border-gray-100 border-l px-6 first:border-l-0">
                   <Button
                     onClick={() => removeFromCompare(product.id)}
                     variant={"outline"}
-                    className="group absolute top-0 right-6 z-1000 rounded-full bg-gray-100 p-2 transition-colors hover:bg-red-50 hover:text-red-500"
-                  >
-                    <Trash2
-                      size={16}
-                      className=""
-                    />
+                    className="group absolute top-0 right-6 z-1000 rounded-full bg-gray-100 p-2 transition-colors hover:bg-red-50 hover:text-red-500">
+                    <Trash2 size={16} className="" />
                   </Button>
 
                   <div className="mb-8 h-[280px] overflow-hidden rounded-2xl bg-gray-50">
@@ -115,8 +109,7 @@ const ModalCompare: React.FC = () => {
                     <div className="flex h-12 items-center pt-4">
                       <Button
                         className="w-full text-sm"
-                        onClick={() => toast.success("Added to cart")}
-                      >
+                        onClick={() => toast.success("Added to cart")}>
                         Add to Cart
                       </Button>
                     </div>

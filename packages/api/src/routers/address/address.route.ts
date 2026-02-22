@@ -1,10 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import type { HonoEnv } from "../../context.js"; // Adjust path
+
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { addressQueries } from "./address.query.js";
 import { AddressSchema, UpdateAddressSchema } from "./address.type.js";
-import type { HonoEnv } from "../../context.js"; // Adjust path
 
 export const address = new Hono<HonoEnv>()
 

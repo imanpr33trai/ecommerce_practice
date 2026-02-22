@@ -1,5 +1,6 @@
-import { env } from "@ecomerceNextjs/env/server";
 import type { MiddlewareHandler } from "hono";
+
+import { env } from "@ecomerceNextjs/env/server";
 
 // Simple rate limiting implementation for Vercel
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();

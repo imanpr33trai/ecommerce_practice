@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+// import type { User } from "better-auth";
+import type { Session } from "@ecomerceNextjs/auth";
 
 import {
   ChevronRight,
@@ -13,8 +13,8 @@ import {
   Package,
   Settings,
 } from "lucide-react";
-// import type { User } from "better-auth";
-import type { Session } from "@ecomerceNextjs/auth";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import Image from "@/components/AppImage";
 import Button from "@/components/Button";
@@ -59,13 +59,8 @@ export function AccountContent({ activeTab, user }: Props) {
         <Button
           variant="outline"
           onClick={handleLogout}
-          className="border-red-200 text-red-500 hover:bg-red-50"
-        >
-          <LogOut
-            size={16}
-            className="mr-2"
-          />{" "}
-          Sign Out
+          className="border-red-200 text-red-500 hover:bg-red-50">
+          <LogOut size={16} className="mr-2" /> Sign Out
         </Button>
       </div>
 
@@ -74,14 +69,7 @@ export function AccountContent({ activeTab, user }: Props) {
         <aside className="w-full shrink-0 space-y-8 md:w-72">
           <div className="flex items-center gap-4 px-2">
             <div className="relative h-12 w-12 overflow-hidden rounded-full bg-gray-200">
-              {user.image && (
-                <Image
-                  src={user.image}
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                />
-              )}
+              {user.image && <Image src={user.image} alt="Profile" fill className="object-cover" />}
             </div>
             <div>
               <h2 className="font-bold leading-tight">{user.name}</h2>
@@ -95,8 +83,7 @@ export function AccountContent({ activeTab, user }: Props) {
                 key={item.id}
                 href={{ pathname: item.path }}
                 className={`group flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-300 ${activeTab === item.id ? "bg-black text-white shadow-lg" : "text-gray-600 hover:bg-white"}
-                `}
-              >
+                `}>
                 <div className="flex items-center gap-3">
                   <item.icon
                     size={20}

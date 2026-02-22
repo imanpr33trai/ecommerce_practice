@@ -43,8 +43,7 @@ export default function ProductGallery({ slug }: ProductGalleryProps) {
       <button
         onClick={handleWishlist}
         type="button"
-        className="absolute top-6 right-6 z-20 rounded-full bg-white/90 p-3 shadow-md backdrop-blur transition-all duration-300 hover:scale-110 active:scale-95"
-      >
+        className="absolute top-6 right-6 z-20 rounded-full bg-white/90 p-3 shadow-md backdrop-blur transition-all duration-300 hover:scale-110 active:scale-95">
         <Heart
           size={24}
           className={`transition-colors duration-300 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-700"}`}

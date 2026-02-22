@@ -1,5 +1,10 @@
 "use client";
 
+import type { Label as LabelPrimitive } from "radix-ui";
+
+import { Label } from "@workspace/ui/components/label";
+import { cn } from "@workspace/ui/lib/utils";
+import { Slot } from "radix-ui";
 import * as React from "react";
 import {
   Controller,
@@ -10,11 +15,6 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form";
-
-import { Label } from "@workspace/ui/components/label";
-import { cn } from "@workspace/ui/lib/utils";
-import { Slot } from "radix-ui";
-import type { Label as LabelPrimitive } from "radix-ui";
 
 const Form = FormProvider;
 
@@ -74,11 +74,7 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div
-        data-slot="form-item"
-        className={cn("grid gap-2", className)}
-        {...props}
-      />
+      <div data-slot="form-item" className={cn("grid gap-2", className)} {...props} />
     </FormItemContext.Provider>
   );
 }
@@ -137,8 +133,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="form-message"
       id={formMessageId}
       className={cn("text-destructive text-sm", className)}
-      {...props}
-    >
+      {...props}>
       {body}
     </p>
   );

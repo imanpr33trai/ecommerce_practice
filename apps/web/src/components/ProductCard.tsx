@@ -1,15 +1,16 @@
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useContext, useRef, useState } from "react";
 import type React from "react";
 
 import { ArrowLeftRight, Eye, Heart, ShoppingBag, Star } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useContext, useRef, useState } from "react";
 import { toast } from "sonner";
+
+import type { ProductSingleResponse } from "@/data/product";
 
 import { useCartAddItemMutation } from "@/data/cart";
 import { useWishListedQuery, useWishToggleMutation } from "@/data/wish";
 import { authClient } from "@/lib/auth-client";
-import type { ProductSingleResponse } from "@/data/product";
 
 import { LayoutContext } from "../context/LayoutContext";
 import { useShop } from "../context/ShopContext";
@@ -231,23 +232,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
         ref={cardRef}
         className={`relative h-110 w-full transition-all duration-300 ${zIndexClass} ${className}`}
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+        onMouseLeave={handleMouseLeave}>
         <div
           className={`absolute top-0 origin-top overflow-hidden rounded-4xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-1000 ease-premium will-change-transform ${isHovering ? "scale-[1.02] shadow-xl ring-black/10" : ""}
                 ${isExpanded ? "h-110 w-[185%] shadow-2xl ring-black/0" : "h-full w-full"}
               `}
-          style={containerStyle}
-        >
+          style={containerStyle}>
           <Link
             href={`/product/${product.slug}`}
             onClick={handleClick}
-            className="group relative block h-full w-full"
-          >
+            className="group relative block h-full w-full">
             <div
               className={`absolute top-0 overflow-hidden bg-[#F9F9F9] transition-all duration-1000 ease-premium ${isExpanded ? "h-full w-[54%]" : "h-70 w-full"}`}
-              style={imageStyle}
-            >
+              style={imageStyle}>
               {product.images.map((image) => (
                 <ImageWithSkeleton
                   key={image.id}
@@ -261,8 +258,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 {badges.map((badge, idx) => (
                   <span
                     key={idx}
-                    className={`${badge.color} animate-fade-in rounded-full px-3 py-1.5 font-bold text-[10px] uppercase tracking-widest shadow-sm`}
-                  >
+                    className={`${badge.color} animate-fade-in rounded-full px-3 py-1.5 font-bold text-[10px] uppercase tracking-widest shadow-sm`}>
                     {badge.text}
                   </span>
                 ))}
@@ -272,8 +268,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 onClick={handleWishlist}
                 type="button"
                 style={wishlistButtonStyle}
-                className="absolute z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all duration-1000 ease-premium hover:scale-110 hover:bg-white active:scale-95"
-              >
+                className="absolute z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/80 shadow-sm backdrop-blur-md transition-all duration-1000 ease-premium hover:scale-110 hover:bg-white active:scale-95">
                 <Heart
                   size={20}
                   className={`transition-colors duration-300 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-500"}`}
@@ -281,15 +276,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
               </button>
 
               <div
-                className={`absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
-              >
+                className={`absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 transition-all duration-300 ${isHovering && !isExpanded ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}>
                 <Button
                   variant="icon"
                   size="icon"
                   className="h-10 w-10 rounded-full"
                   onClick={handleQuickView}
-                  title="Quick View"
-                >
+                  title="Quick View">
                   <Eye size={18} />
                 </Button>
                 <Button
@@ -297,8 +290,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                   size="icon"
                   className={`h-10 w-10 rounded-full ${isInCompare ? "bg-black! text-white!" : ""}`}
                   onClick={handleCompare}
-                  title="Compare"
-                >
+                  title="Compare">
                   <ArrowLeftRight size={18} />
                 </Button>
               </div>
@@ -306,22 +298,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
 
             <div
               className={`absolute overflow-hidden bg-white transition-all duration-1000 ease-premium ${isExpanded ? "top-0 h-full w-[46%]" : "top-70 h-40 w-full"}`}
-              style={contentStyle}
-            >
+              style={contentStyle}>
               <div
-                className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}
-              >
+                className={`relative flex h-full flex-col justify-between transition-all duration-1000 ease-premium ${isExpanded ? "p-8" : "p-6"}`}>
                 <div className="relative z-10">
                   <div className="mb-2 flex items-start justify-between">
                     <div className="min-w-0 flex-1 pr-2">
                       <p
-                        className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}
-                      >
+                        className={`mb-1.5 font-bold text-gray-400 text-xs uppercase tracking-widest transition-opacity duration-300 ${isExpanded ? "opacity-100" : "opacity-80"}`}>
                         {product.category?.name}
                       </p>
                       <h3
-                        className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}
-                      >
+                        className={`truncate font-bold text-gray-900 leading-tight transition-all duration-300 ${isExpanded ? "text-2xl" : "text-xl"}`}>
                         {product.name}
                       </h3>
                     </div>
@@ -330,11 +318,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                         ${product.price}
                       </span>
                       <div className="mt-1 ml-auto flex w-fit items-center gap-1 rounded-md bg-yellow-50 px-2 py-1 font-bold text-[10px] text-yellow-600">
-                        <Star
-                          size={10}
-                          fill="currentColor"
-                        />{" "}
-                        {product.rating}
+                        <Star size={10} fill="currentColor" /> {product.rating}
                       </div>
                     </div>
                   </div>
@@ -354,8 +338,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, className = "" }) =>
                 />
 
                 <div
-                  className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}
-                >
+                  className={`absolute right-6 bottom-6 transition-all duration-300 ease-out ${isExpanded ? "pointer-events-none translate-y-4 scale-50 opacity-0" : "translate-y-0 scale-100 opacity-100"}`}>
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-black shadow-sm hover:bg-gray-200">
                     <ShoppingBag size={20} />
                   </div>

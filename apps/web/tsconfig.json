@@ -7,8 +7,18 @@
       "@/*": ["src/*"],
       "@comp/*": ["../../packages/ui/src/components/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
-    }
+    },
+    "types": ["node"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/dev/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/dev/types/**/*.ts",
+    "../../packages/api/dist/**/*.d.ts",
+    "../../packages/auth/dist/**/*.d.ts",
+    "../../packages/db/dist/**/*.d.ts",
+    "../../packages/env/dist/**/*.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

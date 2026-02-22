@@ -1,7 +1,7 @@
-import Link from "next/link";
 import type React from "react";
 
 import { ArrowUpRight, Facebook, Instagram, Twitter } from "lucide-react";
+import Link from "next/link";
 
 import BentoCard from "./BentoCard";
 import Button from "./Button";
@@ -23,22 +23,13 @@ const Footer: React.FC = () => {
             </h2>
           </div>
           <div className="mt-auto flex gap-4">
-            <Button
-              variant="icon"
-              className="!bg-white/10 !text-white hover:!bg-white/20"
-            >
+            <Button variant="icon" className="!bg-white/10 !text-white hover:!bg-white/20">
               <Instagram size={20} />
             </Button>
-            <Button
-              variant="icon"
-              className="!bg-white/10 !text-white hover:!bg-white/20"
-            >
+            <Button variant="icon" className="!bg-white/10 !text-white hover:!bg-white/20">
               <Twitter size={20} />
             </Button>
-            <Button
-              variant="icon"
-              className="!bg-white/10 !text-white hover:!bg-white/20"
-            >
+            <Button variant="icon" className="!bg-white/10 !text-white hover:!bg-white/20">
               <Facebook size={20} />
             </Button>
           </div>
@@ -49,34 +40,19 @@ const Footer: React.FC = () => {
             Shop
           </span>
           <div className="flex flex-col gap-4 font-medium text-gray-600">
-            <Link
-              href="/product"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="/product" className="transition-colors hover:text-black">
               All Products
             </Link>
-            <Link
-              href="/product?category=Sofa"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="/product?category=Sofa" className="transition-colors hover:text-black">
               Sofas
             </Link>
-            <Link
-              href="/product?category=Chair"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="/product?category=Chair" className="transition-colors hover:text-black">
               Chairs
             </Link>
-            <Link
-              href="/product?category=Table"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="/product?category=Table" className="transition-colors hover:text-black">
               Tables
             </Link>
-            <Link
-              href="/product?category=Lamps"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="/product?category=Lamps" className="transition-colors hover:text-black">
               Lighting
             </Link>
           </div>
@@ -87,34 +63,19 @@ const Footer: React.FC = () => {
             Company
           </span>
           <div className="flex flex-col gap-4 font-medium text-gray-600">
-            <Link
-              href={{ pathname: "/about" }}
-              className="transition-colors hover:text-black"
-            >
+            <Link href={{ pathname: "/about" }} className="transition-colors hover:text-black">
               About Us
             </Link>
-            <Link
-              href="#"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="#" className="transition-colors hover:text-black">
               Shipping
             </Link>
-            <Link
-              href="#"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="#" className="transition-colors hover:text-black">
               Returns
             </Link>
-            <Link
-              href="#"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="#" className="transition-colors hover:text-black">
               Privacy Policy
             </Link>
-            <Link
-              href="#"
-              className="transition-colors hover:text-black"
-            >
+            <Link href="#" className="transition-colors hover:text-black">
               Terms of Service
             </Link>
           </div>
@@ -133,10 +94,7 @@ const Footer: React.FC = () => {
             />
             <Button className="group w-full justify-between">
               Subscribe{" "}
-              <ArrowUpRight
-                size={16}
-                className="transition-transform group-hover:translate-x-1"
-              />
+              <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         </BentoCard>

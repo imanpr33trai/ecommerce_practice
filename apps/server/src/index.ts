@@ -32,7 +32,9 @@ const app = new Hono<HonoEnv>()
       credentials: true,
     }),
   )
+
   .basePath("/api")
+
   .route("/", api)
   .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))
 

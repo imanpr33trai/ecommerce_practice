@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useState } from "react";
 
 import CartDrawer from "@/components/CartDrawer";
 import { Toaster } from "@/components/sonner";
@@ -19,24 +18,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const toggleCart = () => setIsCartOpen((prev) => !prev);
   const { data: isUser } = authClient.useSession();
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <QueryClientProvider client={createQueryClient()}>
         <LayoutContext.Provider value={{ isCartOpen, toggleCart }}>
           {/*<ToastProvider>*/}
 
           <ShopProvider>
             <ReactQueryDevtools />
-            {isUser && (
-              <CartDrawer
-                isOpen={isCartOpen}
-                onClose={() => setIsCartOpen(false)}
-              />
-            )}
+            {isUser && <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />}
 
             {children}
             <Toaster richColors />

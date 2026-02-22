@@ -14,6 +14,9 @@ export default defineConfig((options) => ({
   splitting: false,
   minify: false,
 
+  // Optimize for development speed
+  sourcemap: options.watch ? "inline" : true,
+
   external: [
     "@prisma/client",
     "@prisma/adapter-pg",
@@ -24,4 +27,7 @@ export default defineConfig((options) => ({
     "path",
     "os",
   ],
+
+  // Reduce rebuild frequency
+  ignoreWatch: ["**/*.test.ts", "**/*.spec.ts", "dist/**"],
 }));

@@ -6,9 +6,10 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import type { GetUpdateAddressRequest } from "@/data/account/types";
+
 import { accountKeys } from "@/data/account/keys";
 import { client } from "@/lib/hono-client";
-import type { GetUpdateAddressRequest } from "@/data/account/types";
 
 const updateAdd = async ({ id, json }: { id: string; json: GetUpdateAddressRequest["json"] }) => {
   const res = await client.address[":id"].$put({

@@ -2,10 +2,9 @@
 
 // import React from 'react';
 
+import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Breadcrumbs from "@/components/Breadcrumbs";
@@ -41,10 +40,7 @@ export default function CartPage() {
       <div className="mx-auto flex min-h-[60vh] max-w-[1200px] animate-fade-in flex-col items-center justify-center p-4 text-center md:px-8">
         <Breadcrumbs />
         <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
-          <ShoppingBag
-            size={32}
-            className="text-gray-400"
-          />
+          <ShoppingBag size={32} className="text-gray-400" />
         </div>
         <h1 className="mb-2 font-light text-3xl">Your Cart is Empty</h1>
         <p className="mb-8 max-w-md text-gray-500">
@@ -67,10 +63,7 @@ export default function CartPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           {cart.items.map((item) => (
-            <BentoCard
-              key={item.id}
-              className="group flex items-center gap-4 bg-white p-4"
-            >
+            <BentoCard key={item.id} className="group flex items-center gap-4 bg-white p-4">
               <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
                 {item.product.images.map((image) => (
                   <Image
@@ -100,8 +93,7 @@ export default function CartPage() {
                         updateQuantity({ productId: item.id, quantity: item.quantity + -1 })
                       }
                       type="button"
-                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-sm hover:bg-gray-50"
-                    >
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-sm hover:bg-gray-50">
                       <Minus size={10} />
                     </button>
                     <span className="w-4 text-center font-medium text-sm">{item.quantity}</span>
@@ -110,8 +102,7 @@ export default function CartPage() {
                         updateQuantity({ productId: item.id, quantity: item.quantity + 1 })
                       }
                       type="button"
-                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-sm hover:bg-gray-50"
-                    >
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs shadow-sm hover:bg-gray-50">
                       <Plus size={10} />
                     </button>
                   </div>
@@ -121,18 +112,14 @@ export default function CartPage() {
               <button
                 onClick={() => removeItem(item.id)}
                 type="button"
-                className="p-2 text-gray-400 transition-colors hover:text-red-500"
-              >
+                className="p-2 text-gray-400 transition-colors hover:text-red-500">
                 <X size={20} />
               </button>
             </BentoCard>
           ))}
 
           <Link href="/product">
-            <Button
-              variant="outline"
-              className="mt-4"
-            >
+            <Button variant="outline" className="mt-4">
               Continue Shopping
             </Button>
           </Link>
@@ -161,10 +148,7 @@ export default function CartPage() {
               </div>
             </div>
 
-            <Link
-              href={{ pathname: "/checkout" }}
-              className="block w-full"
-            >
+            <Link href={{ pathname: "/checkout" }} className="block w-full">
               <Button className="group !justify-between w-full px-6">
                 <span>Checkout</span>
                 <span className="rounded-full bg-white/20 p-1 transition-colors group-hover:bg-white/30">

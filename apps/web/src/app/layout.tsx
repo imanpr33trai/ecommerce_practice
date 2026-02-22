@@ -1,7 +1,8 @@
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import type { Metadata } from "next";
-import "../index.css";
 
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+
+import "../index.css";
 import Footer from "@/components/Footer";
 import ModalCompare from "@/components/ModalCompare";
 import Navbar from "@/components/Navbar";
@@ -30,10 +31,7 @@ export default function RootLayout({
   modal: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <body className={`${jakartaSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <div className="flex min-h-screen flex-col bg-nest-bg font-sans text-nest-text selection:bg-black selection:text-white">

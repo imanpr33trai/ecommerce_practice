@@ -1,9 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import type { HonoEnv } from "../../context.js";
+
 import { productQueries } from "./product.query";
 import { ProductFilterSchema, SuggestionSchema } from "./product.type";
-import type { HonoEnv } from "../../context.js";
 
 export const product = new Hono<HonoEnv>()
 

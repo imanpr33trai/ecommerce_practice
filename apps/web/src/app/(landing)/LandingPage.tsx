@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import {
@@ -14,6 +12,8 @@ import {
   Star,
   Truck,
 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 /** Wrap a DOM update in a View Transition when the browser supports it. */
 function withViewTransition(callback: () => void) {
@@ -79,19 +79,14 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
       className="group relative animate-slide-up space-y-6"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      style={viewTransitionName ? { viewTransitionName } : undefined}
-    >
+      style={viewTransitionName ? { viewTransitionName } : undefined}>
       <div className="flex items-end justify-between px-2">
         <div>
           <h2 className="font-light text-3xl">{title}</h2>
           <p className="mt-1 text-gray-500 text-sm">{subtitle}</p>
         </div>
         <Link href={{ pathname: categoryLink }}>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full"
-          >
+          <Button variant="outline" size="sm" className="rounded-full">
             View Collection
           </Button>
         </Link>
@@ -100,29 +95,23 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
       <Button
         variant="icon"
         onClick={() => scroll("left")}
-        className="absolute top-[55%] left-0 z-20 -ml-5 hidden -translate-y-1/2 border border-gray-100 bg-white text-black opacity-0 shadow-xl transition-all duration-300 hover:scale-110 group-hover:opacity-100 md:flex"
-      >
+        className="absolute top-[55%] left-0 z-20 -ml-5 hidden -translate-y-1/2 border border-gray-100 bg-white text-black opacity-0 shadow-xl transition-all duration-300 hover:scale-110 group-hover:opacity-100 md:flex">
         <ArrowLeft size={20} />
       </Button>
 
       <Button
         variant="icon"
         onClick={() => scroll("right")}
-        className="absolute top-[55%] right-0 z-20 -mr-5 hidden -translate-y-1/2 border border-gray-100 bg-white text-black opacity-0 shadow-xl transition-all duration-300 hover:scale-110 group-hover:opacity-100 md:flex"
-      >
+        className="absolute top-[55%] right-0 z-20 -mr-5 hidden -translate-y-1/2 border border-gray-100 bg-white text-black opacity-0 shadow-xl transition-all duration-300 hover:scale-110 group-hover:opacity-100 md:flex">
         <ArrowRight size={20} />
       </Button>
 
       <div
         ref={scrollRef}
         className="no-scrollbar -mx-2 flex snap-x items-start gap-4 overflow-x-auto scroll-smooth p-2 pt-4 pb-8"
-        style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem" }}
-      >
+        style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem" }}>
         {products.map((product) => (
-          <div
-            key={product.id}
-            className="min-w-75 shrink-0 snap-center md:min-w-85"
-          >
+          <div key={product.id} className="min-w-75 shrink-0 snap-center md:min-w-85">
             <ProductCard product={product} />
           </div>
         ))}
@@ -192,17 +181,14 @@ export default function LandingPage() {
   return (
     <div
       className="mx-auto max-w-[1600px] animate-fade-in space-y-16 p-4 pb-8 md:px-8"
-      style={{ viewTransitionName: "landing-page" }}
-    >
+      style={{ viewTransitionName: "landing-page" }}>
       <div
         className="grid h-auto grid-cols-1 gap-4 lg:h-[600px] lg:grid-cols-12"
-        style={{ viewTransitionName: "hero-grid" }}
-      >
+        style={{ viewTransitionName: "hero-grid" }}>
         <BentoCard className="group relative flex flex-col justify-center overflow-hidden bg-[#F2F2F0] lg:col-span-8">
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-bold text-[12vw] text-white uppercase leading-none tracking-tighter transition-transform duration-150 ease-out"
-            style={{ transform: `translate(-50%, calc(-50% + ${parallaxText}px))` }}
-          >
+            style={{ transform: `translate(-50%, calc(-50% + ${parallaxText}px))` }}>
             Nestify
           </div>
 
@@ -217,40 +203,29 @@ export default function LandingPage() {
 
               <h1
                 className="font-light text-4xl leading-[1.1] tracking-tight md:text-6xl"
-                style={{ viewTransitionName: "hero-title" }}
-              >
+                style={{ viewTransitionName: "hero-title" }}>
                 {featuredProduct.name}
               </h1>
 
               <div className="flex items-center gap-4">
-                <span
-                  className="font-medium text-2xl"
-                  style={{ viewTransitionName: "hero-price" }}
-                >
+                <span className="font-medium text-2xl" style={{ viewTransitionName: "hero-price" }}>
                   ${featuredProduct.price}
                 </span>
                 <div className="h-4 w-px bg-gray-300"></div>
                 <div className="flex items-center gap-1 text-yellow-500">
-                  <Star
-                    size={16}
-                    fill="currentColor"
-                  />
+                  <Star size={16} fill="currentColor" />
                   <span className="font-bold text-black">{featuredProduct.rating}</span>
                 </div>
               </div>
 
               <div className="flex gap-3 pt-4">
-                <Link
-                  href={`/product/${featuredProduct.slug}`}
-                  className="flex-1"
-                >
+                <Link href={`/product/${featuredProduct.slug}`} className="flex-1">
                   <Button className="h-12 w-full px-8!">View Product</Button>
                 </Link>
                 <Button
                   variant="icon"
                   className="h-12 w-12 bg-white transition-transform hover:bg-white/80 active:scale-90"
-                  onClick={() => setIsHeroWishlisted(!isHeroWishlisted)}
-                >
+                  onClick={() => setIsHeroWishlisted(!isHeroWishlisted)}>
                   <Heart
                     size={20}
                     className={`transition-colors duration-300 ${isHeroWishlisted ? "fill-red-500 text-red-500" : "text-black"}`}
@@ -261,8 +236,7 @@ export default function LandingPage() {
 
             <div
               className="relative aspect-square w-full max-w-[400px] flex-1 transition-transform duration-150 ease-out"
-              style={{ transform: `translateY(${parallaxImage}px)` }}
-            >
+              style={{ transform: `translateY(${parallaxImage}px)` }}>
               <div className="absolute inset-0 scale-75 transform rounded-full bg-white/40 blur-3xl"></div>
               <Image
                 width={100}
@@ -276,18 +250,10 @@ export default function LandingPage() {
           </div>
 
           <div className="absolute right-6 bottom-6 flex gap-2">
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={prevSlide}
-            >
+            <Button variant="secondary" size="icon" onClick={prevSlide}>
               <ArrowLeft size={20} />
             </Button>
-            <Button
-              variant="primary"
-              size="icon"
-              onClick={nextSlide}
-            >
+            <Button variant="primary" size="icon" onClick={nextSlide}>
               <ArrowRight size={20} />
             </Button>
           </div>
@@ -295,8 +261,7 @@ export default function LandingPage() {
 
         <BentoCard
           className="group relative flex flex-col justify-between overflow-hidden bg-black p-8 text-white lg:col-span-4"
-          style={{ viewTransitionName: "summer-sale" }}
-        >
+          style={{ viewTransitionName: "summer-sale" }}>
           <div className="relative z-10">
             <span className="font-bold text-gray-400 text-xs uppercase tracking-wider">
               Limited Offer
@@ -312,12 +277,8 @@ export default function LandingPage() {
               href={{
                 pathname: "/product",
                 query: "sale=true",
-              }}
-            >
-              <Button
-                variant="secondary"
-                className="w-full justify-between group-hover:pl-8"
-              >
+              }}>
+              <Button variant="secondary" className="w-full justify-between group-hover:pl-8">
                 Shop Sale <ArrowRight size={16} />
               </Button>
             </Link>
@@ -328,8 +289,7 @@ export default function LandingPage() {
 
       <div
         className="grid grid-cols-1 gap-4 md:grid-cols-3"
-        style={{ viewTransitionName: "trust-badges" }}
-      >
+        style={{ viewTransitionName: "trust-badges" }}>
         {[
           { icon: Truck, id: 1, title: "Free Shipping", desc: "On all orders over $200" },
           {
@@ -340,15 +300,9 @@ export default function LandingPage() {
           },
           { icon: RefreshCcw, id: 3, title: "30 Days Return", desc: "If goods have problems" },
         ].map((item) => (
-          <BentoCard
-            key={item.id}
-            className="flex items-center gap-4 bg-white p-6"
-          >
+          <BentoCard key={item.id} className="flex items-center gap-4 bg-white p-6">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gray-50">
-              <item.icon
-                size={24}
-                className="text-black"
-              />
+              <item.icon size={24} className="text-black" />
             </div>
             <div>
               <h3 className="font-bold text-sm">{item.title}</h3>
@@ -370,8 +324,7 @@ export default function LandingPage() {
 
       <div
         className="grid min-h-100 grid-cols-1 gap-4 md:grid-cols-3"
-        style={{ viewTransitionName: "category-grid" }}
-      >
+        style={{ viewTransitionName: "category-grid" }}>
         <BentoCard className="group relative overflow-hidden bg-[#E8E8E6] md:col-span-2">
           <Image
             alt="Modern sofas"
@@ -388,8 +341,7 @@ export default function LandingPage() {
                 pathname: "/product",
                 query: "category=Sofa",
               }}
-              className="flex items-center gap-1 font-bold text-xs uppercase tracking-wider hover:underline"
-            >
+              className="flex items-center gap-1 font-bold text-xs uppercase tracking-wider hover:underline">
               Explore Collection <ArrowRight size={12} />
             </Link>
           </div>
@@ -453,16 +405,12 @@ export default function LandingPage() {
 
       <div
         className="grid grid-cols-1 gap-4 md:grid-cols-12"
-        style={{ viewTransitionName: "reviews-section" }}
-      >
+        style={{ viewTransitionName: "reviews-section" }}>
         <BentoCard className="flex flex-col justify-center bg-white p-8 md:col-span-8">
           <h3 className="mb-8 font-light text-2xl">What our customers say</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {REVIEWS.slice(0, 2).map((review) => (
-              <div
-                key={review.id}
-                className="rounded-3xl bg-gray-50 p-6"
-              >
+              <div key={review.id} className="rounded-3xl bg-gray-50 p-6">
                 <div className="mb-3 flex gap-1 text-yellow-500">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -493,8 +441,7 @@ export default function LandingPage() {
         </BentoCard>
         <BentoCard
           className="group relative flex cursor-pointer flex-col justify-between overflow-hidden bg-[#C6BAA8] p-8 text-black md:col-span-4"
-          style={{ viewTransitionName: "careers-card" }}
-        >
+          style={{ viewTransitionName: "careers-card" }}>
           <div className="relative z-10">
             <span className="rounded-full border border-black/20 px-3 py-1 font-bold text-xs uppercase tracking-wider">
               Careers

@@ -22,14 +22,14 @@ jobs:
         run: |
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
           CHANGED_LINES=$(git diff --stat origin/${{ github.base_ref }}...HEAD | tail -1 | awk '{print $4}')
-          
+
           echo "Changed files: $CHANGED_FILES"
           echo "Changed lines: $CHANGED_LINES"
-          
+
           if [ $CHANGED_FILES -gt 50 ]; then
             echo "::warning::This PR changes $CHANGED_FILES files. Consider breaking it into smaller PRs."
           fi
-          
+
           if [ $CHANGED_LINES -gt 1000 ]; then
             echo "::warning::This PR changes $CHANGED_LINES lines. Consider breaking it into smaller PRs."
           fi

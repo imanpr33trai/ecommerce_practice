@@ -22,8 +22,7 @@ const BentoCard: React.FC<BentoCardProps> = ({
       `,
         className,
       )}
-      {...props}
-    >
+      {...props}>
       {children}
     </div>
   );

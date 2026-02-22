@@ -1,11 +1,12 @@
 import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query";
 
-import { reviewKeys } from "@/data/review/keys";
-import { client } from "@/lib/hono-client";
 import type {
   GetReviewProductListRequest,
   GetReviewProductListResponse,
 } from "@/data/review/types";
+
+import { reviewKeys } from "@/data/review/keys";
+import { client } from "@/lib/hono-client";
 
 const fetchProductReviews = async (
   productId: string,

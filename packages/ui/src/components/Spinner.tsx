@@ -5,31 +5,19 @@ import { cn } from "../lib/utils";
 type SpinnerVariantProps = Omit<SpinnerProps, "variant">;
 
 const Default = ({ className, ...props }: SpinnerVariantProps) => (
-  <LoaderIcon
-    className={cn("animate-spin", className)}
-    {...props}
-  />
+  <LoaderIcon className={cn("animate-spin", className)} {...props} />
 );
 
 const Circle = ({ className, ...props }: SpinnerVariantProps) => (
-  <LoaderCircleIcon
-    className={cn("animate-spin", className)}
-    {...props}
-  />
+  <LoaderCircleIcon className={cn("animate-spin", className)} {...props} />
 );
 
 const Pinwheel = ({ className, ...props }: SpinnerVariantProps) => (
-  <LoaderPinwheelIcon
-    className={cn("animate-spin", className)}
-    {...props}
-  />
+  <LoaderPinwheelIcon className={cn("animate-spin", className)} {...props} />
 );
 
 const CircleFilled = ({ className, size = 24, ...props }: SpinnerVariantProps) => (
-  <div
-    className="relative"
-    style={{ width: size, height: size }}
-  >
+  <div className="relative" style={{ width: size, height: size }}>
     <div className="absolute inset-0 rotate-180">
       <LoaderCircleIcon
         className={cn("animate-spin", className, "text-foreground opacity-20")}
@@ -37,11 +25,7 @@ const CircleFilled = ({ className, size = 24, ...props }: SpinnerVariantProps) =
         {...props}
       />
     </div>
-    <LoaderCircleIcon
-      className={cn("relative animate-spin", className)}
-      size={size}
-      {...props}
-    />
+    <LoaderCircleIcon className={cn("relative animate-spin", className)} size={size} {...props} />
   </div>
 );
 
@@ -52,15 +36,9 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      {...props}
-    >
+      {...props}>
       <title>Loading...</title>
-      <circle
-        cx="4"
-        cy="12"
-        r="2"
-        fill="currentColor"
-      >
+      <circle cx="4" cy="12" r="2" fill="currentColor">
         <animate
           id="ellipsis1"
           begin="0;ellipsis3.end+0.25s"
@@ -71,12 +49,7 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
           keySplines=".33,.66,.66,1;.33,0,.66,.33"
         />
       </circle>
-      <circle
-        cx="12"
-        cy="12"
-        r="2"
-        fill="currentColor"
-      >
+      <circle cx="12" cy="12" r="2" fill="currentColor">
         <animate
           begin="ellipsis1.begin+0.1s"
           attributeName="cy"
@@ -86,12 +59,7 @@ const Ellipsis = ({ size = 24, ...props }: SpinnerVariantProps) => {
           keySplines=".33,.66,.66,1;.33,0,.66,.33"
         />
       </circle>
-      <circle
-        cx="20"
-        cy="12"
-        r="2"
-        fill="currentColor"
-      >
+      <circle cx="20" cy="12" r="2" fill="currentColor">
         <animate
           id="ellipsis3"
           begin="ellipsis1.begin+0.2s"
@@ -113,19 +81,10 @@ const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
     height={size}
     viewBox="0 0 44 44"
     stroke="currentColor"
-    {...props}
-  >
+    {...props}>
     <title>Loading...</title>
-    <g
-      fill="none"
-      fillRule="evenodd"
-      strokeWidth="2"
-    >
-      <circle
-        cx="22"
-        cy="22"
-        r="1"
-      >
+    <g fill="none" fillRule="evenodd" strokeWidth="2">
+      <circle cx="22" cy="22" r="1">
         <animate
           attributeName="r"
           begin="0s"
@@ -147,11 +106,7 @@ const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
           repeatCount="indefinite"
         />
       </circle>
-      <circle
-        cx="22"
-        cy="22"
-        r="1"
-      >
+      <circle cx="22" cy="22" r="1">
         <animate
           attributeName="r"
           begin="-0.9s"
@@ -178,13 +133,7 @@ const Ring = ({ size = 24, ...props }: SpinnerVariantProps) => (
 );
 
 const Bars = ({ size = 24, ...props }: SpinnerVariantProps) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" {...props}>
     <title>Loading...</title>
     <style>{`
       .spinner-bar {
@@ -209,14 +158,7 @@ const Bars = ({ size = 24, ...props }: SpinnerVariantProps) => (
         }
       }
     `}</style>
-    <rect
-      className="spinner-bar"
-      x="1"
-      y="1"
-      width="6"
-      height="22"
-      fill="currentColor"
-    />
+    <rect className="spinner-bar" x="1" y="1" width="6" height="22" fill="currentColor" />
     <rect
       className="spinner-bar spinner-bars-2"
       x="9"
@@ -243,8 +185,7 @@ const Infinite = ({ size = 24, ...props }: SpinnerVariantProps) => (
     height={size}
     viewBox="0 0 100 100"
     preserveAspectRatio="xMidYMid"
-    {...props}
-  >
+    {...props}>
     <title>Loading...</title>
     <path
       fill="none"
@@ -256,8 +197,7 @@ const Infinite = ({ size = 24, ...props }: SpinnerVariantProps) => (
       style={{
         transform: "scale(0.8)",
         transformOrigin: "50px 50px",
-      }}
-    >
+      }}>
       <animate
         attributeName="stroke-dashoffset"
         repeatCount="indefinite"

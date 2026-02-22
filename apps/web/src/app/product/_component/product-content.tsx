@@ -1,9 +1,8 @@
 "use client";
 
+import { ArrowLeftRight, Filter } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-
-import { ArrowLeftRight, Filter } from "lucide-react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -109,30 +108,19 @@ export function ProductContent() {
           {compareList.length > 0 && (
             <Button
               onClick={() => setCompareOpen(true)}
-              className="!px-4 animate-fade-in rounded-full bg-black text-white"
-            >
-              <ArrowLeftRight
-                size={16}
-                className="mr-2"
-              />{" "}
-              Compare ({compareList.length})
+              className="!px-4 animate-fade-in rounded-full bg-black text-white">
+              <ArrowLeftRight size={16} className="mr-2" /> Compare ({compareList.length})
             </Button>
           )}
 
           <div
             className="relative"
             onMouseEnter={handleFilterEnter}
-            onMouseLeave={handleFilterLeave}
-          >
+            onMouseLeave={handleFilterLeave}>
             <Button
               variant="outline"
-              className={`!px-4 rounded-full transition-all duration-300 ${showFilters ? "border-black bg-black text-white" : ""}`}
-            >
-              <Filter
-                size={16}
-                className="mr-2"
-              />{" "}
-              Filters
+              className={`!px-4 rounded-full transition-all duration-300 ${showFilters ? "border-black bg-black text-white" : ""}`}>
+              <Filter size={16} className="mr-2" /> Filters
             </Button>
 
             <div
@@ -140,12 +128,8 @@ export function ProductContent() {
                 showFilters
                   ? "pointer-events-auto visible translate-y-0 scale-100 opacity-100"
                   : "pointer-events-none invisible -translate-y-2 scale-95 opacity-0"
-              }`}
-            >
-              <ModalFilter
-                filters={filters}
-                setFilters={setFilters}
-              />
+              }`}>
+              <ModalFilter filters={filters} setFilters={setFilters} />
             </div>
           </div>
         </div>
@@ -153,10 +137,7 @@ export function ProductContent() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {PRODUCTS.data.items.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-          />
+          <ProductCard key={product.id} product={product} />
         ))}
 
         <BentoCard className="col-span-1 row-span-1 flex h-[440px] flex-col items-center justify-center border border-gray-800 bg-black p-8 text-center text-white lg:col-span-1">

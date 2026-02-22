@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import type React from "react";
 
 import { Input } from "@comp/input";
 import { Label } from "@comp/label";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import BentoCard from "@/components/BentoCard";
@@ -54,8 +54,7 @@ export default function SignUpPage() {
       <div className="mb-8">
         <Link
           href="/"
-          className="flex items-center gap-2 rounded-full bg-white px-6 py-3 shadow-sm"
-        >
+          className="flex items-center gap-2 rounded-full bg-white px-6 py-3 shadow-sm">
           <div className="grid h-6 w-6 place-items-center rounded-full bg-black">
             <span className="font-bold text-white text-xs">N</span>
           </div>
@@ -69,10 +68,7 @@ export default function SignUpPage() {
           <p className="text-gray-500 text-sm">Join Nestify for exclusive deals.</p>
         </div>
 
-        <form
-          className="space-y-4"
-          onSubmit={handleSubmit}
-        >
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label className="mb-2 block font-bold text-gray-500 text-xs uppercase tracking-wider">
@@ -125,10 +121,7 @@ export default function SignUpPage() {
           </div>
 
           <div className="pt-4">
-            <Button
-              className="w-full"
-              type="submit"
-            >
+            <Button className="w-full" type="submit">
               Create Account
             </Button>
           </div>
@@ -136,10 +129,7 @@ export default function SignUpPage() {
 
         <div className="mt-6 text-center text-gray-500 text-sm">
           Already have an account?{" "}
-          <Link
-            href="/log-in"
-            className="font-bold text-black hover:underline"
-          >
+          <Link href="/log-in" className="font-bold text-black hover:underline">
             Log in
           </Link>
         </div>

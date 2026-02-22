@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
 import { Skeleton } from "@workspace/ui/components/skeleton";
+import { useState } from "react";
 
 import BentoCard from "@/components/BentoCard";
 import Button from "@/components/Button";
@@ -19,10 +18,7 @@ export function AccountAddresses() {
     <div className="animate-fade-in space-y-6">
       <div className="mb-4 flex items-end justify-between">
         <h2 className="font-light text-3xl">Saved Addresses</h2>
-        <Button
-          size="sm"
-          onClick={() => setIsAddressModalOpen(true)}
-        >
+        <Button size="sm" onClick={() => setIsAddressModalOpen(true)}>
           Add New
         </Button>
       </div>
@@ -34,8 +30,7 @@ export function AccountAddresses() {
           {addresses?.data.map((addr) => (
             <BentoCard
               key={addr.id}
-              className={`relative border-2 bg-white p-6 ${addr.isDefault ? "border-black" : "border-transparent"}`}
-            >
+              className={`relative border-2 bg-white p-6 ${addr.isDefault ? "border-black" : "border-transparent"}`}>
               {addr.isDefault && (
                 <span className="absolute top-4 right-4 rounded-full bg-black px-2 py-1 font-bold text-[10px] text-white">
                   DEFAULT
@@ -53,15 +48,13 @@ export function AccountAddresses() {
                   onClick={() => {
                     /* Edit Logic */
                   }}
-                  type="button"
-                >
+                  type="button">
                   Edit
                 </button>
                 <button
                   className="font-bold text-red-500 text-xs underline"
                   onClick={() => deleteAddress({ id: addr.id })}
-                  type="button"
-                >
+                  type="button">
                   Remove
                 </button>
               </div>
@@ -70,8 +63,7 @@ export function AccountAddresses() {
 
           <BentoCard
             className="flex min-h-50 cursor-pointer items-center justify-center border border-gray-300 border-dashed bg-gray-50 p-6 transition-colors hover:bg-gray-100"
-            onClick={() => setIsAddressModalOpen(true)}
-          >
+            onClick={() => setIsAddressModalOpen(true)}>
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm">
                 +
@@ -82,10 +74,7 @@ export function AccountAddresses() {
         </div>
       )}
 
-      <ModalAddress
-        isOpen={isAddressModalOpen}
-        onClose={() => setIsAddressModalOpen(false)}
-      />
+      <ModalAddress isOpen={isAddressModalOpen} onClose={() => setIsAddressModalOpen(false)} />
     </div>
   );
 }

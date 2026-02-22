@@ -1,6 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import type { HonoEnv } from "../../context";
+
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { orderQueries } from "./order.query.js";
 import {
@@ -8,7 +10,6 @@ import {
   UpdateOrderStatusSchema,
   UpdatePaymentStatusSchema,
 } from "./order.types";
-import type { HonoEnv } from "../../context";
 
 export const order = new Hono<HonoEnv>()
 

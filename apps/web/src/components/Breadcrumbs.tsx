@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import type React from "react";
 
 import { ChevronRight, Home } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Breadcrumbs: React.FC = () => {
   const location = usePathname();
@@ -16,15 +16,8 @@ const Breadcrumbs: React.FC = () => {
 
   return (
     <nav className="no-scrollbar mb-6 flex animate-fade-in items-center overflow-x-auto whitespace-nowrap text-gray-500 text-sm">
-      <Link
-        href="/"
-        className="flex items-center transition-colors hover:text-black"
-      >
-        <Home
-          size={14}
-          className="mr-1"
-        />{" "}
-        Home
+      <Link href="/" className="flex items-center transition-colors hover:text-black">
+        <Home size={14} className="mr-1" /> Home
       </Link>
 
       {pathnames.map((value, index) => {
@@ -38,14 +31,8 @@ const Breadcrumbs: React.FC = () => {
         displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
 
         return (
-          <div
-            key={to}
-            className="flex items-center"
-          >
-            <ChevronRight
-              size={14}
-              className="mx-2 text-gray-300"
-            />
+          <div key={to} className="flex items-center">
+            <ChevronRight size={14} className="mx-2 text-gray-300" />
             {isLast ? (
               <span className="font-medium text-black">{displayName}</span>
             ) : (
@@ -53,8 +40,7 @@ const Breadcrumbs: React.FC = () => {
                 href={{
                   pathname: to,
                 }}
-                className="transition-colors hover:text-black"
-              >
+                className="transition-colors hover:text-black">
                 {displayName}
               </Link>
             )}

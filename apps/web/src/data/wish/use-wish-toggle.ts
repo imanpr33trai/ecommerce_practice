@@ -6,9 +6,10 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import type { GetWishListIDsResponse, GetWishToggleResponse } from "@/data/wish/types";
+
 import { wishKeys } from "@/data/wish/keys";
 import { client } from "@/lib/hono-client";
-import type { GetWishListIDsResponse, GetWishToggleResponse } from "@/data/wish/types";
 
 /**
  * 1. Standalone Function

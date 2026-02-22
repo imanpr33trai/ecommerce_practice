@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import type React from "react";
 
 import { ArrowRight, CheckCircle, CreditCard, Lock, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import BentoCard from "@/components/BentoCard";
@@ -151,8 +151,7 @@ export default function CheckoutPage() {
         <div className="space-y-6 lg:col-span-8">
           {/* STEP 1: SHIPPING */}
           <BentoCard
-            className={`bg-white p-8 transition-opacity duration-300 ${step === 2 ? "pointer-events-none opacity-50 grayscale" : "opacity-100"}`}
-          >
+            className={`bg-white p-8 transition-opacity duration-300 ${step === 2 ? "pointer-events-none opacity-50 grayscale" : "opacity-100"}`}>
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black font-bold text-sm text-white">
@@ -164,8 +163,7 @@ export default function CheckoutPage() {
                 <button
                   onClick={() => setStep(1)}
                   type="button"
-                  className="font-bold text-sm underline"
-                >
+                  className="font-bold text-sm underline">
                   Edit
                 </button>
               )}
@@ -178,8 +176,7 @@ export default function CheckoutPage() {
                   <div
                     key={addr.id}
                     onClick={() => handleSelectAddress(addr.id)}
-                    className={`min-w-[200px] cursor-pointer rounded-xl border p-4 transition-all ${selectedAddressId === addr.id ? "border-black bg-gray-50 ring-1 ring-black" : "border-gray-200 hover:border-gray-300"}`}
-                  >
+                    className={`min-w-[200px] cursor-pointer rounded-xl border p-4 transition-all ${selectedAddressId === addr.id ? "border-black bg-gray-50 ring-1 ring-black" : "border-gray-200 hover:border-gray-300"}`}>
                     <div className="flex justify-between">
                       <span className="font-bold text-sm">{addr.fullName}</span>
                       {selectedAddressId === addr.id && <CheckCircle size={16} />}
@@ -193,11 +190,7 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <form
-              id="shipping-form"
-              className="space-y-4"
-              onSubmit={handleShippingSubmit}
-            >
+            <form id="shipping-form" className="space-y-4" onSubmit={handleShippingSubmit}>
               <div className="grid grid-cols-2 gap-4">
                 <input
                   required
@@ -267,12 +260,10 @@ export default function CheckoutPage() {
 
           {/* STEP 2: PAYMENT */}
           <BentoCard
-            className={`bg-white p-8 transition-all duration-300 ${step === 1 ? "pointer-events-none opacity-50" : "opacity-100 ring-2 ring-black"}`}
-          >
+            className={`bg-white p-8 transition-all duration-300 ${step === 1 ? "pointer-events-none opacity-50" : "opacity-100 ring-2 ring-black"}`}>
             <div className="mb-6 flex items-center gap-3">
               <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm ${step === 2 ? "bg-black text-white" : "bg-gray-200 text-gray-500"}`}
-              >
+                className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-sm ${step === 2 ? "bg-black text-white" : "bg-gray-200 text-gray-500"}`}>
                 2
               </div>
               <h2 className="font-bold text-xl">Payment Details</h2>
@@ -288,18 +279,11 @@ export default function CheckoutPage() {
                   <p className="text-gray-500 text-xs">Secure 256-bit SSL encryption</p>
                 </div>
                 <div className="ml-auto">
-                  <Lock
-                    size={16}
-                    className="text-gray-400"
-                  />
+                  <Lock size={16} className="text-gray-400" />
                 </div>
               </div>
 
-              <form
-                id="payment-form"
-                onSubmit={handlePlaceOrder}
-                className="space-y-4"
-              >
+              <form id="payment-form" onSubmit={handlePlaceOrder} className="space-y-4">
                 <input
                   required
                   name="cardNumber"
@@ -355,10 +339,7 @@ export default function CheckoutPage() {
 
             <div className="mb-6 max-h-[300px] space-y-4 overflow-y-auto pr-2">
               {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex gap-4"
-                >
+                <div key={item.id} className="flex gap-4">
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-white">
                     <Image
                       src={item.product.images[0]?.url || "/placeholder.jpg"}
@@ -403,14 +384,10 @@ export default function CheckoutPage() {
             <Button
               onClick={handlePlaceOrder}
               disabled={step === 1 || isProcessing}
-              className={`group w-full justify-between ${step === 1 ? "cursor-not-allowed opacity-50" : ""}`}
-            >
+              className={`group w-full justify-between ${step === 1 ? "cursor-not-allowed opacity-50" : ""}`}>
               {isProcessing ? "Processing..." : `Pay ${formatCurrency(total)}`}
               {!isProcessing && (
-                <ArrowRight
-                  size={16}
-                  className="transition-transform group-hover:translate-x-1"
-                />
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               )}
             </Button>
           </BentoCard>

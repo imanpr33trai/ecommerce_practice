@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
 import { ShieldCheck, Star, Truck } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import BentoCard from "@/components/BentoCard";
@@ -55,10 +54,7 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
             {product.category?.name}
           </span>
           <div className="flex items-center gap-1 rounded-lg bg-yellow-50 px-2 py-1">
-            <Star
-              size={14}
-              className="fill-yellow-500 text-yellow-500"
-            />
+            <Star size={14} className="fill-yellow-500 text-yellow-500" />
             <span className="font-bold text-sm">
               {product.rating}{" "}
               <span className="font-normal text-gray-400">
@@ -96,17 +92,10 @@ export default function ProductInfo({ slug }: ProductInfoProps) {
         </div>
 
         <div className="space-y-3">
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handleAddToCart}
-          >
+          <Button className="w-full" size="lg" onClick={handleAddToCart}>
             Add to Cart
           </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-          >
+          <Button variant="outline" className="w-full">
             Download Spec Sheet
           </Button>
         </div>

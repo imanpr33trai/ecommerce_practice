@@ -1,10 +1,10 @@
 {
   "inlay_hints": {
     "show_value_hints": false,
-    "enabled": false,
+    "enabled": false
   },
   "completions": {
-    "words_min_length": 0,
+    "words_min_length": 0
   },
   "show_whitespaces": "boundary",
   "always_treat_brackets_as_autoclosed": false,
@@ -12,7 +12,7 @@
     "background_coloring": "disabled",
     "coloring": "indent_aware",
     "active_line_width": 3,
-    "line_width": 1,
+    "line_width": 1
   },
-  "show_wrap_guides": true,
+  "show_wrap_guides": true
 }

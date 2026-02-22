@@ -1,11 +1,40 @@
 {
-  "name": "@ecommerceNextjs/env",
+  "name": "@ecomerceNextjs/env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "main": "./dist/server.js",
+  "module": "./dist/server.js",
+  "types": "./dist/server.d.ts",
   "exports": {
-    "./server": "./src/server.ts",
-    "./web": "./src/web.ts"
+    "./server": {
+      "import": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      },
+      "require": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      }
+    },
+    "./web": {
+      "import": {
+        "types": "./dist/web.d.ts",
+        "default": "./dist/web.js"
+      },
+      "require": {
+        "types": "./dist/web.d.ts",
+        "default": "./dist/web.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rimraf dist",
+    "dev": "tsup --watch",
+    "lint": "biome check .",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.1",
@@ -14,8 +43,9 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@ecommerce/config": "workspace:*",
+    "@ecomerceNextjs/config": "workspace:*",
     "@types/node": "^22.13.14",
+    "tsup": "^8.5.1",
     "typescript": "catalog:"
   }
 }

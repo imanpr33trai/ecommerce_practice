@@ -6,9 +6,10 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import type { GetSetDefaultResponse } from "@/data/account/types";
+
 import { accountKeys } from "@/data/account/keys";
 import { client } from "@/lib/hono-client";
-import type { GetSetDefaultResponse } from "@/data/account/types";
 
 const setDefaultAddressFn = async ({ id }: { id: string }) => {
   const res = await client.address[":id"].default.$put({

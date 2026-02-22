@@ -1,8 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@comp/select";
 import { Skeleton } from "@comp/skeleton";
 import {
@@ -14,6 +11,8 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import Image from "@/components/AppImage";
@@ -100,19 +99,13 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                 Login to share your experience with this product.
               </p>
               <Link href="/log-in">
-                <Button
-                  variant="outline"
-                  size="sm"
-                >
+                <Button variant="outline" size="sm">
                   Sign In
                 </Button>
               </Link>
             </div>
           ) : (
-            <form
-              onSubmit={handlePostReview}
-              className="space-y-4"
-            >
+            <form onSubmit={handlePostReview} className="space-y-4">
               <div>
                 <label className="mb-3 block font-bold text-gray-400 text-xs uppercase tracking-wider">
                   Your Rating
@@ -123,8 +116,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                       type="button"
                       key={star}
                       onClick={() => setReviewRating(star)}
-                      className="transition-transform hover:scale-110 focus:outline-none active:scale-95"
-                    >
+                      className="transition-transform hover:scale-110 focus:outline-none active:scale-95">
                       <Star
                         size={24}
                         className={
@@ -147,16 +139,8 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                   required
                 />
               </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isPosting}
-              >
-                {isPosting ? "Posting..." : "Post Review"}{" "}
-                <Send
-                  size={16}
-                  className="ml-2"
-                />
+              <Button type="submit" className="w-full" disabled={isPosting}>
+                {isPosting ? "Posting..." : "Post Review"} <Send size={16} className="ml-2" />
               </Button>
             </form>
           )}
@@ -176,10 +160,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
           {isSummaryLoading ? (
             <div className="space-y-2">
               {[...Array(5)].map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="h-4 w-full"
-                />
+                <Skeleton key={i} className="h-4 w-full" />
               ))}
             </div>
           ) : (
@@ -190,20 +171,13 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                 const percentage = (count / total) * 100;
 
                 return (
-                  <div
-                    key={r}
-                    className="flex items-center gap-3"
-                  >
+                  <div key={r} className="flex items-center gap-3">
                     <span className="w-4 font-bold text-xs">{r}</span>
-                    <Star
-                      size={12}
-                      className="shrink-0 fill-yellow-500 text-yellow-500"
-                    />
+                    <Star size={12} className="shrink-0 fill-yellow-500 text-yellow-500" />
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white">
                       <div
                         className="h-full bg-black transition-all duration-1000 ease-out"
-                        style={{ width: `${percentage}%` }}
-                      ></div>
+                        style={{ width: `${percentage}%` }}></div>
                     </div>
                     <span className="w-8 text-right text-gray-400 text-xs">{count}</span>
                   </div>
@@ -231,8 +205,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
               setSort(value as "newest" | "highest" | "lowest");
               // Always reset page to 1 when changing sort order
               setPage(1);
-            }}
-          >
+            }}>
             <SelectTrigger className="w-[180px]">
               {/*
                 SelectValue automatically renders the label of the active item.
@@ -260,17 +233,13 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
           {isListLoading ? (
             // List Skeleton
             [1, 2, 3].map((i) => (
-              <Skeleton
-                key={i}
-                className="h-48 w-full rounded-[2rem] bg-[#e8e8e6]"
-              />
+              <Skeleton key={i} className="h-48 w-full rounded-[2rem] bg-[#e8e8e6]" />
             ))
           ) : productReviews && productReviews.data.items.length > 0 ? (
             productReviews.data.items.map((review) => (
               <BentoCard
                 key={review.id}
-                className="group/rev bg-white p-8 transition-all hover:shadow-md"
-              >
+                className="group/rev bg-white p-8 transition-all hover:shadow-md">
                 <div className="mb-6 flex items-start justify-between">
                   <div className="flex items-center gap-4">
                     <div className="relative h-12 w-12">
@@ -309,8 +278,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
                       type="button"
                       onClick={() => deleteReview(review.id)}
                       className="rounded-full bg-gray-50 p-2 text-gray-300 opacity-0 transition-colors hover:text-red-500 group-hover/rev:opacity-100"
-                      title="Delete Review"
-                    >
+                      title="Delete Review">
                       <Trash2 size={18} />
                     </button>
                   )}
@@ -325,10 +293,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
             ))
           ) : (
             <div className="flex flex-col items-center justify-center rounded-[2rem] border border-gray-100 border-dashed bg-white py-20 text-center">
-              <MessageSquare
-                size={48}
-                className="mb-4 text-gray-200"
-              />
+              <MessageSquare size={48} className="mb-4 text-gray-200" />
               <h3 className="mb-2 font-bold text-xl">No reviews yet</h3>
               <p className="text-gray-500">Be the first to share your thoughts!</p>
             </div>
@@ -343,8 +308,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
               size="icon"
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="rounded-full"
-            >
+              className="rounded-full">
               <ChevronLeft size={20} />
             </Button>
             <span className="font-medium text-gray-500 text-sm">
@@ -355,8 +319,7 @@ export default function ProductReviews({ slug }: ProductReviewsProps) {
               size="icon"
               disabled={page >= productReviews.data.pagination.totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="rounded-full"
-            >
+              className="rounded-full">
               <ChevronRight size={20} />
             </Button>
           </div>

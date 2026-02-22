@@ -3,9 +3,22 @@ import { defineConfig } from "tsup";
 export default defineConfig((options) => ({
   entry: ["src/index.ts"],
   format: ["esm"],
-  dts: true, // This is where the TS6307 error triggers
+  dts: true,
   clean: !options.watch,
-  splitting: true,
-  // tsconfig: "./tsconfig.json", // Explicitly point to local config
-  skipNodeModulesBundle: true,
+  splitting: false,
+  sourcemap: options.watch ? "inline" : true,
+  minify: false,
+
+  // External dependencies to speed up builds
+  external: [
+    "hono",
+    "@hono/zod-validator",
+    "zod",
+    "@ecomerceNextjs/auth",
+    "@ecomerceNextjs/db",
+    "@ecomerceNextjs/env",
+  ],
+
+  // Reduce rebuild frequency
+  ignoreWatch: ["**/*.test.ts", "**/*.spec.ts", "dist/**"],
 }));

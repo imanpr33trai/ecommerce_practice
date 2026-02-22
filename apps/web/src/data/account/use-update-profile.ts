@@ -1,9 +1,10 @@
 import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import type { GetUpdateProfileRequest, GetUpdateProfileResponse } from "@/data/account/types";
+
 import { accountKeys } from "@/data/account/keys";
 import { client } from "@/lib/hono-client";
-import type { GetUpdateProfileRequest, GetUpdateProfileResponse } from "@/data/account/types";
 
 /**
  * Type inference for Request (JSON body) and Response

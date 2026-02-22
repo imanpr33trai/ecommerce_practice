@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import type React from "react";
 
 import { ArrowRight, LogIn, Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 import {
   useCartItemRemoveMutation,
@@ -37,23 +37,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   if (!session) {
     return (
       <>
-        <div
-          className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm" onClick={onClose} />
         <div className="fixed top-0 right-0 z-[70] flex h-full w-full max-w-md animate-slide-left flex-col items-center justify-center space-y-6 bg-white p-6 text-center shadow-2xl">
-          <ShoppingBag
-            size={64}
-            className="text-gray-300"
-          />
+          <ShoppingBag size={64} className="text-gray-300" />
           <h2 className="font-bold text-2xl">Your Cart is Hidden</h2>
           <p className="text-gray-500">
             Please sign in to view your shopping cart and save your items.
           </p>
-          <Link
-            href="/log-in"
-            onClick={onClose}
-          >
+          <Link href="/log-in" onClick={onClose}>
             <Button className="w-full">
               <LogIn className="mr-2 h-4 w-4" /> Sign In
             </Button>
@@ -61,8 +52,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             type="button"
-            className="text-gray-400 text-sm hover:text-black"
-          >
+            className="text-gray-400 text-sm hover:text-black">
             Close
           </button>
         </div>
@@ -80,8 +70,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
         onClick={onClose}
       />
       <div
-        className={`fixed top-0 right-0 z-[70] h-full w-full max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
-      >
+        className={`fixed top-0 right-0 z-[70] h-full w-full max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-gray-100 border-b p-6">
@@ -89,8 +78,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             <button
               onClick={onClose}
               type="button"
-              className="rounded-full p-2 transition-colors hover:bg-gray-100"
-            >
+              className="rounded-full p-2 transition-colors hover:bg-gray-100">
               <X size={20} />
             </button>
           </div>
@@ -105,20 +93,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
               <div className="flex h-full flex-col items-center justify-center space-y-4 text-center opacity-50">
                 <ShoppingBag size={48} />
                 <p>Your cart is empty.</p>
-                <Button
-                  variant="secondary"
-                  onClick={onClose}
-                >
+                <Button variant="secondary" onClick={onClose}>
                   Start Shopping
                 </Button>
               </div>
             ) : (
               // Cart Items List
               cart.data.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="group flex gap-4"
-                >
+                <div key={item.id} className="group flex gap-4">
                   {/* ... (Your existing item rendering code) ... */}
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-50">
                     {item.product.images[0] && (
@@ -146,8 +128,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                             updateQuantity({ productId: item.id, quantity: item.quantity + -1 })
                           }
                           type="button"
-                          className="flex h-6 w-6 items-center justify-center rounded-l-full transition-colors hover:bg-gray-50"
-                        >
+                          className="flex h-6 w-6 items-center justify-center rounded-l-full transition-colors hover:bg-gray-50">
                           <Minus size={12} />
                         </button>
                         <span className="w-6 text-center font-medium text-xs">{item.quantity}</span>
@@ -156,16 +137,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                             updateQuantity({ productId: item.id, quantity: item.quantity + 1 })
                           }
                           type="button"
-                          className="flex h-6 w-6 items-center justify-center rounded-r-full transition-colors hover:bg-gray-50"
-                        >
+                          className="flex h-6 w-6 items-center justify-center rounded-r-full transition-colors hover:bg-gray-50">
                           <Plus size={12} />
                         </button>
                       </div>
                       <button
                         onClick={() => removeItem(item.id)}
                         type="button"
-                        className="text-gray-400 transition-colors hover:text-red-500"
-                      >
+                        className="text-gray-400 transition-colors hover:text-red-500">
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -183,23 +162,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                 <span className="font-bold">${cart.data.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex gap-3 pt-2">
-                <Link
-                  href="/cart"
-                  onClick={onClose}
-                  className="flex-1"
-                >
+                <Link href="/cart" onClick={onClose} className="flex-1">
                   <Button
                     variant="secondary"
-                    className="w-full border border-gray-200 hover:bg-white"
-                  >
+                    className="w-full border border-gray-200 hover:bg-white">
                     View Cart
                   </Button>
                 </Link>
-                <Link
-                  href={{ pathname: "/checkout" }}
-                  onClick={onClose}
-                  className="flex-[2]"
-                >
+                <Link href={{ pathname: "/checkout" }} onClick={onClose} className="flex-[2]">
                   <Button className="group w-full justify-between">
                     Checkout{" "}
                     <ArrowRight
