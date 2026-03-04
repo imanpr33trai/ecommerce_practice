@@ -8,6 +8,53 @@
       "version": "latest"
     }
   },
-  "customizations": { "vscode": { "extensions": [] } },
+  "customizations": {
+    "vscode": {
+      "extensions": [],
+      "settings": {
+        "update.mode": "none",
+        "[javascript]": {
+          "editor.defaultFormatter": "oxc.oxc-vscode"
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "oxc.oxc-vscode"
+        },
+        "js/ts.updateImportsOnFileMove.enabled": "always",
+        "files.autoSave": "onWindowChange",
+
+        // Set Oxc as the default formatter
+        "editor.defaultFormatter": "oxc.oxc-vscode",
+        // Automatically format files on save
+        "oxc.enable": true,
+        "oxc.lint.run": "onSave",
+        // Ensure the whole file is formatted, not, just modified lines
+        "editor.formatOnSaveMode": "file",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.oxc": "always"
+        },
+        "oxc.typeAware": true,
+        "editor.snippetSuggestions": "top",
+        "editor.quickSuggestions": {
+          "other": true,
+          "comments": false,
+          "strings": false
+        },
+        "editor.suggest.showSnippets": true,
+        "editor.suggest.showWords": true,
+        // ⭐ Prioritize real TS/React suggestions
+        "editor.suggestSelection": "recentlyUsedByPrefix",
+        "editor.suggest.filterGraceful": true,
+        // 🧠 TypeScript-specific improvements
+        "js/ts.suggest.enabled": true,
+        "typescript.preferences.includeCompletionsForModuleExports": true,
+        "typescript.preferences.includeCompletionsWithInsertText": true,
+        "workbench.activityBar.location": "default",
+        "workbench.colorTheme": "Everforest Dark",
+        "workbench.iconTheme": "a-file-icon-vscode",
+        "editor.accessibilitySupport": "on"
+      }
+    }
+  },
   "name": "Ecommerce_Practice"
 }

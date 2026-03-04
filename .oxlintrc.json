@@ -1,7 +1,15 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["nextjs", "jsx-a11y", "typescript", "promise", "node", "unicorn", "react", "eslint"],
-  "categories": {},
+  "categories": {
+    "correctness": "warn",
+    "nursery": "error",
+    "pedantic": "warn",
+    "style": "error",
+    "perf": "warn",
+    // "restriction": "error",
+    "suspicious": "warn"
+  },
   "rules": {
     "typescript/no-floating-promises": "error",
     "eslint/no-unused-vars": "error",
