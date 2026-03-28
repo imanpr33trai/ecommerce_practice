@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Biome
-        uses: biomejs/setup-biome@v2.6.0
+        uses: biomejs/setup-biome@v2.7.0
         with:
           version: latest
 
