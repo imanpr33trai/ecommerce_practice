@@ -6,6 +6,7 @@ import type { HonoEnv } from "../../context.js"; // Adjust path
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { userQueries } from "./user.query.js";
 import { UpdateProfileSchema } from "./user.types.js";
+import { ConflictError, InternalError, ValidationError } from "../../utils/errors.js";
 
 export const user = new Hono<HonoEnv>()
 
@@ -14,13 +15,6 @@ export const user = new Hono<HonoEnv>()
    * All user routes require login
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
 
   /**
    * GET /me
@@ -49,7 +43,7 @@ export const user = new Hono<HonoEnv>()
     try {
       const updatedUser = await userQueries.updateProfile(sessionUser.id, input);
       return c.json({ success: true, data: updatedUser });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 500);
+    } catch (error) {
+      throw new InternalError(error instanceof Error ? error.message : "Failed to update profile");
     }
   });

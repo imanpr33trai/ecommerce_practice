@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import type { HonoEnv } from "../../context.js"; // Adjust to your context path
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { ConflictError, InternalError, ValidationError } from "../../utils/errors.js";
 import { cartQueries } from "./cart.query.js";
 import { AddItemSchema, UpdateQuantitySchema } from "./cart.type.js";
 
@@ -46,10 +47,12 @@ export const cart = new Hono<HonoEnv>()
     try {
       const result = await cartQueries.addItem(user.id, input);
       return c.json({ success: true, data: result });
-    } catch (error: any) {
-      // Return 409 Conflict for Stock Issues, 404 for Product Not Found, etc.
-      const status = error.message.includes("stock") ? 409 : 400;
-      return c.json({ success: false, error: error.message }, status);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to add item";
+      if (message.includes("stock")) {
+        throw new ConflictError(message);
+      }
+      throw new ValidationError(message);
     }
   })
 
@@ -65,10 +68,12 @@ export const cart = new Hono<HonoEnv>()
     try {
       const result = await cartQueries.updateQuantity(user.id, productId, quantity);
       return c.json({ success: true, data: result });
-    } catch (error: any) {
-      // Handle Stock Errors (409 Conflict) vs Not Found (404/403)
-      const status = error.message.includes("stock") ? 409 : 400;
-      return c.json({ success: false, error: error.message }, status);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to update quantity";
+      if (message.includes("stock")) {
+        throw new ConflictError(message);
+      }
+      throw new ValidationError(message);
     }
   })
 
@@ -83,8 +88,8 @@ export const cart = new Hono<HonoEnv>()
     try {
       await cartQueries.removeItem(user.id, productId);
       return c.json({ success: true, message: "Item removed" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 400);
+    } catch (error) {
+      throw new ValidationError(error instanceof Error ? error.message : "Failed to remove item");
     }
   })
 
@@ -98,7 +103,7 @@ export const cart = new Hono<HonoEnv>()
     try {
       await cartQueries.clearCart(user.id);
       return c.json({ success: true, message: "Cart cleared" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 500);
+    } catch (error) {
+      throw new InternalError(error instanceof Error ? error.message : "Failed to clear cart");
     }
   });

@@ -1,7 +1,6 @@
 {
   "extends": "@ecomerceNextjs/config/nextjs.json",
   "compilerOptions": {
-    // "baseUrl": ".",
     "allowImportingTsExtensions": false,
     "paths": {
       "@/*": ["./src/*"],

@@ -2,11 +2,7 @@
   "extends": "../config/react-library.json",
   "compilerOptions": {
     "composite": true,
-    "baseUrl": ".",
     "rootDir": ".",
-    "paths": {
-      "@workspace/ui/*": ["src/*"]
-    },
     "noEmit": false,
     "allowImportingTsExtensions": false,
     "sourceMap": true

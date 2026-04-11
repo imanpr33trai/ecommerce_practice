@@ -7,7 +7,8 @@
     "outDir": "./dist/",
     "noEmit": false,
     "allowImportingTsExtensions": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "ignoreDeprecations": "6.0"
   },
   "tsc-alias": {
     "resolveFullPaths": true

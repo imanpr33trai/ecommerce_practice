@@ -3,6 +3,7 @@ import { Hono } from "hono";
 
 import type { HonoEnv } from "../../context";
 
+import { adminMiddleware } from "../../middlewares/admin.middleware.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { orderQueries } from "./order.query.js";
 import {
@@ -17,13 +18,6 @@ export const order = new Hono<HonoEnv>()
    * Middleware: Auth Guard
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
 
   /**
    * GET /
@@ -73,13 +67,11 @@ export const order = new Hono<HonoEnv>()
     }
   })
 
-  // --- ADMIN ROUTES (Optional: Add Role Guard) ---
-
   /**
    * PATCH /:id/status
-   * Update Order Status
+   * Update Order Status (Admin only)
    */
-  .patch("/:id/status", zValidator("json", UpdateOrderStatusSchema), async (c) => {
+  .patch("/:id/status", adminMiddleware, zValidator("json", UpdateOrderStatusSchema), async (c) => {
     const orderId = c.req.param("id");
     const { status } = c.req.valid("json");
 
@@ -91,9 +83,9 @@ export const order = new Hono<HonoEnv>()
 
   /**
    * PATCH /:id/payment
-   * Update Payment Status
+   * Update Payment Status (Admin only)
    */
-  .patch("/:id/payment", zValidator("json", UpdatePaymentStatusSchema), async (c) => {
+  .patch("/:id/payment", adminMiddleware, zValidator("json", UpdatePaymentStatusSchema), async (c) => {
     const orderId = c.req.param("id");
     const { status } = c.req.valid("json");
 

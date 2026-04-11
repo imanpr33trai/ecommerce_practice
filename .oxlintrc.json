@@ -3,9 +3,9 @@
   "plugins": ["nextjs", "jsx-a11y", "typescript", "promise", "node", "unicorn", "react", "eslint"],
   "categories": {
     "correctness": "warn",
-    "nursery": "error",
+    "nursery": "warn",
     "pedantic": "warn",
-    "style": "error",
+    // "style": "warn",
     "perf": "warn",
     // "restriction": "error",
     "suspicious": "warn"

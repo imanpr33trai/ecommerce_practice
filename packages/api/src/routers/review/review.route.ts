@@ -4,6 +4,8 @@ import { Hono } from "hono";
 
 import type { HonoEnv } from "../../context.js"; // Adjust path to your context
 
+import { ConflictError, ForbiddenError } from "../../utils/errors.js";
+
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { reviewQueries } from "./review.query.js";
 import { CreateReviewSchema, ReviewQuerySchema, UserReviewQuerySchema } from "./review.type.js";
@@ -45,13 +47,6 @@ export const review = new Hono<HonoEnv>()
    * Middleware: Auth Guard for Mutation/User Routes
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
 
   /**
    * GET /me
@@ -78,9 +73,8 @@ export const review = new Hono<HonoEnv>()
     try {
       const result = await reviewQueries.create(user.id, input);
       return c.json({ success: true, data: result });
-    } catch (error: any) {
-      // Return 409 Conflict if they already reviewed it
-      return c.json({ success: false, error: error.message }, 409);
+    } catch (error) {
+      throw new ConflictError(error instanceof Error ? error.message : "Failed to create review");
     }
   })
 
@@ -95,7 +89,7 @@ export const review = new Hono<HonoEnv>()
     try {
       await reviewQueries.delete(user.id, reviewId);
       return c.json({ success: true, message: "Review deleted" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
+    } catch (error) {
+      throw new ForbiddenError(error instanceof Error ? error.message : "Failed to delete review");
     }
   });

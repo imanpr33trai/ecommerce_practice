@@ -21,4 +21,8 @@ model Product {
   category      Category?   @relation(fields: [categoryId], references: [id])
   reviews       Review[]
   wishes        Wish[]
+
+  @@index([isActive])
+  @@index([categoryId])
+  @@index([createdAt])
 }

@@ -9,6 +9,10 @@ model Order {
   user          User          @relation(fields: [userId], references: [id])
   items         OrderItem[]
   payment       Payment[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model OrderItem {

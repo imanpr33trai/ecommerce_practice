@@ -6,6 +6,7 @@ import type { HonoEnv } from "../../context.js"; // Adjust path
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { wishQueries } from "./wish.query.js";
 import { ToggleWishSchema } from "./wish.type.js";
+import { ValidationError } from "../../utils/errors.js";
 
 export const wish = new Hono<HonoEnv>()
 
@@ -14,13 +15,6 @@ export const wish = new Hono<HonoEnv>()
    * All wishlist routes require login
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
 
   /**
    * GET /
@@ -55,8 +49,10 @@ export const wish = new Hono<HonoEnv>()
     try {
       const result = await wishQueries.toggle(user.id, productId);
       return c.json({ success: true, data: result });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 400);
+    } catch (error) {
+      throw new ValidationError(
+        error instanceof Error ? error.message : "Failed to toggle wish"
+      );
     }
   })
 

@@ -3,7 +3,8 @@ import { Hono } from "hono";
 
 import type { HonoEnv } from "../../context.js"; // Adjust path
 
-import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware";
+import { ForbiddenError } from "../../utils/errors";
 import { addressQueries } from "./address.query.js";
 import { AddressSchema, UpdateAddressSchema } from "./address.type.js";
 
@@ -13,13 +14,6 @@ export const address = new Hono<HonoEnv>()
    * Middleware: Auth Guard
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
 
   /**
    * GET /
@@ -55,8 +49,8 @@ export const address = new Hono<HonoEnv>()
     try {
       const result = await addressQueries.update(user.id, addressId, input);
       return c.json({ success: true, data: result });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
+    } catch (error) {
+      throw new ForbiddenError(error instanceof Error ? error.message : "Failed to update address");
     }
   })
 
@@ -71,8 +65,10 @@ export const address = new Hono<HonoEnv>()
     try {
       const result = await addressQueries.setDefault(user.id, addressId);
       return c.json({ success: true, data: result });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
+    } catch (error) {
+      throw new ForbiddenError(
+        error instanceof Error ? error.message : "Failed to set default address",
+      );
     }
   })
 
@@ -87,7 +83,7 @@ export const address = new Hono<HonoEnv>()
     try {
       await addressQueries.delete(user.id, addressId);
       return c.json({ success: true, message: "Address deleted" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
+    } catch (error) {
+      throw new ForbiddenError(error instanceof Error ? error.message : "Failed to delete address");
     }
   });
