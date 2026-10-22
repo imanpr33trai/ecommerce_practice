@@ -15,12 +15,14 @@ export function AccountReviews() {
   const { data: userReviews } = useReviewsUserQuery(!!session, { limit: "10", page: "1" });
   const { mutate: deleteReview } = useReviewDeleteMutation();
 
+  const reviews = userReviews?.items ?? [];
+
   return (
     <div className="animate-fade-in space-y-6">
-      <h2 className="mb-6 font-light text-3xl">My Reviews ({userReviews.items.length})</h2>
-      {userReviews.items.length > 0 ? (
+      <h2 className="mb-6 font-light text-3xl">My Reviews ({reviews.length})</h2>
+      {reviews.length > 0 ? (
         <div className="space-y-4">
-          {userReviews.items.map((review) => {
+          {reviews.map((review) => {
             return (
               <BentoCard
                 key={review.id}

@@ -1,4 +1,4 @@
-import type { Session } from "@ecomerceNextjs/auth"; // Your auth package
+import type { Session } from "@ecommerceNextjs/auth"; // Your auth package
 
 // Define the Hono Environment Type
 export type HonoEnv = {

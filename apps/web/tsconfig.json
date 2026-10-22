@@ -1,5 +1,5 @@
 {
-  "extends": "@ecomerceNextjs/config/nextjs.json",
+  "extends": "@ecommerceNextjs/config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "allowImportingTsExtensions": false,

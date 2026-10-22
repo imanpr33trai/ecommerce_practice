@@ -14,7 +14,7 @@ import {
   Settings,
 } from "lucide-react";
 // import type { User } from "better-auth";
-import type { Session } from "@ecomerceNextjs/auth";
+import type { Session } from "@ecommerceNextjs/auth";
 
 import Image from "@/components/AppImage";
 import Button from "@/components/Button";

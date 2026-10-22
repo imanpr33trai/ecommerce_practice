@@ -1,4 +1,4 @@
-import { prisma } from "@ecomerceNextjs/db";
+import { prisma } from "@ecommerceNextjs/db";
 import type { MiddlewareHandler } from "hono";
 
 export const databaseMiddleware: MiddlewareHandler = async (c, next) => {

@@ -1,4 +1,4 @@
-import { auth } from "@ecomerceNextjs/auth";
+import { auth } from "@ecommerceNextjs/auth";
 import type { Context, Next } from "hono";
 
 import type { HonoEnv } from "../context";

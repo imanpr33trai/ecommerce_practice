@@ -6,7 +6,7 @@
 	"linter": {
 		"rules": {
 			"nursery": {
-				"noNextAsyncClientComponent": "error"
+				// "noNextAsyncClientComponent": "error" - rule removed in newer Biome
 			},
 			"performance": {
 				"noImgElement": "error"

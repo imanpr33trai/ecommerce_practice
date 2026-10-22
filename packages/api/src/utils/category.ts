@@ -1,4 +1,4 @@
-import type { Prisma, PrismaClient } from "@ecomerceNextjs/db";
+import type { Prisma, PrismaClient } from "@ecommerceNextjs/db";
 
 export async function getDescendantCategoryIds(
   categoryId: string,

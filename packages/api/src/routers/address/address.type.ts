@@ -1,6 +1,6 @@
 // Assuming AddressType is exported from your DB package
 // If not, use z.enum(["SHIPPING", "BILLING"]) based on your schema
-import { AddressType } from "@ecomerceNextjs/db";
+import { AddressType } from "@ecommerceNextjs/db";
 import { z } from "zod";
 
 export const AddressSchema = z.object({

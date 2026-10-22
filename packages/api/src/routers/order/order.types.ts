@@ -1,5 +1,5 @@
 // Import Enums from your DB package
-import { OrderStatus, PaymentStatus } from "@ecomerceNextjs/db";
+import { OrderStatus, PaymentStatus } from "@ecommerceNextjs/db";
 import { z } from "zod";
 
 // 1. Create Order (Checkout)

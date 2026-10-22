@@ -1,4 +1,4 @@
-import { env } from "@ecomerceNextjs/env/server";
+import { env } from "@ecommerceNextjs/env/server";
 import { PrismaPg } from "@prisma/adapter-pg";
 import dotenv from "dotenv";
 

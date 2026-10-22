@@ -1,4 +1,4 @@
-import { type Prisma, prisma } from "@ecomerceNextjs/db";
+import { type Prisma, prisma } from "@ecommerceNextjs/db";
 
 import type { CreateReviewInput, ReviewListOptions, UserReviewQueryInput } from "./review.type";
 

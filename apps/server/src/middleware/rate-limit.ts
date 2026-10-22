@@ -1,4 +1,4 @@
-import { env } from "@ecomerceNextjs/env/server";
+import { env } from "@ecommerceNextjs/env/server";
 import type { MiddlewareHandler } from "hono";
 
 // Simple rate limiting implementation for Vercel

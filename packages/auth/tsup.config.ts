@@ -7,5 +7,5 @@ export default defineConfig((options) => ({
   dts: true,
   clean: !options.watch,
   splitting: true,
-  external: ["@ecomerceNextjs/db"], // Don't bundle the DB into the Auth package
+  external: ["@ecommerceNextjs/db"], // Don't bundle the DB into the Auth package
 }));

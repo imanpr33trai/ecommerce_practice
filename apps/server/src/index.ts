@@ -1,6 +1,6 @@
-import { api, type HonoEnv } from "@ecomerceNextjs/api";
-import { auth } from "@ecomerceNextjs/auth";
-import { env } from "@ecomerceNextjs/env/server";
+import { api, type HonoEnv } from "@ecommerceNextjs/api";
+import { auth } from "@ecommerceNextjs/auth";
+import { env } from "@ecommerceNextjs/env/server";
 import { serve } from "@hono/node-server";
 import { handle } from "@hono/node-server/vercel";
 import { Hono } from "hono";
@@ -10,7 +10,7 @@ import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import { timing } from "hono/timing";
 
-// import type { HonoEnv } from "@ecomerceNextjs/api";
+// import type { HonoEnv } from "@ecommerceNextjs/api";
 
 const app = new Hono<HonoEnv>()
   .use(

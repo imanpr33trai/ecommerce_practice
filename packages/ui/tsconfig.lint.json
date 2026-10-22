@@ -1,5 +1,5 @@
 {
-  "extends": "@ecomerceNextjs/config/react-library.json",
+  "extends": "@ecommerceNextjs/config/react-library.json",
   "compilerOptions": {
     "outDir": "dist"
   },

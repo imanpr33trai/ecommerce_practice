@@ -15,7 +15,7 @@
 				"useJsxKeyInIterable": "error"
 			},
 			"nursery": {
-				"noReactForwardRef": "off"
+				// "noReactForwardRef": "off" - rule removed in newer Biome
 			},
 			"suspicious": {
 				"noArrayIndexKey": "error",

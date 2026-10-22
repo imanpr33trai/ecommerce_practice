@@ -3,10 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@workspace/ui",
-    "@ecomerceNextjs/api",
-    "@ecomerceNextjs/auth",
-    "@ecomerceNextjs/db",
-    "@ecomerceNextjs/env",
+    "@ecommerceNextjs/api",
+    "@ecommerceNextjs/auth",
+    "@ecommerceNextjs/db",
+    "@ecommerceNextjs/env",
   ],
   typedRoutes: true,
   reactCompiler: true,

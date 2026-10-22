@@ -1,4 +1,4 @@
-import { type Prisma, prisma } from "@ecomerceNextjs/db";
+import { type Prisma, prisma } from "@ecommerceNextjs/db";
 
 import type { ProductFilters } from "./product.type";
 

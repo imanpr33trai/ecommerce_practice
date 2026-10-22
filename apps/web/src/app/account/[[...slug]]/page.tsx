@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 // import { auth } from "../../../../../../packages/auth/src/index";
-import { auth } from "@ecomerceNextjs/auth";
-// import { auth } from "@ecomerceNextjs/auth";
+import { auth } from "@ecommerceNextjs/auth";
+// import { auth } from "@ecommerceNextjs/auth";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";

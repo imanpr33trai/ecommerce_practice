@@ -1,4 +1,4 @@
-import { OrderStatus, PaymentStatus, type Prisma, prisma } from "@ecomerceNextjs/db";
+import { OrderStatus, PaymentStatus, type Prisma, prisma } from "@ecommerceNextjs/db";
 
 import type { CreateOrderInput } from "./order.types";
 

@@ -1,6 +1,6 @@
-import { env } from "@ecomerceNextjs/env/web";
+import { env } from "@ecommerceNextjs/env/web";
 import { type ClientResponse, hc } from "hono/client";
-import type { AppType } from "@ecomerceNextjs/api";
+import type { AppType } from "@ecommerceNextjs/api";
 
 export const client = hc<AppType>(`${env.NEXT_PUBLIC_API_URL}/api`, {
   init: {
