@@ -21,14 +21,14 @@
     "deploy:preview": "vercel"
   },
   "dependencies": {
-    "@ecomerceNextjs/api": "workspace:*",
-    "@ecomerceNextjs/auth": "workspace:*",
-    "@ecomerceNextjs/db": "workspace:*",
+    "@ecommerceNextjs/api": "workspace:*",
+    "@ecommerceNextjs/auth": "workspace:*",
+    "@ecommerceNextjs/db": "workspace:*",
     "@hono/node-server": "^1.19.9",
     "@hono/zod-validator": "^0.7.6",
-    "@ecomerceNextjs/env": "workspace:*",
+    "@ecommerceNextjs/env": "workspace:*",
 
-    "@ecomerceNextjs/config": "workspace:*",
+    "@ecommerceNextjs/config": "workspace:*",
 
     "better-auth": "catalog:",
     "dotenv": "catalog:",

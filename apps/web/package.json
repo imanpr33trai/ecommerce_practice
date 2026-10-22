@@ -14,11 +14,11 @@
     "deploy:preview": "vercel"
   },
   "dependencies": {
-    "@ecomerceNextjs/api": "workspace:*",
-    "@ecomerceNextjs/auth": "workspace:*",
-    "@ecomerceNextjs/config": "workspace:*",
-    "@ecomerceNextjs/db": "workspace:*",
-    "@ecomerceNextjs/env": "workspace:*",
+    "@ecommerceNextjs/api": "workspace:*",
+    "@ecommerceNextjs/auth": "workspace:*",
+    "@ecommerceNextjs/config": "workspace:*",
+    "@ecommerceNextjs/db": "workspace:*",
+    "@ecommerceNextjs/env": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@tanstack/react-form": "^1.12.3",
     "@tanstack/react-query": "^5.90.12",

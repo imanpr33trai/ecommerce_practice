@@ -14,7 +14,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@ecommerce/config": "workspace:*",
+    "@ecommerceNextjs/config": "workspace:*",
     "@types/node": "^22.13.14",
     "typescript": "catalog:"
   }

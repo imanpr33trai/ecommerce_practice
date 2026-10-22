@@ -1,5 +1,5 @@
 {
-  "name": "@ecomerceNextjs/auth",
+  "name": "@ecommerceNextjs/auth",
   "exports": {
     ".": {
       "import": "./src/index.ts",
@@ -14,9 +14,9 @@
 
   "dependencies": {
     "better-auth": "^1.4.0",
-    "@ecomerceNextjs/config": "workspace:*",
-    "@ecomerceNextjs/env": "workspace:*",
+    "@ecommerceNextjs/config": "workspace:*",
+    "@ecommerceNextjs/env": "workspace:*",
     "zod": "^4.3.5",
-    "@ecomerceNextjs/db": "workspace:*"
+    "@ecommerceNextjs/db": "workspace:*"
   }
 }
