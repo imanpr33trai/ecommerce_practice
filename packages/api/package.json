@@ -3,6 +3,36 @@
   "exports": {
     ".": {
       "default": "./src/index.ts"
+    },
+    "./di/container": {
+      "default": "./src/di/container.ts"
+    },
+    "./middlewares/di.middleware": {
+      "default": "./src/middlewares/di.middleware.ts"
+    },
+    "./repositories/prisma/user.repository": {
+      "default": "./src/repositories/prisma/user.repository.ts"
+    },
+    "./repositories/prisma/product.repository": {
+      "default": "./src/repositories/prisma/product.repository.ts"
+    },
+    "./repositories/prisma/cart.repository": {
+      "default": "./src/repositories/prisma/cart.repository.ts"
+    },
+    "./repositories/prisma/wishlist.repository": {
+      "default": "./src/repositories/prisma/wishlist.repository.ts"
+    },
+    "./repositories/prisma/review.repository": {
+      "default": "./src/repositories/prisma/review.repository.ts"
+    },
+    "./repositories/prisma/address.repository": {
+      "default": "./src/repositories/prisma/address.repository.ts"
+    },
+    "./repositories/prisma/order.repository": {
+      "default": "./src/repositories/prisma/order.repository.ts"
+    },
+    "./services/UserService": {
+      "default": "./src/services/UserService.ts"
     }
   },
   "main": "./src/index.ts",

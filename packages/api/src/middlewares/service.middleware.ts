@@ -1,17 +1,20 @@
 import type { Context, Next } from "hono";
 
-import { PrismaUserRepository } from "../repositories/prisma/user.repository.js";
-import { UserService } from "../services/UserService.js";
 import type { HonoEnv } from "../context.js";
+import type { UserService } from "../services/UserService.js";
 
 /**
  * Middleware to inject UserService into the Hono context
- * Creates PrismaUserRepository and UserService instances per request
+ * Gets UserService from the DI container attached by diMiddleware
  */
 export async function serviceMiddleware(c: Context<HonoEnv>, next: Next) {
-  const userRepository = new PrismaUserRepository();
-  const userService = new UserService(userRepository);
+  const userService = c.get("userService") as UserService;
 
+  if (!userService) {
+    throw new Error("UserService not found in context. Ensure diMiddleware runs before serviceMiddleware.");
+  }
+
+  // Re-set to ensure it's available (in case diMiddleware didn't run)
   c.set("userService", userService);
 
   await next();

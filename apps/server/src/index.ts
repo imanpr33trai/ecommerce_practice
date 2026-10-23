@@ -9,8 +9,36 @@ import { logger } from "hono/logger";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import { timing } from "hono/timing";
+// DI Container & Composition Root
+import { createContainer } from "@ecommerceNextjs/api/di/container";
+import { createDIMiddleware } from "@ecommerceNextjs/api/middlewares/di.middleware";
+import { PrismaUserRepository } from "@ecommerceNextjs/api/repositories/prisma/user.repository";
+import { PrismaProductRepository } from "@ecommerceNextjs/api/repositories/prisma/product.repository";
+import { PrismaCartRepository } from "@ecommerceNextjs/api/repositories/prisma/cart.repository";
+import { PrismaWishlistRepository } from "@ecommerceNextjs/api/repositories/prisma/wishlist.repository";
+import { PrismaReviewRepository } from "@ecommerceNextjs/api/repositories/prisma/review.repository";
+import { PrismaAddressRepository } from "@ecommerceNextjs/api/repositories/prisma/address.repository";
+import { PrismaOrderRepository } from "@ecommerceNextjs/api/repositories/prisma/order.repository";
+import { UserService } from "@ecommerceNextjs/api/services/UserService";
+import { prisma } from "@ecommerceNextjs/db";
 
-// import type { HonoEnv } from "@ecommerceNextjs/api";
+// ============================================================
+// COMPOSITION ROOT - Wire up all dependencies
+// This is the ONLY place that knows about Prisma implementations
+// ============================================================
+const container = createContainer({
+  userRepository: () => new PrismaUserRepository(),
+  productRepository: () => new PrismaProductRepository(),
+  cartRepository: () => new PrismaCartRepository(),
+  wishlistRepository: () => new PrismaWishlistRepository(),
+  reviewRepository: () => new PrismaReviewRepository(),
+  addressRepository: () => new PrismaAddressRepository(),
+  orderRepository: () => new PrismaOrderRepository(),
+  userService: ({ userRepository }) => new UserService(userRepository),
+});
+
+// Create DI middleware with the container
+const diMiddleware = createDIMiddleware(container);
 
 const app = new Hono<HonoEnv>()
   .use(
@@ -32,6 +60,8 @@ const app = new Hono<HonoEnv>()
       credentials: true,
     }),
   )
+  // Attach DI container to every request
+  .use("*", diMiddleware)
   .basePath("/api")
   .route("/", api)
   .on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw))

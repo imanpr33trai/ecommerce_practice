@@ -10,6 +10,9 @@ import { wish } from "./routers/wish/wish.route";
 import { errorHandler } from "./middlewares/error.middleware";
 import type { HonoEnv } from "./context";
 
+// DI Container exports
+export * from "./di/container";
+export * from "./middlewares/di.middleware";
 export * from "./context";
 
 export const api = new Hono<HonoEnv>().onError(errorHandler);
