@@ -1,25 +1,20 @@
+import { UpdateProfileSchema } from "@ecommerceNextjs/types";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { userQueries } from "./user.query.js";
-import { UpdateProfileSchema } from "./user.types.js";
-import type { HonoEnv } from "../../context.js"; // Adjust path
+import { serviceMiddleware } from "../../middlewares/service.middleware.js";
+import type { HonoEnv } from "../../context.js";
+import type { UserService } from "../../services/UserService.js";
 
 export const user = new Hono<HonoEnv>()
 
   /**
-   * Middleware: Auth Guard
-   * All user routes require login
+   * Middleware: Auth Guard & Service Injection
+   * All user routes require login and UserService
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
+  .use(serviceMiddleware)
 
   /**
    * GET /me
@@ -27,12 +22,9 @@ export const user = new Hono<HonoEnv>()
    */
   .get("/me", async (c) => {
     const sessionUser = c.get("user");
+    const userService = c.get("userService") as UserService;
 
-    const profile = await userQueries.getProfile(sessionUser.id);
-
-    if (!profile) {
-      return c.json({ success: false, error: "User not found" }, 404);
-    }
+    const profile = await userService.getProfile(sessionUser.id);
 
     return c.json({ success: true, data: profile });
   })
@@ -43,12 +35,9 @@ export const user = new Hono<HonoEnv>()
    */
   .put("/me", zValidator("json", UpdateProfileSchema), async (c) => {
     const sessionUser = c.get("user");
+    const userService = c.get("userService") as UserService;
     const input = c.req.valid("json");
 
-    try {
-      const updatedUser = await userQueries.updateProfile(sessionUser.id, input);
-      return c.json({ success: true, data: updatedUser });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 500);
-    }
+    const updatedUser = await userService.updateProfile(sessionUser.id, input);
+    return c.json({ success: true, data: updatedUser });
   });

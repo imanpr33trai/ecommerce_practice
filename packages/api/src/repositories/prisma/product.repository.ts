@@ -1,6 +1,7 @@
 import { prisma } from "@ecommerceNextjs/db";
 import type { Prisma, Product } from "@ecommerceNextjs/db";
 import type { ProductFilters, ProductSuggestionInput } from "@ecommerceNextjs/types";
+
 import type { ProductRepository } from "../product.repository";
 
 export class PrismaProductRepository implements ProductRepository {
@@ -175,7 +176,9 @@ export class PrismaProductRepository implements ProductRepository {
       },
     });
 
-    if (!product) return null;
+    if (!product) {
+      return null;
+    }
 
     const p = product as unknown as Product;
     const result = Object.assign({}, p, {

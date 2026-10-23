@@ -1,6 +1,7 @@
 import { prisma } from "@ecommerceNextjs/db";
 import type { Prisma } from "@ecommerceNextjs/db";
 import type { ToggleWishInput } from "@ecommerceNextjs/types";
+
 import type { WishlistRepository } from "../wishlist.repository";
 
 export class PrismaWishlistRepository implements WishlistRepository {
@@ -23,7 +24,11 @@ export class PrismaWishlistRepository implements WishlistRepository {
             colors: true,
             material: true,
             category: { select: { name: true, slug: true } },
-            images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true, id: true } },
+            images: {
+              where: { isPrimary: true },
+              take: 1,
+              select: { url: true, altText: true, id: true },
+            },
             reviews: { select: { rating: true } },
           },
         },
@@ -50,8 +55,13 @@ export class PrismaWishlistRepository implements WishlistRepository {
       await prisma.wish.delete({ where: { id: existing.id } });
       return { added: false, message: "Removed from wishlist" };
     } else {
-      const product = await prisma.product.findUnique({ where: { id: productId }, select: { id: true } });
-      if (!product) throw new Error("Product not found");
+      const product = await prisma.product.findUnique({
+        where: { id: productId },
+        select: { id: true },
+      });
+      if (!product) {
+        throw new Error("Product not found");
+      }
 
       await prisma.wish.create({ data: { userId, productId } });
       return { added: true, message: "Added to wishlist" };

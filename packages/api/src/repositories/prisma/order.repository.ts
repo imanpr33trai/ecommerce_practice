@@ -1,6 +1,6 @@
-import { prisma } from "@ecommerceNextjs/db";
-import { Prisma, OrderStatus, PaymentStatus } from "@ecommerceNextjs/db";
+import { OrderStatus, PaymentStatus, type Prisma, prisma } from "@ecommerceNextjs/db";
 import type { CreateOrderInput } from "@ecommerceNextjs/types";
+
 import type { OrderRepository } from "../order.repository";
 
 const orderInclude = {

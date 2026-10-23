@@ -1,4 +1,8 @@
-import type { CreateReviewInput, ReviewListOptions, UserReviewQueryInput } from "@ecommerceNextjs/types";
+import type {
+  CreateReviewInput,
+  ReviewListOptions,
+  UserReviewQueryInput,
+} from "@ecommerceNextjs/types";
 
 export interface ReviewRepository {
   findByProduct(productId: string, options: ReviewListOptions): Promise<unknown>;

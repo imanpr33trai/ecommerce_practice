@@ -1,6 +1,5 @@
 import { prisma } from "@ecommerceNextjs/db";
-
-import type { UpdateProfileInput } from "./user.types";
+import type { UpdateProfileInput } from "@ecommerceNextjs/types";
 
 export const userQueries = {
   /**

@@ -1,6 +1,7 @@
 import { prisma } from "@ecommerceNextjs/db";
 import type { Prisma } from "@ecommerceNextjs/db";
 import type { CreateAddressInput, UpdateAddressInput } from "@ecommerceNextjs/types";
+
 import type { AddressRepository } from "../address.repository";
 
 export class PrismaAddressRepository implements AddressRepository {

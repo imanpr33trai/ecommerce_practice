@@ -1,6 +1,7 @@
 import { prisma } from "@ecommerceNextjs/db";
 import type { Prisma, User } from "@ecommerceNextjs/db";
 import type { UpdateProfileInput } from "@ecommerceNextjs/types";
+
 import type { UserRepository } from "../user.repository";
 
 export class PrismaUserRepository implements UserRepository {
@@ -9,14 +10,15 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async findByIdWithStats(id: string): Promise<
-    (User & {
-      _count: {
-        order: number;
-        wishList: number;
-        reviews: number;
-        address: number;
-      };
-    }) | null
+    | (User & {
+        _count: {
+          order: number;
+          wishList: number;
+          reviews: number;
+          address: number;
+        };
+      })
+    | null
   > {
     return prisma.user.findUnique({
       where: { id },

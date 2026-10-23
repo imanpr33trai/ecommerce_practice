@@ -1,6 +1,7 @@
 import { prisma } from "@ecommerceNextjs/db";
 import type { Prisma } from "@ecommerceNextjs/db";
 import type { AddItemInput } from "@ecommerceNextjs/types";
+
 import type { CartRepository } from "../cart.repository";
 
 const cartItemSelect = {
@@ -18,7 +19,11 @@ const cartItemSelect = {
       discountPrice: true,
       stock: true,
       colors: true,
-      images: { where: { isPrimary: true }, take: 1, select: { url: true, altText: true, id: true } },
+      images: {
+        where: { isPrimary: true },
+        take: 1,
+        select: { url: true, altText: true, id: true },
+      },
     },
   },
 } satisfies Prisma.CartItemSelect;
@@ -134,7 +139,9 @@ export class PrismaCartRepository implements CartRepository {
 
   async clearCart(userId: string) {
     const cart = await prisma.cart.findUnique({ where: { userId } });
-    if (!cart) return;
+    if (!cart) {
+      return;
+    }
 
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
   }

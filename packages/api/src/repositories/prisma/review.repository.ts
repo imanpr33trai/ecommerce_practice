@@ -1,6 +1,11 @@
 import { prisma } from "@ecommerceNextjs/db";
 import type { Prisma } from "@ecommerceNextjs/db";
-import type { CreateReviewInput, ReviewListOptions, UserReviewQueryInput } from "@ecommerceNextjs/types";
+import type {
+  CreateReviewInput,
+  ReviewListOptions,
+  UserReviewQueryInput,
+} from "@ecommerceNextjs/types";
+
 import type { ReviewRepository } from "../review.repository";
 
 const reviewSelect = {
@@ -19,8 +24,12 @@ export class PrismaReviewRepository implements ReviewRepository {
     const where: Prisma.ReviewWhereInput = { productId };
 
     let orderBy: Prisma.ReviewOrderByWithRelationInput = { createdAt: "desc" };
-    if (sort === "highest") orderBy = { rating: "desc" };
-    if (sort === "lowest") orderBy = { rating: "asc" };
+    if (sort === "highest") {
+      orderBy = { rating: "desc" };
+    }
+    if (sort === "lowest") {
+      orderBy = { rating: "asc" };
+    }
 
     const [total, reviews] = await prisma.$transaction([
       prisma.review.count({ where }),
@@ -47,7 +56,10 @@ export class PrismaReviewRepository implements ReviewRepository {
     });
 
     const totalReviews = aggregations.reduce((acc, curr) => acc + curr._count.rating, 0);
-    const weightedSum = aggregations.reduce((acc, curr) => acc + curr.rating * curr._count.rating, 0);
+    const weightedSum = aggregations.reduce(
+      (acc, curr) => acc + curr.rating * curr._count.rating,
+      0,
+    );
     const average = totalReviews > 0 ? weightedSum / totalReviews : 0;
 
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } as Record<number, number>;
@@ -74,7 +86,11 @@ export class PrismaReviewRepository implements ReviewRepository {
               id: true,
               name: true,
               slug: true,
-              images: { where: { isPrimary: true }, take: 1, select: { url: true, id: true, altText: true } },
+              images: {
+                where: { isPrimary: true },
+                take: 1,
+                select: { url: true, id: true, altText: true },
+              },
             },
           },
         },
@@ -98,8 +114,12 @@ export class PrismaReviewRepository implements ReviewRepository {
 
   async delete(userId: string, reviewId: string) {
     const review = await prisma.review.findUnique({ where: { id: reviewId } });
-    if (!review) throw new Error("Review not found");
-    if (review.userId !== userId) throw new Error("Unauthorized to delete this review");
+    if (!review) {
+      throw new Error("Review not found");
+    }
+    if (review.userId !== userId) {
+      throw new Error("Unauthorized to delete this review");
+    }
 
     await prisma.review.delete({ where: { id: reviewId } });
   }
