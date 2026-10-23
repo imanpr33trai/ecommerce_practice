@@ -1,6 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
+import { AppError } from "@ecommerceNextjs/types";
 import { productQueries } from "./product.query";
 import { ProductFilterSchema, SuggestionSchema } from "./product.type";
 import type { HonoEnv } from "../../context.js";
@@ -58,7 +59,7 @@ export const product = new Hono<HonoEnv>()
     const result = await productQueries.getBySlug(slug);
 
     if (!result) {
-      return c.json({ success: false, error: "Product not found" }, 404);
+      throw AppError.notFound("Product", slug);
     }
 
     return c.json({ success: true, data: result });

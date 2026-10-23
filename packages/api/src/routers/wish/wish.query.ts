@@ -1,5 +1,7 @@
 import { prisma } from "@ecommerceNextjs/db";
 
+import { AppError } from "@ecommerceNextjs/types";
+
 // Selector for the "My Wishlist" Page
 
 export const wishQueries = {
@@ -112,7 +114,7 @@ export const wishQueries = {
       });
 
       if (!product) {
-        throw new Error("Product not found");
+        throw AppError.notFound("Product", productId);
       }
 
       await prisma.wish.create({

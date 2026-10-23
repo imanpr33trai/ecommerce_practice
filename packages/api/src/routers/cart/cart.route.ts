@@ -42,14 +42,8 @@ export const cart = new Hono<HonoEnv>()
     const user = c.get("user");
     const input = c.req.valid("json");
 
-    try {
-      const result = await cartQueries.addItem(user.id, input);
-      return c.json({ success: true, data: result });
-    } catch (error: any) {
-      // Return 409 Conflict for Stock Issues, 404 for Product Not Found, etc.
-      const status = error.message.includes("stock") ? 409 : 400;
-      return c.json({ success: false, error: error.message }, status);
-    }
+    const result = await cartQueries.addItem(user.id, input);
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -61,14 +55,8 @@ export const cart = new Hono<HonoEnv>()
     const productId = c.req.param("productId");
     const { quantity } = c.req.valid("json");
 
-    try {
-      const result = await cartQueries.updateQuantity(user.id, productId, quantity);
-      return c.json({ success: true, data: result });
-    } catch (error: any) {
-      // Handle Stock Errors (409 Conflict) vs Not Found (404/403)
-      const status = error.message.includes("stock") ? 409 : 400;
-      return c.json({ success: false, error: error.message }, status);
-    }
+    const result = await cartQueries.updateQuantity(user.id, productId, quantity);
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -79,12 +67,8 @@ export const cart = new Hono<HonoEnv>()
     const user = c.get("user");
     const productId = c.req.param("productId");
 
-    try {
-      await cartQueries.removeItem(user.id, productId);
-      return c.json({ success: true, message: "Item removed" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 400);
-    }
+    await cartQueries.removeItem(user.id, productId);
+    return c.json({ success: true, message: "Item removed" });
   })
 
   /**
@@ -94,10 +78,6 @@ export const cart = new Hono<HonoEnv>()
   .delete("/", async (c) => {
     const user = c.get("user");
 
-    try {
-      await cartQueries.clearCart(user.id);
-      return c.json({ success: true, message: "Cart cleared" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 500);
-    }
+    await cartQueries.clearCart(user.id);
+    return c.json({ success: true, message: "Cart cleared" });
   });

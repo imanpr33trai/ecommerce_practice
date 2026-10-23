@@ -42,16 +42,8 @@ export const order = new Hono<HonoEnv>()
     const user = c.get("user");
     const orderId = c.req.param("id");
 
-    try {
-      const order = await orderQueries.getById(user.id, orderId);
-      if (!order) {
-        return c.json({ success: false, error: "Order not found" }, 404);
-      }
-
-      return c.json({ success: true, data: order });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
-    }
+    const order = await orderQueries.getById(user.id, orderId);
+    return c.json({ success: true, data: order });
   })
 
   /**
@@ -62,14 +54,8 @@ export const order = new Hono<HonoEnv>()
     const user = c.get("user");
     const input = c.req.valid("json");
 
-    try {
-      const order = await orderQueries.createFromCart(user.id, input);
-      return c.json({ success: true, data: order });
-    } catch (error: any) {
-      // Handle Stock Errors vs others
-      const status = error.message.includes("stock") ? 409 : 400;
-      return c.json({ success: false, error: error.message }, status);
-    }
+    const order = await orderQueries.createFromCart(user.id, input);
+    return c.json({ success: true, data: order });
   })
 
   // --- ADMIN ROUTES (Optional: Add Role Guard) ---

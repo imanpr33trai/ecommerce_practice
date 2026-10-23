@@ -1,6 +1,7 @@
 import { auth } from "@ecommerceNextjs/auth";
 import type { Context, Next } from "hono";
 
+import { AppError } from "@ecommerceNextjs/types";
 import type { HonoEnv } from "../context";
 
 // Middleware to populate context
@@ -10,7 +11,7 @@ export async function authMiddleware(c: Context<HonoEnv>, next: Next) {
   });
 
   if (!session) {
-    return c.json({ success: false, message: "Unauthorized" }, 401);
+    throw AppError.unauthorized();
   }
 
   // Set user for subsequent handlers

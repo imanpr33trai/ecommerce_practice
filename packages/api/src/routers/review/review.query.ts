@@ -1,5 +1,6 @@
 import { type Prisma, prisma } from "@ecommerceNextjs/db";
 
+import { AppError } from "@ecommerceNextjs/types";
 import type { CreateReviewInput, ReviewListOptions, UserReviewQueryInput } from "./review.type";
 
 // Selector to ensure we only send necessary public data
@@ -142,16 +143,16 @@ export const reviewQueries = {
    */
   create: async (userId: string, input: CreateReviewInput) => {
     // 1. Check if user already reviewed this product
-    // const existing = await prisma.review.findFirst({
-    //   where: {
-    //     userId,
-    //     productId: input.productId,
-    //   },
-    // });
+    const existing = await prisma.review.findFirst({
+      where: {
+        userId,
+        productId: input.productId,
+      },
+    });
 
-    // if (existing) {
-    //   throw new Error("You have already reviewed this product.");
-    // }
+    if (existing) {
+      throw AppError.conflict("You have already reviewed this product.");
+    }
 
     // 2. Create Review
     return prisma.review.create({
@@ -173,11 +174,11 @@ export const reviewQueries = {
     });
 
     if (!review) {
-      throw new Error("Review not found");
+      throw AppError.notFound("Review", reviewId);
     }
 
     if (review.userId !== userId) {
-      throw new Error("Unauthorized to delete this review");
+      throw AppError.forbidden("Unauthorized to delete this review");
     }
 
     // 2. Delete

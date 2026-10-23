@@ -1,5 +1,6 @@
 import { prisma } from "@ecommerceNextjs/db";
 
+import { AppError } from "@ecommerceNextjs/types";
 import type { CreateAddressInput, UpdateAddressInput } from "./address.type";
 
 export const addressQueries = {
@@ -55,7 +56,7 @@ export const addressQueries = {
     // 1. Ownership Check
     const existing = await prisma.address.findUnique({ where: { id: addressId } });
     if (!existing || existing.userId !== userId) {
-      throw new Error("Address not found or access denied");
+      throw AppError.notFound("Address", addressId);
     }
 
     // 2. Transaction
@@ -82,7 +83,7 @@ export const addressQueries = {
     // 1. Ownership Check
     const existing = await prisma.address.findUnique({ where: { id: addressId } });
     if (!existing || existing.userId !== userId) {
-      throw new Error("Address not found or access denied");
+      throw AppError.notFound("Address", addressId);
     }
 
     // 2. Transaction
@@ -107,7 +108,7 @@ export const addressQueries = {
   delete: async (userId: string, addressId: string) => {
     const existing = await prisma.address.findUnique({ where: { id: addressId } });
     if (!existing || existing.userId !== userId) {
-      throw new Error("Address not found or access denied");
+      throw AppError.notFound("Address", addressId);
     }
 
     return prisma.address.delete({

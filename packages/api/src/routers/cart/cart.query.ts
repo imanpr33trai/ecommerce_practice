@@ -1,5 +1,6 @@
 import { type Prisma, prisma } from "@ecommerceNextjs/db";
 
+import { AppError } from "@ecommerceNextjs/types";
 import type { AddItemInput } from "./cart.type.js";
 
 // Selector to get product details inside cart items
@@ -105,12 +106,12 @@ export const cartQueries = {
     });
 
     if (!product || !product.isActive) {
-      throw new Error("Product not available");
+      throw AppError.notFound("Product");
     }
 
     // B. Validate Color (if provided)
     if (color && (!product.colors || !product.colors.includes(color))) {
-      throw new Error(`Color '${color}' is not available for this product`);
+      throw AppError.validation(`Color '${color}' is not available for this product`);
     }
 
     // C. Find or Create Cart
@@ -134,7 +135,7 @@ export const cartQueries = {
 
     // E. Stock Check
     if (newQty > product.stock) {
-      throw new Error(`Cannot add. Only ${product.stock} items in stock.`);
+      throw AppError.outOfStock(product.name);
     }
 
     // F. Upsert Logic
@@ -163,18 +164,18 @@ export const cartQueries = {
       where: { id: itemId },
       include: {
         cart: true, // Needed to verify userId
-        product: { select: { stock: true, isActive: true } },
+        product: { select: { stock: true, isActive: true, name: true } },
       },
     });
 
     // 2. Security Check: Does item exist and belong to user?
     if (!item || item.cart.userId !== userId) {
-      throw new Error("Item not found or access denied");
+      throw AppError.notFound("Cart item");
     }
 
     // 3. Stock Check
     if (quantity > item.product.stock) {
-      throw new Error(`Cannot update. Only ${item.product.stock} items in stock.`);
+      throw AppError.outOfStock(item.product.name);
     }
 
     // 4. Update
@@ -196,7 +197,7 @@ export const cartQueries = {
     });
 
     if (!item || item.cart.userId !== userId) {
-      throw new Error("Item not found or access denied");
+      throw AppError.notFound("Cart item");
     }
 
     return prisma.cartItem.delete({

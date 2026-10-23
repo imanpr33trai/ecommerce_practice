@@ -51,12 +51,8 @@ export const address = new Hono<HonoEnv>()
     const addressId = c.req.param("id");
     const input = c.req.valid("json");
 
-    try {
-      const result = await addressQueries.update(user.id, addressId, input);
-      return c.json({ success: true, data: result });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
-    }
+    const result = await addressQueries.update(user.id, addressId, input);
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -67,12 +63,8 @@ export const address = new Hono<HonoEnv>()
     const user = c.get("user");
     const addressId = c.req.param("id");
 
-    try {
-      const result = await addressQueries.setDefault(user.id, addressId);
-      return c.json({ success: true, data: result });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
-    }
+    const result = await addressQueries.setDefault(user.id, addressId);
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -83,10 +75,6 @@ export const address = new Hono<HonoEnv>()
     const user = c.get("user");
     const addressId = c.req.param("id");
 
-    try {
-      await addressQueries.delete(user.id, addressId);
-      return c.json({ success: true, message: "Address deleted" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
-    }
+    await addressQueries.delete(user.id, addressId);
+    return c.json({ success: true, message: "Address deleted" });
   });

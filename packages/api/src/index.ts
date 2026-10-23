@@ -7,7 +7,7 @@ import { product } from "./routers/product/product.route";
 import { review } from "./routers/review/review.route";
 import { user } from "./routers/user/user.route";
 import { wish } from "./routers/wish/wish.route";
-import { errorHandler } from "./utils/error-handler";
+import { errorHandler } from "./middlewares/error.middleware";
 import type { HonoEnv } from "./context";
 
 export * from "./context";

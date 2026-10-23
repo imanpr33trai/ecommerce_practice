@@ -74,13 +74,8 @@ export const review = new Hono<HonoEnv>()
     const user = c.get("user");
     const input = c.req.valid("json");
 
-    try {
-      const result = await reviewQueries.create(user.id, input);
-      return c.json({ success: true, data: result });
-    } catch (error: any) {
-      // Return 409 Conflict if they already reviewed it
-      return c.json({ success: false, error: error.message }, 409);
-    }
+    const result = await reviewQueries.create(user.id, input);
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -91,10 +86,6 @@ export const review = new Hono<HonoEnv>()
     const user = c.get("user");
     const reviewId = c.req.param("id");
 
-    try {
-      await reviewQueries.delete(user.id, reviewId);
-      return c.json({ success: true, message: "Review deleted" });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 403);
-    }
+    await reviewQueries.delete(user.id, reviewId);
+    return c.json({ success: true, message: "Review deleted" });
   });

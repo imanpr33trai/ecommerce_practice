@@ -1,5 +1,6 @@
 import { OrderStatus, PaymentStatus, type Prisma, prisma } from "@ecommerceNextjs/db";
 
+import { AppError } from "@ecommerceNextjs/types";
 import type { CreateOrderInput } from "./order.types";
 
 // --- Helpers ---
@@ -94,10 +95,10 @@ export const orderQueries = {
     });
 
     if (!order) {
-      return null;
+      throw AppError.notFound("Order", orderId);
     }
     if (order.userId !== userId) {
-      throw new Error("Unauthorized access to order");
+      throw AppError.forbidden("Unauthorized access to order");
     }
 
     return transformOrder(order);
@@ -113,7 +114,7 @@ export const orderQueries = {
       // 1. Verify Address
       const address = await tx.address.findUnique({ where: { id: addressId } });
       if (!address || address.userId !== userId) {
-        throw new Error("Invalid shipping address");
+        throw AppError.notFound("Address", addressId);
       }
 
       // 2. Fetch Cart
@@ -125,7 +126,7 @@ export const orderQueries = {
       });
 
       if (!cart || cart.items.length === 0) {
-        throw new Error("Cart is empty");
+        throw AppError.validation("Cart is empty");
       }
 
       // 3. Validate Stock & Calculate Total
@@ -135,7 +136,7 @@ export const orderQueries = {
       for (const cartItem of cart.items) {
         // Stock Check
         if (cartItem.quantity > cartItem.product.stock) {
-          throw new Error(`Not enough stock for ${cartItem.product.name}`);
+          throw AppError.outOfStock(cartItem.product.name);
         }
 
         const price = Number(cartItem.product.discountPrice ?? cartItem.product.price);

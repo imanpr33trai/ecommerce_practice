@@ -51,12 +51,8 @@ export const wish = new Hono<HonoEnv>()
     const user = c.get("user");
     const { productId } = c.req.valid("json");
 
-    try {
-      const result = await wishQueries.toggle(user.id, productId);
-      return c.json({ success: true, data: result });
-    } catch (error: any) {
-      return c.json({ success: false, error: error.message }, 400);
-    }
+    const result = await wishQueries.toggle(user.id, productId);
+    return c.json({ success: true, data: result });
   })
 
   /**
