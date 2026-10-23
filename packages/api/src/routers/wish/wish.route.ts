@@ -2,9 +2,9 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { wishQueries } from "./wish.query.js";
-import { ToggleWishSchema } from "./wish.type.js";
-import type { HonoEnv } from "../../context.js"; // Adjust path
+import type { WishlistService } from "../../services/WishlistService";
+import { ToggleWishSchema } from "@ecommerceNextjs/types";
+import type { HonoEnv } from "../../context.js";
 
 export const wish = new Hono<HonoEnv>()
 
@@ -27,7 +27,8 @@ export const wish = new Hono<HonoEnv>()
    */
   .get("/", async (c) => {
     const user = c.get("user");
-    const wishlist = await wishQueries.getAll(user.id);
+    const wishlistService = c.get("wishlistService") as WishlistService;
+    const wishlist = await wishlistService.getAll(user.id);
     return c.json({ success: true, data: wishlist });
   })
   /**
@@ -36,7 +37,8 @@ export const wish = new Hono<HonoEnv>()
    */
   .get("/ids", async (c) => {
     const user = c.get("user");
-    const ids = await wishQueries.getIds(user.id);
+    const wishlistService = c.get("wishlistService") as WishlistService;
+    const ids = await wishlistService.getIds(user.id);
 
     c.header("Cache-Control", "private,max-age=60");
 
@@ -49,9 +51,10 @@ export const wish = new Hono<HonoEnv>()
    */
   .post("/toggle", zValidator("json", ToggleWishSchema), async (c) => {
     const user = c.get("user");
-    const { productId } = c.req.valid("json");
+    const input = c.req.valid("json");
+    const wishlistService = c.get("wishlistService") as WishlistService;
 
-    const result = await wishQueries.toggle(user.id, productId);
+    const result = await wishlistService.toggle(user.id, input);
     return c.json({ success: true, data: result });
   })
 
@@ -61,8 +64,9 @@ export const wish = new Hono<HonoEnv>()
    */
   .delete("/", async (c) => {
     const user = c.get("user");
+    const wishlistService = c.get("wishlistService") as WishlistService;
 
-    await wishQueries.clear(user.id);
+    await wishlistService.clear(user.id);
 
     return c.json({ success: true, message: "Wishlist cleared" });
   });

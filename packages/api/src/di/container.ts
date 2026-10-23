@@ -7,6 +7,12 @@ import type { AddressRepository } from "../repositories/address.repository.js";
 import type { OrderRepository } from "../repositories/order.repository.js";
 
 import type { UserService } from "../services/UserService.js";
+import type { ProductService } from "../services/ProductService.js";
+import type { CartService } from "../services/CartService.js";
+import type { OrderService } from "../services/OrderService.js";
+import type { ReviewService } from "../services/ReviewService.js";
+import type { AddressService } from "../services/AddressService.js";
+import type { WishlistService } from "../services/WishlistService.js";
 
 /**
  * DI Container Interface
@@ -24,6 +30,12 @@ export interface DIContainer {
 
   // Services
   userService: UserService;
+  productService: ProductService;
+  cartService: CartService;
+  orderService: OrderService;
+  reviewService: ReviewService;
+  addressService: AddressService;
+  wishlistService: WishlistService;
 
   // Factory methods for per-request scoped instances
   createRequestScope(): DIContainer;
@@ -41,6 +53,17 @@ interface ContainerConfig {
   addressRepository: () => AddressRepository;
   orderRepository: () => OrderRepository;
   userService: (deps: { userRepository: UserRepository }) => UserService;
+  productService: (deps: { productRepository: ProductRepository }) => ProductService;
+  cartService: (deps: { cartRepository: CartRepository }) => CartService;
+  orderService: (deps: {
+    orderRepository: OrderRepository;
+    cartRepository: CartRepository;
+    addressRepository: AddressRepository;
+    productRepository: ProductRepository;
+  }) => OrderService;
+  reviewService: (deps: { reviewRepository: ReviewRepository; productRepository: ProductRepository }) => ReviewService;
+  addressService: (deps: { addressRepository: AddressRepository }) => AddressService;
+  wishlistService: (deps: { wishlistRepository: WishlistRepository; productRepository: ProductRepository }) => WishlistService;
 }
 
 /**
@@ -57,6 +80,12 @@ export function createContainer(config: ContainerConfig): DIContainer {
   let orderRepositoryInstance: OrderRepository;
 
   let userServiceInstance: UserService;
+  let productServiceInstance: ProductService;
+  let cartServiceInstance: CartService;
+  let orderServiceInstance: OrderService;
+  let reviewServiceInstance: ReviewService;
+  let addressServiceInstance: AddressService;
+  let wishlistServiceInstance: WishlistService;
 
   const container: DIContainer = {
     get userRepository() {
@@ -115,6 +144,59 @@ export function createContainer(config: ContainerConfig): DIContainer {
       return userServiceInstance;
     },
 
+    get productService() {
+      if (!productServiceInstance) {
+        productServiceInstance = config.productService({ productRepository: container.productRepository });
+      }
+      return productServiceInstance;
+    },
+
+    get cartService() {
+      if (!cartServiceInstance) {
+        cartServiceInstance = config.cartService({ cartRepository: container.cartRepository });
+      }
+      return cartServiceInstance;
+    },
+
+    get orderService() {
+      if (!orderServiceInstance) {
+        orderServiceInstance = config.orderService({
+          orderRepository: container.orderRepository,
+          cartRepository: container.cartRepository,
+          addressRepository: container.addressRepository,
+          productRepository: container.productRepository,
+        });
+      }
+      return orderServiceInstance;
+    },
+
+    get reviewService() {
+      if (!reviewServiceInstance) {
+        reviewServiceInstance = config.reviewService({
+          reviewRepository: container.reviewRepository,
+          productRepository: container.productRepository,
+        });
+      }
+      return reviewServiceInstance;
+    },
+
+    get addressService() {
+      if (!addressServiceInstance) {
+        addressServiceInstance = config.addressService({ addressRepository: container.addressRepository });
+      }
+      return addressServiceInstance;
+    },
+
+    get wishlistService() {
+      if (!wishlistServiceInstance) {
+        wishlistServiceInstance = config.wishlistService({
+          wishlistRepository: container.wishlistRepository,
+          productRepository: container.productRepository,
+        });
+      }
+      return wishlistServiceInstance;
+    },
+
     createRequestScope() {
       // For per-request scope, we create a new container with fresh instances
       // but sharing the same config (factories)
@@ -127,6 +209,12 @@ export function createContainer(config: ContainerConfig): DIContainer {
         addressRepository: config.addressRepository,
         orderRepository: config.orderRepository,
         userService: config.userService,
+        productService: config.productService,
+        cartService: config.cartService,
+        orderService: config.orderService,
+        reviewService: config.reviewService,
+        addressService: config.addressService,
+        wishlistService: config.wishlistService,
       });
     },
   };
@@ -198,6 +286,52 @@ export function createTestContainer(overrides: Partial<ContainerConfig> = {}): D
     updateProfile: async (userId: string, data: unknown) => mockUserRepository.updateProfile(userId, data as never),
   } as UserService;
 
+  const mockProductService: ProductService = {
+    getProducts: async () => ({ items: [], pagination: { total: 0, page: 1, limit: 10, totalPages: 0, hasNextPage: false } }),
+    getFilterOptions: async () => ({ categories: [], materials: [], colors: [] }),
+    getBySlug: async () => null,
+    getSuggestions: async () => [],
+  } as unknown as ProductService;
+
+  const mockCartService: CartService = {
+    getCart: async () => null,
+    addItem: async () => null,
+    updateQuantity: async () => null,
+    removeItem: async () => {},
+    clearCart: async () => {},
+  } as unknown as CartService;
+
+  const mockOrderService: OrderService = {
+    listByUser: async () => [],
+    getById: async () => null,
+    createFromCart: async () => null,
+    updateStatus: async () => null,
+    updatePaymentStatus: async () => null,
+  } as unknown as OrderService;
+
+  const mockReviewService: ReviewService = {
+    listByProduct: async () => ({ items: [], pagination: { total: 0, page: 1, totalPages: 0 } }),
+    getSummary: async () => ({ average: 0, total: 0, distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } }),
+    listByUser: async () => ({ items: [], pagination: { total: 0, page: 1, totalPages: 0 } }),
+    create: async () => null,
+    delete: async () => {},
+  } as unknown as ReviewService;
+
+  const mockAddressService: AddressService = {
+    list: async () => [],
+    create: async () => null,
+    update: async () => null,
+    setDefault: async () => null,
+    delete: async () => {},
+  } as unknown as AddressService;
+
+  const mockWishlistService: WishlistService = {
+    getAll: async () => [],
+    getIds: async () => [],
+    toggle: async () => ({ added: false, message: "" }),
+    clear: async () => 0,
+  } as unknown as WishlistService;
+
   return createContainer({
     userRepository: () => mockUserRepository,
     productRepository: () => mockProductRepository,
@@ -207,6 +341,12 @@ export function createTestContainer(overrides: Partial<ContainerConfig> = {}): D
     addressRepository: () => mockAddressRepository,
     orderRepository: () => mockOrderRepository,
     userService: () => mockUserService,
+    productService: () => mockProductService,
+    cartService: () => mockCartService,
+    orderService: () => mockOrderService,
+    reviewService: () => mockReviewService,
+    addressService: () => mockAddressService,
+    wishlistService: () => mockWishlistService,
     ...overrides,
   });
 }

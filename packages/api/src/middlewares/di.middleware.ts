@@ -15,8 +15,14 @@ export function createDIMiddleware(container: DIContainer) {
     // Attach container to context
     c.set("container", requestContainer);
 
-    // Also attach individual services for backward compatibility
+    // Attach individual services for easy access in routers
     c.set("userService", requestContainer.userService);
+    c.set("productService", requestContainer.productService);
+    c.set("cartService", requestContainer.cartService);
+    c.set("orderService", requestContainer.orderService);
+    c.set("reviewService", requestContainer.reviewService);
+    c.set("addressService", requestContainer.addressService);
+    c.set("wishlistService", requestContainer.wishlistService);
 
     await next();
   };

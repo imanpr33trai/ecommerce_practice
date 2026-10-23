@@ -1,5 +1,4 @@
-import type { OrderStatus, PaymentStatus } from "@ecommerceNextjs/db";
-import type { CreateOrderInput } from "@ecommerceNextjs/types";
+import type { OrderStatus, PaymentStatus, CreateOrderInput } from "@ecommerceNextjs/types";
 
 export interface OrderRepository {
   findByUserId(userId: string): Promise<unknown>;

@@ -20,6 +20,12 @@ import { PrismaReviewRepository } from "@ecommerceNextjs/api/repositories/prisma
 import { PrismaAddressRepository } from "@ecommerceNextjs/api/repositories/prisma/address.repository";
 import { PrismaOrderRepository } from "@ecommerceNextjs/api/repositories/prisma/order.repository";
 import { UserService } from "@ecommerceNextjs/api/services/UserService";
+import { ProductService } from "@ecommerceNextjs/api/services/ProductService";
+import { CartService } from "@ecommerceNextjs/api/services/CartService";
+import { OrderService } from "@ecommerceNextjs/api/services/OrderService";
+import { ReviewService } from "@ecommerceNextjs/api/services/ReviewService";
+import { AddressService } from "@ecommerceNextjs/api/services/AddressService";
+import { WishlistService } from "@ecommerceNextjs/api/services/WishlistService";
 import { prisma } from "@ecommerceNextjs/db";
 
 // ============================================================
@@ -35,6 +41,15 @@ const container = createContainer({
   addressRepository: () => new PrismaAddressRepository(),
   orderRepository: () => new PrismaOrderRepository(),
   userService: ({ userRepository }) => new UserService(userRepository),
+  productService: ({ productRepository }) => new ProductService(productRepository),
+  cartService: ({ cartRepository }) => new CartService(cartRepository),
+  orderService: ({ orderRepository, cartRepository, addressRepository, productRepository }) =>
+    new OrderService(orderRepository, cartRepository, addressRepository, productRepository),
+  reviewService: ({ reviewRepository, productRepository }) =>
+    new ReviewService(reviewRepository, productRepository),
+  addressService: ({ addressRepository }) => new AddressService(addressRepository),
+  wishlistService: ({ wishlistRepository, productRepository }) =>
+    new WishlistService(wishlistRepository, productRepository),
 });
 
 // Create DI middleware with the container

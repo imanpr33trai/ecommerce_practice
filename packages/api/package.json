@@ -33,6 +33,24 @@
     },
     "./services/UserService": {
       "default": "./src/services/UserService.ts"
+    },
+    "./services/ProductService": {
+      "default": "./src/services/ProductService.ts"
+    },
+    "./services/CartService": {
+      "default": "./src/services/CartService.ts"
+    },
+    "./services/OrderService": {
+      "default": "./src/services/OrderService.ts"
+    },
+    "./services/ReviewService": {
+      "default": "./src/services/ReviewService.ts"
+    },
+    "./services/AddressService": {
+      "default": "./src/services/AddressService.ts"
+    },
+    "./services/WishlistService": {
+      "default": "./src/services/WishlistService.ts"
     }
   },
   "main": "./src/index.ts",

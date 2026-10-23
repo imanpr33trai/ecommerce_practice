@@ -1,11 +1,10 @@
-import { prisma } from "@ecommerceNextjs/db";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { reviewQueries } from "./review.query.js";
-import { CreateReviewSchema, ReviewQuerySchema, UserReviewQuerySchema } from "./review.type.js";
-import type { HonoEnv } from "../../context.js"; // Adjust path to your context
+import type { ReviewService } from "../../services/ReviewService";
+import { CreateReviewSchema, ReviewQuerySchema, UserReviewQuerySchema } from "@ecommerceNextjs/types";
+import type { HonoEnv } from "../../context.js";
 
 export const review = new Hono<HonoEnv>()
 
@@ -16,8 +15,9 @@ export const review = new Hono<HonoEnv>()
   .get("/:productId", zValidator("query", ReviewQuerySchema), async (c) => {
     const productId = c.req.param("productId");
     const options = c.req.valid("query");
+    const reviewService = c.get("reviewService") as ReviewService;
 
-    const result = await reviewQueries.listByProduct(productId, options);
+    const result = await reviewService.listByProduct(productId, options);
 
     return c.json({
       success: true,
@@ -31,8 +31,9 @@ export const review = new Hono<HonoEnv>()
    */
   .get("/:productId/summary", async (c) => {
     const productId = c.req.param("productId");
+    const reviewService = c.get("reviewService") as ReviewService;
 
-    const result = await reviewQueries.getSummary(productId);
+    const result = await reviewService.getSummary(productId);
 
     return c.json({
       success: true,
@@ -44,13 +45,6 @@ export const review = new Hono<HonoEnv>()
    * Middleware: Auth Guard for Mutation/User Routes
    */
   .use(authMiddleware)
-  // .use("*", async (c, next) => {
-  //   const user = c.get("user");
-  //   if (!user) {
-  //     return c.json({ success: false, error: "Unauthorized" }, 401);
-  //   }
-  //   await next();
-  // })
 
   /**
    * GET /me
@@ -59,11 +53,10 @@ export const review = new Hono<HonoEnv>()
   .get("/me", zValidator("query", UserReviewQuerySchema), async (c) => {
     const user = c.get("user");
     const options = c.req.valid("query");
+    const reviewService = c.get("reviewService") as ReviewService;
 
-    const totalCount = await prisma.review.count();
-
-    const result = await reviewQueries.listByUser(user.id, options);
-    return c.json({ success: true, data: result, count: totalCount, userId: user.id });
+    const result = await reviewService.listByUser(user.id, options);
+    return c.json({ success: true, data: result, userId: user.id });
   })
 
   /**
@@ -73,8 +66,9 @@ export const review = new Hono<HonoEnv>()
   .post("/", zValidator("json", CreateReviewSchema), async (c) => {
     const user = c.get("user");
     const input = c.req.valid("json");
+    const reviewService = c.get("reviewService") as ReviewService;
 
-    const result = await reviewQueries.create(user.id, input);
+    const result = await reviewService.create(user.id, input);
     return c.json({ success: true, data: result });
   })
 
@@ -85,7 +79,8 @@ export const review = new Hono<HonoEnv>()
   .delete("/:id", async (c) => {
     const user = c.get("user");
     const reviewId = c.req.param("id");
+    const reviewService = c.get("reviewService") as ReviewService;
 
-    await reviewQueries.delete(user.id, reviewId);
+    await reviewService.delete(user.id, reviewId);
     return c.json({ success: true, message: "Review deleted" });
   });

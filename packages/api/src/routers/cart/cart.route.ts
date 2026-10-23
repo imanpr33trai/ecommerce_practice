@@ -2,9 +2,9 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { cartQueries } from "./cart.query.js";
-import { AddItemSchema, UpdateQuantitySchema } from "./cart.type.js";
-import type { HonoEnv } from "../../context.js"; // Adjust to your context path
+import type { CartService } from "../../services/CartService";
+import { AddItemSchema, UpdateQuantitySchema } from "@ecommerceNextjs/types";
+import type { HonoEnv } from "../../context.js";
 
 export const cart = new Hono<HonoEnv>()
 
@@ -21,7 +21,8 @@ export const cart = new Hono<HonoEnv>()
    */
   .get("/", async (c) => {
     const user = c.get("user");
-    const cart = await cartQueries.getCart(user.id);
+    const cartService = c.get("cartService") as CartService;
+    const cart = await cartService.getCart(user.id);
 
     // If no cart exists yet, return empty structure instead of null for easier frontend handling
     if (!cart) {
@@ -41,8 +42,9 @@ export const cart = new Hono<HonoEnv>()
   .post("/", zValidator("json", AddItemSchema), async (c) => {
     const user = c.get("user");
     const input = c.req.valid("json");
+    const cartService = c.get("cartService") as CartService;
 
-    const result = await cartQueries.addItem(user.id, input);
+    const result = await cartService.addItem(user.id, input);
     return c.json({ success: true, data: result });
   })
 
@@ -52,10 +54,11 @@ export const cart = new Hono<HonoEnv>()
    */
   .put("/:productId", zValidator("json", UpdateQuantitySchema), async (c) => {
     const user = c.get("user");
-    const productId = c.req.param("productId");
+    const itemId = c.req.param("productId");
     const { quantity } = c.req.valid("json");
+    const cartService = c.get("cartService") as CartService;
 
-    const result = await cartQueries.updateQuantity(user.id, productId, quantity);
+    const result = await cartService.updateQuantity(user.id, itemId, quantity);
     return c.json({ success: true, data: result });
   })
 
@@ -65,9 +68,10 @@ export const cart = new Hono<HonoEnv>()
    */
   .delete("/:productId", async (c) => {
     const user = c.get("user");
-    const productId = c.req.param("productId");
+    const itemId = c.req.param("productId");
+    const cartService = c.get("cartService") as CartService;
 
-    await cartQueries.removeItem(user.id, productId);
+    await cartService.removeItem(user.id, itemId);
     return c.json({ success: true, message: "Item removed" });
   })
 
@@ -77,7 +81,8 @@ export const cart = new Hono<HonoEnv>()
    */
   .delete("/", async (c) => {
     const user = c.get("user");
+    const cartService = c.get("cartService") as CartService;
 
-    await cartQueries.clearCart(user.id);
+    await cartService.clearCart(user.id);
     return c.json({ success: true, message: "Cart cleared" });
   });

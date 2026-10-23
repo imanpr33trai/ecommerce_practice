@@ -2,8 +2,8 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { AppError } from "@ecommerceNextjs/types";
-import { productQueries } from "./product.query";
-import { ProductFilterSchema, SuggestionSchema } from "./product.type";
+import type { ProductService } from "../../services/ProductService";
+import { ProductFilterSchema, SuggestionSchema } from "@ecommerceNextjs/types";
 import type { HonoEnv } from "../../context.js";
 
 export const product = new Hono<HonoEnv>()
@@ -13,17 +13,10 @@ export const product = new Hono<HonoEnv>()
    * List products with filtering
    */
   .get("/", zValidator("query", ProductFilterSchema), async (c) => {
-    // 1. Get Validated Input
     const filters = c.req.valid("query");
-
-    // 2. Call Query Layer
-    const result = await productQueries.getProducts(filters);
-
-    // 3. Return JSON
-    return c.json({
-      success: true,
-      data: result,
-    });
+    const productService = c.get("productService") as ProductService;
+    const result = await productService.getProducts(filters);
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -31,12 +24,9 @@ export const product = new Hono<HonoEnv>()
    * Get available filter options (facets)
    */
   .get("/filters", async (c) => {
-    const result = await productQueries.getFilterOptions();
-
-    return c.json({
-      success: true,
-      data: result,
-    });
+    const productService = c.get("productService") as ProductService;
+    const result = await productService.getFilterOptions();
+    return c.json({ success: true, data: result });
   })
 
   /**
@@ -46,7 +36,8 @@ export const product = new Hono<HonoEnv>()
    */
   .get("/suggestions", zValidator("query", SuggestionSchema), async (c) => {
     const { query } = c.req.valid("query");
-    const result = await productQueries.getSuggestions(query);
+    const productService = c.get("productService") as ProductService;
+    const result = await productService.getSuggestions({ query });
     return c.json({ success: true, data: result });
   })
 
@@ -56,11 +47,7 @@ export const product = new Hono<HonoEnv>()
    */
   .get("/:slug", async (c) => {
     const slug = c.req.param("slug");
-    const result = await productQueries.getBySlug(slug);
-
-    if (!result) {
-      throw AppError.notFound("Product", slug);
-    }
-
+    const productService = c.get("productService") as ProductService;
+    const result = await productService.getBySlug(slug);
     return c.json({ success: true, data: result });
   });

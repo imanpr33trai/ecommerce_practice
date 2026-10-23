@@ -2,12 +2,12 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { orderQueries } from "./order.query.js";
+import type { OrderService } from "../../services/OrderService";
 import {
   CreateOrderSchema,
   UpdateOrderStatusSchema,
   UpdatePaymentStatusSchema,
-} from "./order.types";
+} from "@ecommerceNextjs/types";
 import type { HonoEnv } from "../../context";
 
 export const order = new Hono<HonoEnv>()
@@ -30,7 +30,8 @@ export const order = new Hono<HonoEnv>()
    */
   .get("/", async (c) => {
     const user = c.get("user");
-    const orders = await orderQueries.listByUser(user.id);
+    const orderService = c.get("orderService") as OrderService;
+    const orders = await orderService.listByUser(user.id);
     return c.json({ success: true, data: orders });
   })
 
@@ -41,8 +42,9 @@ export const order = new Hono<HonoEnv>()
   .get("/:id", async (c) => {
     const user = c.get("user");
     const orderId = c.req.param("id");
+    const orderService = c.get("orderService") as OrderService;
 
-    const order = await orderQueries.getById(user.id, orderId);
+    const order = await orderService.getById(user.id, orderId);
     return c.json({ success: true, data: order });
   })
 
@@ -53,8 +55,9 @@ export const order = new Hono<HonoEnv>()
   .post("/", zValidator("json", CreateOrderSchema), async (c) => {
     const user = c.get("user");
     const input = c.req.valid("json");
+    const orderService = c.get("orderService") as OrderService;
 
-    const order = await orderQueries.createFromCart(user.id, input);
+    const order = await orderService.createFromCart(user.id, input);
     return c.json({ success: true, data: order });
   })
 
@@ -67,10 +70,11 @@ export const order = new Hono<HonoEnv>()
   .patch("/:id/status", zValidator("json", UpdateOrderStatusSchema), async (c) => {
     const orderId = c.req.param("id");
     const { status } = c.req.valid("json");
+    const orderService = c.get("orderService") as OrderService;
 
     // Add logic here: if (user.role !== 'ADMIN') return 403
 
-    const result = await orderQueries.updateStatus(orderId, status);
+    const result = await orderService.updateStatus(orderId, status);
     return c.json({ success: true, data: result });
   })
 
@@ -81,9 +85,10 @@ export const order = new Hono<HonoEnv>()
   .patch("/:id/payment", zValidator("json", UpdatePaymentStatusSchema), async (c) => {
     const orderId = c.req.param("id");
     const { status } = c.req.valid("json");
+    const orderService = c.get("orderService") as OrderService;
 
     // Add logic here: if (user.role !== 'ADMIN') return 403
 
-    const result = await orderQueries.updatePaymentStatus(orderId, status);
+    const result = await orderService.updatePaymentStatus(orderId, status);
     return c.json({ success: true, data: result });
   });

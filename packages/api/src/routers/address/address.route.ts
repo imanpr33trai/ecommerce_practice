@@ -2,9 +2,9 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { addressQueries } from "./address.query.js";
-import { AddressSchema, UpdateAddressSchema } from "./address.type.js";
-import type { HonoEnv } from "../../context.js"; // Adjust path
+import type { AddressService } from "../../services/AddressService";
+import { AddressSchema, UpdateAddressSchema } from "@ecommerceNextjs/types";
+import type { HonoEnv } from "../../context.js";
 
 export const address = new Hono<HonoEnv>()
 
@@ -26,7 +26,8 @@ export const address = new Hono<HonoEnv>()
    */
   .get("/", async (c) => {
     const user = c.get("user");
-    const addresses = await addressQueries.list(user.id);
+    const addressService = c.get("addressService") as AddressService;
+    const addresses = await addressService.list(user.id);
     return c.json({ success: true, data: addresses });
   })
 
@@ -37,8 +38,9 @@ export const address = new Hono<HonoEnv>()
   .post("/", zValidator("json", AddressSchema), async (c) => {
     const user = c.get("user");
     const input = c.req.valid("json");
+    const addressService = c.get("addressService") as AddressService;
 
-    const result = await addressQueries.create(user.id, input);
+    const result = await addressService.create(user.id, input);
     return c.json({ success: true, data: result });
   })
 
@@ -50,8 +52,9 @@ export const address = new Hono<HonoEnv>()
     const user = c.get("user");
     const addressId = c.req.param("id");
     const input = c.req.valid("json");
+    const addressService = c.get("addressService") as AddressService;
 
-    const result = await addressQueries.update(user.id, addressId, input);
+    const result = await addressService.update(user.id, addressId, input);
     return c.json({ success: true, data: result });
   })
 
@@ -62,8 +65,9 @@ export const address = new Hono<HonoEnv>()
   .put("/:id/default", async (c) => {
     const user = c.get("user");
     const addressId = c.req.param("id");
+    const addressService = c.get("addressService") as AddressService;
 
-    const result = await addressQueries.setDefault(user.id, addressId);
+    const result = await addressService.setDefault(user.id, addressId);
     return c.json({ success: true, data: result });
   })
 
@@ -74,7 +78,8 @@ export const address = new Hono<HonoEnv>()
   .delete("/:id", async (c) => {
     const user = c.get("user");
     const addressId = c.req.param("id");
+    const addressService = c.get("addressService") as AddressService;
 
-    await addressQueries.delete(user.id, addressId);
+    await addressService.delete(user.id, addressId);
     return c.json({ success: true, message: "Address deleted" });
   });

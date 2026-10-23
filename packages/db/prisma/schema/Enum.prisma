@@ -5,17 +5,20 @@ enum UserRole {
 
 enum OrderStatus {
   PENDING
-  PAID
+  CONFIRMED
+  PROCESSING
   SHIPPED
   DELIVERED
   CANCELLED
+  REFUNDED
 }
 
 enum PaymentStatus {
   PENDING
-  SUCCESS
+  PAID
   FAILED
   REFUNDED
+  PARTIALLY_REFUNDED
 }
 enum AddressType {
   SHIPPING
