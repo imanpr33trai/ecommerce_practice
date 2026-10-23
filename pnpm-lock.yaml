@@ -227,6 +227,9 @@ importers:
       '@ecommerceNextjs/env':
         specifier: workspace:*
         version: link:../env
+      '@ecommerceNextjs/types':
+        specifier: workspace:*
+        version: link:../types
       '@hono/zod-validator':
         specifier: ^0.7.6
         version: 0.7.6(hono@4.12.0)(zod@4.3.6)
@@ -329,6 +332,25 @@ importers:
       '@types/node':
         specifier: ^22.13.14
         version: 22.19.11
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/types:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
+    devDependencies:
+      '@ecommerceNextjs/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^20.11.17
+        version: 20.19.33
+      tsdown:
+        specifier: ^0.16.5
+        version: 0.16.8(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
