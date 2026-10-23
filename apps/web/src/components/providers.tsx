@@ -11,13 +11,16 @@ import { LayoutContext } from "@/context/LayoutContext";
 import { ShopProvider } from "@/context/ShopContext";
 import { authClient } from "@/lib/auth-client";
 import { createQueryClient } from "@/lib/query-client";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { CartProvider } from "@/components/providers/CartProvider";
+import { WishlistProvider } from "@/components/providers/WishlistProvider";
 
 import { ThemeProvider } from "./theme-provider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const toggleCart = () => setIsCartOpen((prev) => !prev);
-  const { data: isUser } = authClient.useSession();
+
   return (
     <ThemeProvider
       attribute="class"
@@ -26,24 +29,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <QueryClientProvider client={createQueryClient()}>
-        <LayoutContext.Provider value={{ isCartOpen, toggleCart }}>
-          {/*<ToastProvider>*/}
-
-          <ShopProvider>
-            <ReactQueryDevtools />
-            {isUser && (
-              <CartDrawer
-                isOpen={isCartOpen}
-                onClose={() => setIsCartOpen(false)}
-              />
-            )}
-
-            {children}
-            <Toaster richColors />
-          </ShopProvider>
-
-          {/*</ToastProvider>*/}
-        </LayoutContext.Provider>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <LayoutContext.Provider value={{ isCartOpen, toggleCart }}>
+                <ShopProvider>
+                  <ReactQueryDevtools />
+                  {children}
+                  <Toaster richColors />
+                </ShopProvider>
+              </LayoutContext.Provider>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

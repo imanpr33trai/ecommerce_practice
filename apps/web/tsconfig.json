@@ -3,12 +3,13 @@
   "compilerOptions": {
     "baseUrl": ".",
     "allowImportingTsExtensions": false,
+    "types": ["vitest/globals", "@testing-library/jest-dom", "node"],
     "paths": {
       "@/*": ["src/*"],
       "@comp/*": ["../../packages/ui/src/components/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/dev/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/dev/types/**/*.ts", "test/**/*", "vitest.config.ts"],
   "exclude": ["node_modules"]
 }
