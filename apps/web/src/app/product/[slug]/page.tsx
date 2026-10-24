@@ -1,28 +1,51 @@
 import { Suspense } from "react";
+import { Metadata } from "next";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
+import ProductDetailClient from "./ProductDetailClient";
+import { prefetchProductDetail } from "@/hooks/queries/useProductDetailQuery";
 
-import DesignStory from "./DesignStory";
-import ProductGallery from "./ProductGallery";
-import ProductInfo from "./ProductInfo";
-import ProductReviews from "./ProductReviews";
+interface ProductDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
 
-export default async function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
+  // We could fetch product here for metadata, but let's keep it simple
+  return {
+    title: slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+    description: "View product details and purchase",
+  };
+}
+
+async function getProductData(slug: string) {
+  try {
+    const data = await prefetchProductDetail(slug);
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
+    return null;
+  }
+}
+
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const { slug } = await params;
+
+  // Prefetch product data on the server
+  const initialData = await getProductData(slug);
+
+  if (!initialData) {
+    // The not-found.tsx will handle this
+    return null;
+  }
 
   return (
     <Suspense fallback={<LoadingSkeleton type="detail" />}>
-      <div className="mx-auto max-w-400 animate-fade-in p-4 pb-12 md:px-8">
+      <div className="mx-auto max-w-7xl animate-fade-in p-4 pb-12 md:px-8">
         <Breadcrumbs />
 
-        <div className="mb-16 grid grid-cols-1 gap-4 lg:grid-cols-12">
-          <ProductGallery slug={slug} />
-          <ProductInfo slug={slug} />
-        </div>
-
-        <ProductReviews slug={slug} />
-        <DesignStory slug={slug} />
+        <ProductDetailClient initialData={initialData} />
       </div>
     </Suspense>
   );
