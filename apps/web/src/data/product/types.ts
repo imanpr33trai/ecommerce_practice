@@ -30,7 +30,11 @@ export type ProductSingleResponse = GetProductsListResponse["data"]["items"][num
 
 export type ProductDetailResponse = InferResponseType<typeof $getProductDetail>;
 
-export type FilterOptionsResponse = InferResponseType<typeof $getProductFilter>["data"];
+export type FilterOptionsResponse = {
+  categories: Array<{ id: string; name: string; slug: string; _count?: { products: number } }>;
+  materials: string[];
+  colors: string[];
+};
 
 export type Filters = GetProductListRequest["query"];
 

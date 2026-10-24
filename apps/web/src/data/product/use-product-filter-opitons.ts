@@ -5,7 +5,13 @@ import { client } from "@/lib/hono-client";
 
 import { productKeys } from "./keys";
 
-const fetchFilters = async () => {
+interface FilterOptionsResponse {
+  categories: Array<{ id: string; name: string; slug: string; _count?: { products: number } }>;
+  materials: string[];
+  colors: string[];
+}
+
+const fetchFilters = async (): Promise<{ success: boolean; data: FilterOptionsResponse }> => {
   const res = await client.product.filters.$get();
   if (!res.ok) {
     throw new HTTPException(404, { message: "Fetching failed filters" });

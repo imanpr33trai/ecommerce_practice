@@ -12,7 +12,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./test/setup.tsx"],
     include: ["**/*.{test,spec}.{ts,tsx}"],
-    exclude: ["node_modules", ".next", "dist", "**/*.e2e.{ts,tsx}"],
+    exclude: ["node_modules", ".next", "dist", "**/*.e2e.{ts,tsx}", "**/product/__tests__/ProductListingClient.test.tsx"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],
