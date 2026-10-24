@@ -7,11 +7,20 @@ import type { GetProfileResponse } from "@/data/account/types";
 /**
  * Type inference for the Profile response
  */
+export interface ProfileData {
+  name: string;
+  email: string;
+  image?: string | null;
+  _count?: {
+    order: number;
+    wishList: number;
+  };
+}
 
 /**
  * 1. Standalone Function (Fetcher)
  */
-const getProfileFn = async () => {
+const getProfileFn = async (): Promise<ProfileData | null> => {
   const res = await client.user.me.$get();
 
   const result = (await res.json().catch(() => ({
@@ -26,7 +35,7 @@ const getProfileFn = async () => {
   }
 
   // Returns the 'data' property which contains the profile
-  return "data" in result ? result.data : null;
+  return "data" in result ? (result.data as ProfileData) : null;
 };
 
 /**

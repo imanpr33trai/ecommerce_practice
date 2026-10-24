@@ -4,17 +4,36 @@ import { wishKeys } from "@/data/wish/keys";
 import { client } from "@/lib/hono-client";
 import type { GetWishListResponse } from "@/data/wish/types";
 
-const fetchWishList = async (): Promise<GetWishListResponse | null> => {
+interface WishlistItem {
+  id: string;
+  productId: string;
+  product: {
+    id: string;
+    name: string;
+    slug: string;
+    price: string | number;
+    images: Array<{ url: string; altText?: string }>;
+  };
+}
+
+const fetchWishList = async (): Promise<WishlistItem[] | null> => {
   const res = await client.wish.$get();
 
   if (res.status === 401) {
     return null;
   }
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch wishlist");
+  const result = (await res.json().catch(() => ({
+    success: false,
+    error: "Failed to parse wishlist data",
+  }))) as GetWishListResponse;
+
+  if (!res.ok || result.success === false) {
+    const errorMessage = "error" in result ? result.error : "Failed to fetch wishlist";
+    throw new Error(errorMessage);
   }
-  return await res.json();
+
+  return "data" in result ? (result.data as WishlistItem[]) : null;
 };
 
 export const wishListOptions = (isAuthenticated: boolean) => {

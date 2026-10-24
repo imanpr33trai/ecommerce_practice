@@ -2,18 +2,40 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 import { orderKeys } from "@/data/order/keys";
 import { client } from "@/lib/hono-client";
+import type { GetListOrdersResponse } from "@/data/order/type";
 
-const listOrdersFn = async () => {
+// Extract the data type from the response
+interface OrderListData {
+  id: string;
+  status: string;
+  totalAmount: string | number;
+  createdAt: string;
+  items: Array<{
+    id: string;
+    product: {
+      name: string;
+      slug: string;
+      images: Array<{ url: string; altText?: string }>;
+      price: string | number;
+    };
+    quantity: number;
+  }>;
+}
+
+const listOrdersFn = async (): Promise<OrderListData[]> => {
   const res = await client.order.$get();
 
-  if (!res.ok) {
-    // Type-safe property access for the union type
-    const errorMessage = "Failed to fetch orders";
+  const result = (await res.json().catch(() => ({
+    success: false,
+    error: "Failed to parse orders data",
+  }))) as GetListOrdersResponse;
+
+  if (!res.ok || result.success === false) {
+    const errorMessage = "error" in result ? result.error : "Failed to fetch orders";
     throw new Error(errorMessage);
   }
 
-  // Narrowing the type to return the array of orders
-  return res.json();
+  return "data" in result ? (result.data as OrderListData[]) : [];
 };
 
 /**
