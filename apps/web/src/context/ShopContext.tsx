@@ -19,6 +19,7 @@ export interface CartItem extends ProductSingleResponse {
   quantity: number;
   selectedColor?: string;
   selectedSize?: string; // Added size support
+  price: string | number; // Ensure price is available for cart calculations
 }
 
 type ShopContextType = {

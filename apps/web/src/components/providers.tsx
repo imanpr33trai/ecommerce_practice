@@ -5,7 +5,7 @@ import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import CartDrawer from "@/components/CartDrawer";
+import CartDrawer from "@/components/features/cart/CartDrawer";
 import { Toaster } from "@/components/sonner";
 import { LayoutContext } from "@/context/LayoutContext";
 import { ShopProvider } from "@/context/ShopContext";
@@ -43,6 +43,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           </CartProvider>
         </AuthProvider>
       </QueryClientProvider>
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </ThemeProvider>
   );
 }
