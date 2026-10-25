@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   Controller,
   type ControllerProps,
+  type ControllerRenderProps,
   type FieldPath,
   type FieldValues,
   FormProvider,
@@ -30,12 +31,23 @@ const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFi
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  ...props
-}: ControllerProps<TFieldValues, TName>) => {
+>(
+  props: ControllerProps<TFieldValues, TName> & {
+    children?: React.ReactNode | ((field: ControllerRenderProps<TFieldValues, TName>) => React.ReactElement);
+  }
+) => {
+  const { children, ...controllerProps } = props;
+
+  // Handle children as render function if it's a function, otherwise wrap React nodes in a function
+  // Controller's render prop expects: ({ field, fieldState, formState }) => ReactElement
+  const render = typeof children === "function"
+    ? ({ field, fieldState, formState }: { field: ControllerRenderProps<TFieldValues, TName>; fieldState: any; formState: any }) => 
+        children({ ...field, ...fieldState, ...formState } as ControllerRenderProps<TFieldValues, TName>)
+    : () => children as React.ReactElement;
+
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
+    <FormFieldContext.Provider value={{ name: controllerProps.name }}>
+      <Controller {...controllerProps} render={render} />
     </FormFieldContext.Provider>
   );
 };
