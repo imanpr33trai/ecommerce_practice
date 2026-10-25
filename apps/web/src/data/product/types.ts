@@ -54,3 +54,16 @@ export const INITIAL_FILTERS: ProductFilters = {
 };
 
 export type GetProductListResponseWithOnlyData = Pick<GetProductsListResponse, "data">;
+
+export interface ProductLandingResponse {
+  data: {
+    items: ProductSingleResponse[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+  success: boolean;
+}

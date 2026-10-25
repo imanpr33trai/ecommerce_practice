@@ -3,6 +3,11 @@ import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { ReactNode } from "react";
+import { ShopProvider } from "@/context/ShopContext";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { CartProvider } from "@/components/providers/CartProvider";
+import { WishlistProvider } from "@/components/providers/WishlistProvider";
+import { LayoutContext } from "@/context/LayoutContext";
 
 // Create a custom render function that includes providers
 const createTestQueryClient = () =>
@@ -18,16 +23,42 @@ const createTestQueryClient = () =>
     },
   });
 
-interface WrapperProps {
-  children: ReactNode;
-}
-
-const TestWrapper: React.FC<WrapperProps> = ({ children }) => {
-  const [queryClient] = React.useState(() => createTestQueryClient());
-  return (
+const createTestWrapper = () => {
+  const queryClient = createTestQueryClient();
+  return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-        {children}
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <LayoutContext.Provider value={{ isCartOpen: false, toggleCart: () => {} }}>
+                <ShopProvider>
+                  {children}
+                </ShopProvider>
+              </LayoutContext.Provider>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
+
+const createTestWrapperWithQueryClient = (queryClient: QueryClient) => {
+  return ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <LayoutContext.Provider value={{ isCartOpen: false, toggleCart: () => {} }}>
+                <ShopProvider>
+                  {children}
+                </ShopProvider>
+              </LayoutContext.Provider>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
@@ -42,14 +73,9 @@ export const renderWithProviders = (
   options: CustomRenderOptions = {},
 ) => {
   const { queryClient, ...renderOptions } = options;
+  const client = queryClient ?? createTestQueryClient();
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient ?? createTestQueryClient()}>
-      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-        {children}
-      </ThemeProvider>
-    </QueryClientProvider>
-  );
+  const wrapper = createTestWrapperWithQueryClient(client);
 
   return render(ui, { wrapper, ...renderOptions });
 };
@@ -57,6 +83,8 @@ export const renderWithProviders = (
 // Re-export everything from testing-library
 export * from "@testing-library/react";
 export { renderWithProviders as render };
+export { createTestWrapper, createTestWrapperWithQueryClient };
+export { createTestQueryClient };
 
 // Mock data factories
 export const createMockProduct = (overrides: Partial<{

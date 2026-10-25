@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 
 import LoadingSkeleton from "@/components/LoadingSkeleton";
-
-import { SearchContent } from "./_component/search-content";
+import { SearchClient } from "./_component/SearchClient";
 
 export default function SearchPage() {
   return (
     <Suspense fallback={<LoadingSkeleton type="products" />}>
-      <SearchContent />
+      <SearchClient />
     </Suspense>
   );
 }
