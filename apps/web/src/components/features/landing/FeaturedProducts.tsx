@@ -49,6 +49,7 @@ export const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
 
   return (
     <div
+      data-testid="featured-products"
       className="group relative animate-slide-up space-y-6"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

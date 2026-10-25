@@ -23,7 +23,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
   }
 
   return (
-    <div className="grid min-h-100 grid-cols-1 gap-4 md:grid-cols-3">
+    <div data-testid="category-grid" className="grid min-h-100 grid-cols-1 gap-4 md:grid-cols-3">
       {categories.map((category, index) => (
         <BentoCard
           key={category.slug}
